@@ -16,7 +16,8 @@ This action checks a website for broken links like 404...
 The time the website was checked.
 
 ## Example usage
-
+```yml
 uses: ScholliYT/Broken-Links-Crawler-Action@v1
 with:
   website: 'https://github.com/ScholliYT/Broken-Links-Crawler-Action'
+```
