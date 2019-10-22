@@ -1,0 +1,13 @@
+name: 'Broken-Links-Crawler'
+description: 'Checks a webiste for broken links'
+inputs:
+  website_url:  # id of input
+    description: 'Which website to check'
+    required: true
+    default: ''
+outputs:
+  time: # id of output
+    description: 'The time the website was checked'
+runs:
+  using: 'node12'
+  main: 'index.js'
