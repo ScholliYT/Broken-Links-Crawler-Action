@@ -9,6 +9,10 @@ This action checks a website for broken links like 404...
 
 **Required** The url of the website to check.
 
+### `verbose`
+
+**Optional** Turn verbose mode on/off.
+
 ## Outputs
 
 ### `time`
@@ -20,4 +24,5 @@ The time the website was checked.
 uses: ScholliYT/Broken-Links-Crawler-Action@v1.0.0
 with:
   website_url: 'https://github.com/ScholliYT/Broken-Links-Crawler-Action'
+  verbose: true
 ```
