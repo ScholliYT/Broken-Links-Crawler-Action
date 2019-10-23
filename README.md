@@ -5,7 +5,7 @@ This action checks a website for broken links like 404...
 
 ## Inputs
 
-### `website`
+### `website_url`
 
 **Required** The url of the website to check.
 
@@ -19,5 +19,5 @@ The time the website was checked.
 ```yml
 uses: ScholliYT/Broken-Links-Crawler-Action@v1
 with:
-  website: 'https://github.com/ScholliYT/Broken-Links-Crawler-Action'
+  website_url: 'https://github.com/ScholliYT/Broken-Links-Crawler-Action'
 ```
