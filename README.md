@@ -17,7 +17,7 @@ The time the website was checked.
 
 ## Example usage
 ```yml
-uses: ScholliYT/Broken-Links-Crawler-Action@v1
+uses: ScholliYT/Broken-Links-Crawler-Action@v1.0.0
 with:
   website_url: 'https://github.com/ScholliYT/Broken-Links-Crawler-Action'
 ```
