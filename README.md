@@ -24,5 +24,5 @@ The time the website was checked.
 uses: ScholliYT/Broken-Links-Crawler-Action@v1.0.0
 with:
   website_url: 'https://github.com/ScholliYT/Broken-Links-Crawler-Action'
-  verbose: true
+  verbose: 'true'
 ```
