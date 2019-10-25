@@ -4,7 +4,7 @@ FROM python:3.7-alpine
 WORKDIR /app
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
-COPY deadseeker.py deadseeker.py
+COPY deadseeker.py /app/deadseeker.py
 
 # Code file to execute when the docker container starts up (`deadseeker.py`)
-CMD [ "python", "deadseeker.py" ]
+CMD [ "python", "/app/deadseeker.py" ]
