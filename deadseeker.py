@@ -67,7 +67,9 @@ class LinkParser(HTMLParser):
             self.pages_to_check.appendleft(link)
 
 
-# check for verbose tag
-verbose = len(sys.argv) > 2 and sys.argv[2] == 'v'
-# enable this as a script, e.g., 'https://healeycodes.com/ v'
-LinkParser(sys.argv[1], verbose)
+# read env variables
+website_url = os.environ['INPUT_WEBSITE_URL']
+verbose = os.environ['INPUT_VERBOSE']
+print(website_url)
+print(verbose)
+LinkParser(website_url, verbose)

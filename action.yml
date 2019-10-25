@@ -15,6 +15,5 @@ outputs:
 runs:
   using: 'docker'
   image: 'Dockerfile'
-  args:
-    - ${{ inputs.website_url }}
-    - ${{ inputs.verbose }}
+  # args:
+    # don't put args here, python will read them from env
