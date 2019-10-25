@@ -4,6 +4,7 @@ Seeking out your 404s in around 50 lines of vanilla Python.
 '''
 
 import sys
+import os
 import urllib
 from urllib import request, parse
 from urllib.parse import urlparse, urljoin
