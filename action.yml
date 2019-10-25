@@ -13,5 +13,8 @@ outputs:
   time: # id of output
     description: 'The time the website was checked'
 runs:
-  using: 'node12'
-  main: 'index.js'
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.website_url }}
+    - ${{ verbose }}
