@@ -6,6 +6,7 @@ Seeking out your 404s in around 50 lines of vanilla Python.
 import sys
 import os
 import urllib
+import time
 from urllib import request, parse
 from urllib.parse import urlparse, urljoin
 from urllib.request import Request
@@ -15,7 +16,6 @@ from collections import deque
 search_attrs = set(['href', 'src'])
 excluded_link_prefixes = set(['mailto:'])
 agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36'
-
 
 class LinkParser(HTMLParser):
     def __init__(self, home, verbose):
@@ -27,7 +27,11 @@ class LinkParser(HTMLParser):
         self.checked_links = set()
         self.pages_to_check = deque()
         self.pages_to_check.appendleft(home)
+        self.error_occured = False
         self.scanner()
+        if self.error_occured:
+            print("::error Found some broken links!")
+            sys.exit(1)
 
     def scanner(self):
         '''Loop through remaining pages, looking for HTML responses'''
@@ -54,16 +58,22 @@ class LinkParser(HTMLParser):
             link = urljoin(self.home, link)
         try:
             req = Request(link, headers={'User-Agent': agent}, method='HEAD')
+            start = time.time() # measure load time (HEAD only)
             status = request.urlopen(req).getcode()
+            end = time.time()
         except urllib.error.HTTPError as e:
             print(f'HTTPError: {e.code} - {link}')  # (e.g. 404, 501, etc)
+            self.error_occured = True
         except urllib.error.URLError as e:
             print(f'URLError: {e.reason} - {link}')  # (e.g. conn. refused)
+            self.error_occured = True
         except ValueError as e:
             print(f'ValueError {e} - {link}')  # (e.g. missing protocol http)
+            self.error_occured = True
         else:
             if self.verbose:
-                print(f'{status} - {link}')
+                elapsedTime = "{0:.2f} ms".format((end - start)*1000)
+                print(f'{status} - {link} - {elapsedTime}')
         if self.home in link:
             self.pages_to_check.appendleft(link)
 
