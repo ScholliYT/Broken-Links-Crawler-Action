@@ -15,10 +15,6 @@ This action checks a website for broken links like 404...
 
 ## Outputs
 
-### `time`
-
-The time the website was checked.
-
 ## Example usage
 ```yml
 uses: ScholliYT/Broken-Links-Crawler-Action@v1.0.0

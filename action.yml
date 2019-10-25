@@ -9,9 +9,6 @@ inputs:
     description: 'Turn verbose mode on/off'
     require: false
     default: 'false'
-outputs:
-  time: # id of output
-    description: 'The time the website was checked'
 runs:
   using: 'docker'
   image: 'Dockerfile'
