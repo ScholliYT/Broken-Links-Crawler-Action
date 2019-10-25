@@ -17,4 +17,4 @@ runs:
   image: 'Dockerfile'
   args:
     - ${{ inputs.website_url }}
-    - ${{ verbose }}
+    - ${{ inputs.verbose }}
