@@ -30,7 +30,7 @@ class LinkParser(HTMLParser):
         self.error_occured = False
         self.scanner()
         if self.error_occured:
-            print("::error Found some broken links!")
+            print("::error file=app.js,line=10,col=15::Found some broken links!")
             sys.exit(1)
 
     def scanner(self):
