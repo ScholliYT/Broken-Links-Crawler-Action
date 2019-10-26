@@ -63,13 +63,13 @@ class LinkParser(HTMLParser):
             status = request.urlopen(req).getcode()
             end = time.time()
         except urllib.error.HTTPError as e:
-            print(f'HTTPError: {e.code} - {link}')  # (e.g. 404, 501, etc)
+            print(f'::error ::HTTPError: {e.code} - {link}')  # (e.g. 404, 501, etc)
             self.error_occured = True
         except urllib.error.URLError as e:
-            print(f'URLError: {e.reason} - {link}')  # (e.g. conn. refused)
+            print(f'::error ::URLError: {e.reason} - {link}')  # (e.g. conn. refused)
             self.error_occured = True
         except ValueError as e:
-            print(f'ValueError {e} - {link}')  # (e.g. missing protocol http)
+            print(f'::error ::ValueError {e} - {link}')  # (e.g. missing protocol http)
             self.error_occured = True
         else:
             if self.verbose:
@@ -83,6 +83,8 @@ class LinkParser(HTMLParser):
 github_event_json = os.environ['GITHUB_EVENT_PATH']
 with open(github_event_json) as f:
     d = json.load(f)
+    jsondump = json.dumps(d)
+    print("::debug ::" + str(jsondump))
     repository_homepage_url = d['repository']['homepage']
     print("homepage url found in repository: {}".format(repository_homepage_url))
 
