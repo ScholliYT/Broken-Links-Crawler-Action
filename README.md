@@ -17,7 +17,7 @@ This action checks a website for broken links like 404...
 
 ## Example usage
 ```yml
-uses: ScholliYT/Broken-Links-Crawler-Action@v1.0.0
+uses: ScholliYT/Broken-Links-Crawler-Action@v1.1.2
 with:
   website_url: 'https://github.com/ScholliYT/Broken-Links-Crawler-Action'
   verbose: 'true'
