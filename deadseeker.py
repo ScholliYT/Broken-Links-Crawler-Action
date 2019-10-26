@@ -7,6 +7,7 @@ import sys
 import os
 import urllib
 import time
+import json
 from urllib import request, parse
 from urllib.parse import urlparse, urljoin
 from urllib.request import Request
@@ -30,7 +31,7 @@ class LinkParser(HTMLParser):
         self.error_occured = False
         self.scanner()
         if self.error_occured:
-            print("::error file=app.js,line=10,col=15::Found some broken links!")
+            print("::error ::Found some broken links!")
             sys.exit(1)
 
     def scanner(self):
@@ -79,7 +80,19 @@ class LinkParser(HTMLParser):
 
 
 # read env variables
-website_url = os.environ['INPUT_WEBSITE_URL']
+github_event_json = os.environ['GITHUB_EVENT_PATH']
+with open(github_event_json) as f:
+    d = json.load(f)
+    repository_homepage_url = d['repository']['homepage']
+    print("homepage url found in repository: {}".format(repository_homepage_url))
+
+if repository_homepage_url != "":
+    website_url = repository_homepage_url
+else:
+    website_url = os.environ['INPUT_WEBSITE_URL']
+    if website_url == "":
+        print("::error ::Can't find website_url!")
+        sys.exit(1)
 verbose = os.environ['INPUT_VERBOSE']
 print(website_url)
 print(verbose)

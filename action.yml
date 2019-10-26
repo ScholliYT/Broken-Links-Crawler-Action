@@ -3,7 +3,7 @@ description: 'Checks a webiste for broken links'
 inputs:
   website_url:  # id of input
     description: 'Which website to check'
-    required: true
+    required: false
     default: ''
   verbose:
     description: 'Turn verbose mode on/off'
