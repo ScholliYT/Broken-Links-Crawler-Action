@@ -1,7 +1,8 @@
 name: 'Broken-Links-Crawler'
 description: 'Checks a webiste for broken links'
-color: red
-icon: check-circle
+branding:
+  color: red
+  icon: check-circle
 inputs:
   website_url:  # id of input
     description: 'Which website to check'
