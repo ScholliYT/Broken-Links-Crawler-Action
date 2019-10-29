@@ -16,7 +16,7 @@ This action checks all links on a website. It will detect broken links i.e. link
 
 ## Example usage
 ```yml
-uses: ScholliYT/Broken-Links-Crawler-Action@v1.1.2
+uses: ScholliYT/Broken-Links-Crawler-Action@v1.1.4
 with:
   website_url: 'https://github.com/ScholliYT/Broken-Links-Crawler-Action'
   verbose: 'true'
