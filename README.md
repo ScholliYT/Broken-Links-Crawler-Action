@@ -1,7 +1,8 @@
 # Broken-Links-Crawler-Action
-
 This action checks all links on a website. It will detect broken links i.e. links that return HTTP Code 403, 404...
 Check the logs to see which links are broken and consequently cause this action to fail. 
+
+based on this work: https://github.com/healeycodes/Broken-Link-Crawler
 ## Inputs
 
 ### `website_url`
