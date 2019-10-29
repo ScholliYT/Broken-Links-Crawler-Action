@@ -78,24 +78,9 @@ class LinkParser(HTMLParser):
         if self.home in link:
             self.pages_to_check.appendleft(link)
 
-
 # read env variables
-github_event_json = os.environ['GITHUB_EVENT_PATH']
-with open(github_event_json) as f:
-    d = json.load(f)
-    jsondump = json.dumps(d)
-    print("::debug ::" + str(jsondump))
-    repository_homepage_url = d['repository']['homepage']
-    print("homepage url found in repository: {}".format(repository_homepage_url))
-
-if repository_homepage_url != "":
-    website_url = repository_homepage_url
-else:
-    website_url = os.environ['INPUT_WEBSITE_URL']
-    if website_url == "":
-        print("::error ::Can't find website_url!")
-        sys.exit(1)
+website_url = os.environ['INPUT_WEBSITE_URL']
 verbose = os.environ['INPUT_VERBOSE']
-print(website_url)
-print(verbose)
+print("Checking website: " + str(website_url))
+print("Verbose mode on: " + str(verbose))
 LinkParser(website_url, verbose)
