@@ -11,6 +11,14 @@ inputs:
     description: 'Turn verbose mode on/off'
     require: false
     default: 'false'
+  max_retry_time:
+    description: 'Maximum time for request retries'
+    require: false
+    default: 30
+  max_retries:
+    description: 'Maximum request retry count'
+    require: false
+    default: 4
 runs:
   using: 'docker'
   image: 'Dockerfile'

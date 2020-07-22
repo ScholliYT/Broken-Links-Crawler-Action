@@ -80,7 +80,7 @@ class LinkParser(HTMLParser):
         if self.home in link:
             self.pages_to_check.appendleft(link)
     
-    @backoff.on_exception(backoff.expo, (urllib.error.HTTPError, urllib.error.URLError), max_time=16, max_tries=8) # retry on error
+    @backoff.on_exception(backoff.expo, (urllib.error.HTTPError, urllib.error.URLError), max_time=int(os.environ['INPUT_MAX_RETRY_TIME']), max_tries=int(os.environ['INPUT_MAX_RETRIES'])) # retry on error
     def make_request(self, req):
         statusCode = request.urlopen(req).getcode()
         return statusCode
