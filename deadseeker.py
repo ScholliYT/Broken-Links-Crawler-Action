@@ -1,6 +1,6 @@
 '''
 deadseeker.py
-Seeking out your 404s in around 50 lines of vanilla Python.
+Seeking out your 404s in around 100 lines of Python.
 '''
 
 import sys
@@ -41,11 +41,22 @@ class LinkParser(HTMLParser):
         while self.pages_to_check:
             page = self.pages_to_check.pop()
             req = Request(page, headers={'User-Agent': agent})
-            res = request.urlopen(req)
-            if 'html' in res.headers['content-type']:
-                with res as f:
-                    body = f.read().decode('utf-8', errors='ignore')
-                    self.feed(body)
+            try:
+                res = self.make_request(req)
+                if 'html' in res.headers['content-type']:
+                    with res as f:
+                        body = f.read().decode('utf-8', errors='ignore')
+                        self.feed(body)                
+            except urllib.error.HTTPError as e:
+                print(f'::error ::HTTPError: {e.code} - {page}')  # (e.g. 404, 501, etc)
+                self.error_occured = True
+            except urllib.error.URLError as e:
+                print(f'::error ::URLError: {e.reason} - {page}')  # (e.g. conn. refused)
+                self.error_occured = True
+            except ValueError as e:
+                print(f'::error ::ValueError {e} - {page}')  # (e.g. missing protocol http)
+                self.error_occured = True            
+            
 
     def handle_starttag(self, tag, attrs):
         '''Override parent method and check tag for our attributes'''
@@ -81,15 +92,21 @@ class LinkParser(HTMLParser):
             self.pages_to_check.appendleft(link)
     
     @backoff.on_exception(backoff.expo, (urllib.error.HTTPError, urllib.error.URLError), max_time=int(os.environ['INPUT_MAX_RETRY_TIME']), max_tries=int(os.environ['INPUT_MAX_RETRIES'])) # retry on error
+    def make_request(self, req):
+        res = request.urlopen(req)
+        return res
+
+    @backoff.on_exception(backoff.expo, (urllib.error.HTTPError, urllib.error.URLError), max_time=int(os.environ['INPUT_MAX_RETRY_TIME']), max_tries=int(os.environ['INPUT_MAX_RETRIES'])) # retry on error
     def make_statuscode_request(self, req):
         statusCode = request.urlopen(req).getcode()
         return statusCode
 
 # read env variables
 website_url = os.environ['INPUT_WEBSITE_URL']
-verbose = os.environ['INPUT_VERBOSE']
+verbose = os.environ['INPUT_VERBOSE'] == 'True'
 print("Checking website: " + str(website_url))
 print("Verbose mode on: " + str(verbose))
 
-logging.getLogger('backoff').addHandler(logging.StreamHandler())
+if verbose:
+    logging.getLogger('backoff').addHandler(logging.StreamHandler())
 LinkParser(website_url, verbose)
