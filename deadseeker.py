@@ -13,6 +13,8 @@ from urllib.parse import urlparse, urljoin
 from urllib.request import Request
 from html.parser import HTMLParser
 from collections import deque
+import backoff
+import logging
 
 search_attrs = set(['href', 'src'])
 excluded_link_prefixes = set(['mailto:'])
@@ -60,7 +62,7 @@ class LinkParser(HTMLParser):
         try:
             req = Request(link, headers={'User-Agent': agent}, method='HEAD')
             start = time.time() # measure load time (HEAD only)
-            status = request.urlopen(req).getcode()
+            statusCode = self.make_request(req)
             end = time.time()
         except urllib.error.HTTPError as e:
             print(f'::error ::HTTPError: {e.code} - {link}')  # (e.g. 404, 501, etc)
@@ -74,13 +76,20 @@ class LinkParser(HTMLParser):
         else:
             if self.verbose:
                 elapsedTime = "{0:.2f} ms".format((end - start)*1000)
-                print(f'{status} - {link} - {elapsedTime}')
+                print(f'{statusCode} - {link} - {elapsedTime}')
         if self.home in link:
             self.pages_to_check.appendleft(link)
+    
+    @backoff.on_exception(backoff.expo, (urllib.error.HTTPError, urllib.error.URLError), max_time=16, max_tries=8) # retry on error
+    def make_request(self, req):
+        statusCode = request.urlopen(req).getcode()
+        return statusCode
 
 # read env variables
 website_url = os.environ['INPUT_WEBSITE_URL']
 verbose = os.environ['INPUT_VERBOSE']
 print("Checking website: " + str(website_url))
 print("Verbose mode on: " + str(verbose))
+
+logging.getLogger('backoff').addHandler(logging.StreamHandler())
 LinkParser(website_url, verbose)
