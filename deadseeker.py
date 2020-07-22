@@ -62,7 +62,7 @@ class LinkParser(HTMLParser):
         try:
             req = Request(link, headers={'User-Agent': agent}, method='HEAD')
             start = time.time() # measure load time (HEAD only)
-            statusCode = self.make_request(req)
+            statusCode = self.make_statuscode_request(req)
             end = time.time()
         except urllib.error.HTTPError as e:
             print(f'::error ::HTTPError: {e.code} - {link}')  # (e.g. 404, 501, etc)
@@ -81,7 +81,7 @@ class LinkParser(HTMLParser):
             self.pages_to_check.appendleft(link)
     
     @backoff.on_exception(backoff.expo, (urllib.error.HTTPError, urllib.error.URLError), max_time=int(os.environ['INPUT_MAX_RETRY_TIME']), max_tries=int(os.environ['INPUT_MAX_RETRIES'])) # retry on error
-    def make_request(self, req):
+    def make_statuscode_request(self, req):
         statusCode = request.urlopen(req).getcode()
         return statusCode
 
