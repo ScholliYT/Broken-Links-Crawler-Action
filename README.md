@@ -11,7 +11,15 @@ based on this work: https://github.com/healeycodes/Broken-Link-Crawler
 
 ### `verbose`
 
-**Optional** Turn verbose mode on/off. Default false.
+**Optional** Turn verbose mode on/off (default false).
+
+### `max_retry_time`
+
+**Optional** Maximum time for request retries (default 30).
+
+### `max_retries`
+
+**Optional** Maximum request retry count (default 4).
 
 ## Outputs
 
@@ -21,4 +29,6 @@ uses: ScholliYT/Broken-Links-Crawler-Action@v2.0.0
 with:
   website_url: 'https://github.com/ScholliYT/Broken-Links-Crawler-Action'
   verbose: 'true'
+  max_retry_time: 30
+  max_retries: 5
 ```
