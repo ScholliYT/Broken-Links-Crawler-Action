@@ -103,7 +103,7 @@ class LinkParser(HTMLParser):
 
 # read env variables
 website_url = os.environ['INPUT_WEBSITE_URL']
-verbose = os.environ['INPUT_VERBOSE'] == 'True'
+verbose = os.environ['INPUT_VERBOSE']
 print("Checking website: " + str(website_url))
 print("Verbose mode on: " + str(verbose))
 
