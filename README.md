@@ -25,7 +25,7 @@ based on this work: https://github.com/healeycodes/Broken-Link-Crawler
 
 ## Example usage
 ```yml
-uses: ScholliYT/Broken-Links-Crawler-Action@v2.0.0
+uses: ScholliYT/Broken-Links-Crawler-Action@v2.1.1
 with:
   website_url: 'https://github.com/ScholliYT/Broken-Links-Crawler-Action'
   verbose: 'true'
