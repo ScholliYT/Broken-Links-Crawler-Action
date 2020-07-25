@@ -4,7 +4,8 @@
 This action checks all links on a website. It will detect broken links i.e. links that return HTTP Code 403, 404...
 Check the logs to see which links are broken and consequently cause this action to fail. 
 
-based on this work: https://github.com/healeycodes/Broken-Link-Crawler
+Based on this work: https://github.com/healeycodes/Broken-Link-Crawler  
+**Demo: https://github.com/ScholliYT/devportfolio/actions?query=workflow%3A%22Site+Reliability%22**
 ## Inputs
 
 ### `website_url`
