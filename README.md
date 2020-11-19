@@ -14,7 +14,7 @@ Based on this work: https://github.com/healeycodes/Broken-Link-Crawler
 
 ### `exclude_url_prefix`
 
-**Optional** Comma separated list of url prefixes to exclude. Some sites do not respond properly to bots and you might want to exclude those known sites to prevent a failed build. 
+**Optional** Comma separated list of url prefixes to exclude. Some sites do not respond properly to bots and you might want to exclude those known sites to prevent a failed build.
 
 ### `verbose`
 
@@ -35,7 +35,7 @@ Based on this work: https://github.com/healeycodes/Broken-Link-Crawler
 uses: ScholliYT/Broken-Links-Crawler-Action@v2.1.1
 with:
   website_url: 'https://github.com/ScholliYT/Broken-Links-Crawler-Action'
-  exclude_url_prefix: 'https://www.linkedin.com,https://linkedin.com'
+  exclude_url_prefix: 'mailto:,https://www.linkedin.com,https://linkedin.com'
   verbose: 'true'
   max_retry_time: 30
   max_retries: 5
@@ -46,5 +46,5 @@ with:
 The easiest way to run this action locally is to use Docker. Just build a new image and pass the correct env. variables to it. 
 ```
 docker build --tag broken-links-crawler-action:latest .
-docker run -e INPUT_WEBSITE_URL="https://github.com/ScholliYT/Broken-Links-Crawler-Action" -e INPUT_VERBOSE="true" -e INPUT_MAX_RETRY_TIME=30 -e INPUT_MAX_RETRIES=5 broken-links-crawler-action:latest
+docker run -e INPUT_WEBSITE_URL="https://github.com/ScholliYT/Broken-Links-Crawler-Action" -e INPUT_VERBOSE="true" -e INPUT_MAX_RETRY_TIME=30 -e INPUT_MAX_RETRIES=5 -e INPUT_EXCLUDE_URL_PREFIX="mailto:,https://www.linkedin.com,https://linkedin.com" broken-links-crawler-action:latest
 ```
