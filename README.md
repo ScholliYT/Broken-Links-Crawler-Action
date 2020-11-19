@@ -35,3 +35,11 @@ with:
   max_retry_time: 30
   max_retries: 5
 ```
+
+## Dev
+
+The easiest way to run this action locally is to use Docker. Just build a new image and pass the correct env. variables to it. 
+```
+docker build --tag broken-links-crawler-action:latest .
+docker run -e INPUT_WEBSITE_URL="https://github.com/ScholliYT/Broken-Links-Crawler-Action" -e INPUT_VERBOSE="true" -e INPUT_MAX_RETRY_TIME=30 -e INPUT_MAX_RETRIES=5 broken-links-crawler-action:latest
+```
