@@ -17,7 +17,7 @@ import backoff
 import logging
 
 search_attrs = set(['href', 'src'])
-excluded_link_prefixes = set(['mailto:'])
+excluded_link_prefixes = set()
 agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36'
 
 class LinkParser(HTMLParser):
@@ -104,8 +104,13 @@ class LinkParser(HTMLParser):
 # read env variables
 website_url = os.environ['INPUT_WEBSITE_URL']
 verbose = os.environ['INPUT_VERBOSE']
+exclude_prefix = os.environ['INPUT_EXCLUDE_URL_PREFIX']
 print("Checking website: " + str(website_url))
 print("Verbose mode on: " + str(verbose))
+if exclude_prefix and exclude_prefix != '':
+    for el in exclude_prefix.split(","):
+        excluded_link_prefixes.add(el.strip())
+    print(f"Excluding prefixes: {excluded_link_prefixes}")
 
 if verbose:
     logging.getLogger('backoff').addHandler(logging.StreamHandler())

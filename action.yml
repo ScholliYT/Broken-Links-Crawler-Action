@@ -7,17 +7,21 @@ inputs:
   website_url:  # id of input
     description: 'Which website to check'
     required: true
+  exclude_url_prefix:
+    description: 'Comma separated list of URL prefixes to ignore'
+    required: false
+    default: 'mailto:'
   verbose:
     description: 'Turn verbose mode on/off'
-    require: false
+    required: false
     default: 'false'
   max_retry_time:
     description: 'Maximum time for request retries'
-    require: false
+    required: false
     default: 30
   max_retries:
     description: 'Maximum request retry count'
-    require: false
+    required: false
     default: 4
 runs:
   using: 'docker'
