@@ -10,6 +10,7 @@ inputs:
   exclude_url_prefix:
     description: 'Comma separated list of URL prefixes to ignore'
     required: false
+    default: 'mailto:'
   verbose:
     description: 'Turn verbose mode on/off'
     required: false
