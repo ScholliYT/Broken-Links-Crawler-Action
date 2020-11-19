@@ -8,7 +8,7 @@ inputs:
     description: 'Which website to check'
     required: true
   exclude_url_prefix:
-    description: 'List of URL prefixes to ignore'
+    description: 'Comma separated list of URL prefixes to ignore'
     required: false
   verbose:
     description: 'Turn verbose mode on/off'
