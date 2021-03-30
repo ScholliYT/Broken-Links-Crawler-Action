@@ -31,7 +31,11 @@ class LinkParser(HTMLParser):
         self.pages_to_check = deque()
         self.pages_to_check.appendleft(home)
         self.error_occured = False
+        scanStart = time.time()
         self.scanner()
+        scanEnd = time.time()
+        scanElapsedTime = "{0:.2f} ms".format((scanEnd - scanStart)*1000)
+        print(f'Process took {scanElapsedTime}')
         if self.error_occured:
             print("::error ::Found some broken links!")
             sys.exit(1)
