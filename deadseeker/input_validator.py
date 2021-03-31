@@ -1,4 +1,4 @@
-import validators
+import validators  # type: ignore
 import os
 from typing import List
 
