@@ -1,9 +1,11 @@
 from typing import List, TypeVar, Generic
+from abc import abstractmethod, ABC
 
 T = TypeVar('T')
 
 
-class LinkAcceptor:
+class LinkAcceptor(ABC):
+    @abstractmethod
     def accepts(self, link: str) -> bool:
         pass
 

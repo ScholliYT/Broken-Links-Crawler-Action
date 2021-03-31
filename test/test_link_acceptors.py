@@ -1,11 +1,23 @@
 import unittest
-from deadseeker.link_acceptors import LinkAcceptorBuilder
+from deadseeker.link_acceptors import (
+    LinkAcceptorBuilder,
+    AcceptAllLinkAcceptor)
+from typing import List
 
 STRING_1 = 'bananas'
 STRING_1_PREFIX = STRING_1[0:3]  # ban
 STRING_1_SUFFIX = STRING_1[len(STRING_1)-3:]  # nas
 STRING_1_INNER = STRING_1[2:5]  # nan
 STRING_2 = 'apples'
+
+ALL_METHODS: List[str] = [
+    'addIncludePrefix',
+    'addExcludePrefix',
+    'addIncludeSuffix',
+    'addExcludeSuffix',
+    'addIncludeContained',
+    'addExcludeContained',
+]
 
 
 class TestLinkAcceptor(unittest.TestCase):
@@ -46,6 +58,15 @@ class TestLinkAcceptor(unittest.TestCase):
         self.builder.addExcludeContained(STRING_1_INNER)
         self.assertNotAccepted(STRING_1)
         self.assertAccepted(STRING_2)
+
+    def test_AcceptAllIsReturnedWhenOnlyBlanksAreProvided(self):
+        for methodName in ALL_METHODS:
+            method = getattr(self.builder, methodName)
+            method()
+            result = self.builder.build()
+            self.assertTrue(isinstance(result, AcceptAllLinkAcceptor))
+            self.assertTrue(result.accepts(STRING_1))
+            self.assertTrue(result.accepts(STRING_2))
 
     def assertAccepted(self, value: str) -> None:
         self.assertTrue(self.accepts(value))
