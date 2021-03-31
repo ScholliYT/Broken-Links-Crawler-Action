@@ -2,10 +2,11 @@ import unittest
 from deadseeker.link_acceptors import LinkAcceptorBuilder
 
 STRING_1 = 'bananas'
-STRING_1_PREFIX = STRING_1[0:3] #ban
-STRING_1_SUFFIX = STRING_1[len(STRING_1)-3:] #nas
-STRING_1_INNER = STRING_1[2:5] #nan
+STRING_1_PREFIX = STRING_1[0:3]  # ban
+STRING_1_SUFFIX = STRING_1[len(STRING_1)-3:]  # nas
+STRING_1_INNER = STRING_1[2:5]  # nan
 STRING_2 = 'apples'
+
 
 class TestLinkAcceptor(unittest.TestCase):
 
@@ -51,9 +52,10 @@ class TestLinkAcceptor(unittest.TestCase):
 
     def assertNotAccepted(self, value: str) -> None:
         self.assertFalse(self.accepts(value))
-        
+
     def accepts(self, value: str):
         return self.builder.build().accepts(value)
+
 
 if __name__ == '__main__':
     unittest.main()
