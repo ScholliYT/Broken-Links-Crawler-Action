@@ -1,5 +1,5 @@
 import unittest
-from deadseeker.link_acceptors import (
+from deadseeker.linkacceptor import (
     LinkAcceptorBuilder,
     AcceptAllLinkAcceptor)
 from typing import List
