@@ -3,13 +3,13 @@ import unittest
 from unittest.mock import MagicMock
 import os
 
-testfile_loc = os.path.join(os.path.dirname(__file__), "test.html")
+TESTFILE_LOC = os.path.join(os.path.dirname(__file__), "test.html")
 
 
 class TestLinkParser(unittest.TestCase):
 
     def setUp(self):
-        with open(testfile_loc) as f:
+        with open(TESTFILE_LOC) as f:
             self.html = f.read()
         self.linkacceptor = MagicMock()
         self.testobj: LinkParser = LinkParser(self.linkacceptor)
