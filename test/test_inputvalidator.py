@@ -1,5 +1,9 @@
 from deadseeker.inputvalidator import InputValidator
-from deadseeker.deadseeker import DEFAULT_RETRY_MAX_TRIES, DEFAULT_RETRY_MAX_TIME
+from deadseeker.deadseeker import (
+    DEFAULT_RETRY_MAX_TRIES,
+    DEFAULT_RETRY_MAX_TIME,
+    DEFAULT_WEB_AGENT
+)
 import os
 import unittest
 from unittest.mock import patch
@@ -140,6 +144,16 @@ class TestInputValidator(unittest.TestCase):
             context,
             "'INPUT_MAX_RETRY_TIME' environment variable" +
             " expected to be numeric")
+
+    def test_defaultWebAgent(self):
+        self.assertEqual(
+            DEFAULT_WEB_AGENT, self.testObj.getWebAgent())
+
+    @patch.dict(os.environ,
+                {'INPUT_WEB_AGENT_STRING': 'My Awesome Web Agent 1.0'})
+    def test_webAgentOverrideValue(self):
+        self.assertEqual(
+            'My Awesome Web Agent 1.0', self.testObj.getWebAgent())
 
     def assertExceptionContains(self, context, expected: str):
         actual = str(context.exception)

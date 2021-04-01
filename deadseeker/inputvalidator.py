@@ -1,7 +1,11 @@
 import validators  # type: ignore
 import os
 from typing import List
-from .deadseeker import DEFAULT_RETRY_MAX_TRIES, DEFAULT_RETRY_MAX_TIME
+from .deadseeker import (
+    DEFAULT_RETRY_MAX_TRIES,
+    DEFAULT_RETRY_MAX_TIME,
+    DEFAULT_WEB_AGENT
+)
 
 
 class InputValidator:
@@ -45,6 +49,12 @@ class InputValidator:
 
     def getExcludeContained(self) -> List[str]:
         return self._splitAndTrim('INPUT_EXCLUDE_URL_CONTAINED')
+
+    def getWebAgent(self) -> str:
+        valueStr = os.environ.get('INPUT_WEB_AGENT_STRING')
+        if valueStr:
+            return valueStr
+        return DEFAULT_WEB_AGENT
 
     def _numeric(self, name: str, default: int) -> int:
         valueStr = os.environ.get(name)
