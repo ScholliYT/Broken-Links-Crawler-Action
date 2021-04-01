@@ -1,16 +1,17 @@
 from deadseeker.inputvalidator import InputValidator
+from deadseeker.deadseeker import DEFAULT_RETRY_MAX_TRIES, DEFAULT_RETRY_MAX_TIME
 import os
 import unittest
 from unittest.mock import patch
 from typing import Dict
 
 INCLUDE_EXCLUDE_METHODS_BY_VARNAME: Dict[str, str] = {
-    'INPUT_INCLUDE_URL_PREFIX': 'getValidatedIncludePrefix',
-    'INPUT_EXCLUDE_URL_PREFIX': 'getValidatedExcludePrefix',
-    'INPUT_INCLUDE_URL_SUFFIX': 'getValidatedIncludeSuffix',
-    'INPUT_EXCLUDE_URL_SUFFIX': 'getValidatedExcludeSuffix',
-    'INPUT_INCLUDE_URL_CONTAINED': 'getValidatedIncludeContained',
-    'INPUT_EXCLUDE_URL_CONTAINED': 'getValidatedExcludeContained',
+    'INPUT_INCLUDE_URL_PREFIX': 'getIncludePrefix',
+    'INPUT_EXCLUDE_URL_PREFIX': 'getExcludePrefix',
+    'INPUT_INCLUDE_URL_SUFFIX': 'getIncludeSuffix',
+    'INPUT_EXCLUDE_URL_SUFFIX': 'getExcludeSuffix',
+    'INPUT_INCLUDE_URL_CONTAINED': 'getIncludeContained',
+    'INPUT_EXCLUDE_URL_CONTAINED': 'getExcludeContained',
 }
 
 
@@ -22,24 +23,25 @@ class TestInputValidator(unittest.TestCase):
 
     def test_emptyUrlThrowsException(self):
         with self.assertRaises(Exception) as context:
-            self.testObj.getValidatedUrl()
-        self.assertTrue(
+            self.testObj.getUrls()
+        self.assertExceptionContains(
+            context,
             '\'INPUT_WEBSITE_URL\' environment' +
-            ' variable expected to be provided!'
-            in str(context.exception))
+            ' variable expected to be provided!')
 
     @patch.dict(os.environ, {'INPUT_WEBSITE_URL': 'bananas'})
     def test_badUrlThrowsException(self):
         with self.assertRaises(Exception) as context:
-            self.testObj.getValidatedUrl()
-        self.assertTrue(
-            'Invalid url provided: bananas'
-            in str(context.exception))
+            self.testObj.getUrls()
+        self.assertExceptionContains(
+            context,
+            "'INPUT_WEBSITE_URL' environment variable" +
+            " expected to contain valid url: bananas")
 
     @patch.dict(os.environ, {'INPUT_WEBSITE_URL': 'https://www.google.com'})
     def test_goodUrlReturned(self):
-        self.testObj.getValidatedUrl()
-        urls = self.testObj.getValidatedUrl()
+        self.testObj.getUrls()
+        urls = self.testObj.getUrls()
         self.assertEqual(1, len(urls))
         self.assertTrue('https://www.google.com' in urls)
 
@@ -47,14 +49,14 @@ class TestInputValidator(unittest.TestCase):
                 {'INPUT_WEBSITE_URL':
                     'https://www.google.com,https://www.apple.com'})
     def test_multipleGoodUrlsReturned(self):
-        urls = self.testObj.getValidatedUrl()
+        urls = self.testObj.getUrls()
         self.assertEqual(2, len(urls))
         self.assertTrue('https://www.google.com' in urls)
         self.assertTrue('https://www.apple.com' in urls)
 
     def test_verboseFalseByDefault(self):
         self.assertFalse(
-            self.testObj.getValidatedVerbosFlag(),
+            self.testObj.isVerbos(),
             'Expected default value for verbos to be False')
 
     def test_verboseTrueWhenTrue(self):
@@ -65,7 +67,7 @@ class TestInputValidator(unittest.TestCase):
                     os.environ,
                     {'INPUT_VERBOSE': verboseStr}):
                 self.assertTrue(
-                    self.testObj.getValidatedVerbosFlag(),
+                    self.testObj.isVerbos(),
                     'Expected value to evaluate to' +
                     f' verbose true: {verboseStr}')
 
@@ -77,7 +79,7 @@ class TestInputValidator(unittest.TestCase):
                     os.environ,
                     {'INPUT_VERBOSE': verboseStr}):
                 self.assertFalse(
-                    self.testObj.getValidatedVerbosFlag(),
+                    self.testObj.isVerbos(),
                     'Expected value to evaluate to' +
                     f' verbose false: {verboseStr}')
 
@@ -99,6 +101,51 @@ class TestInputValidator(unittest.TestCase):
                 results = method()
                 self.assertEqual(
                     5, len(results))
+
+    def test_defaultMaxTries(self):
+        self.assertEqual(
+            DEFAULT_RETRY_MAX_TRIES, self.testObj.getRetryMaxTries())
+
+    @patch.dict(os.environ,
+                {'INPUT_MAX_RETRIES': '5'})
+    def test_maxTriesMatchesGoodValue(self):
+        self.assertEqual(
+            5, self.testObj.getRetryMaxTries())
+
+    @patch.dict(os.environ,
+                {'INPUT_MAX_RETRIES': 'apples'})
+    def test_maxTriesRaisesWithBadValue(self):
+        with self.assertRaises(Exception) as context:
+            self.testObj.getRetryMaxTries()
+        self.assertExceptionContains(
+            context,
+            "'INPUT_MAX_RETRIES' environment variable expected to be numeric")
+
+    def test_defaultMaxTime(self):
+        self.assertEqual(
+            DEFAULT_RETRY_MAX_TIME, self.testObj.getRetryMaxTime())
+
+    @patch.dict(os.environ,
+                {'INPUT_MAX_RETRY_TIME': '5'})
+    def test_maxTimeMatchesGoodValue(self):
+        self.assertEqual(
+            5, self.testObj.getRetryMaxTime())
+
+    @patch.dict(os.environ,
+                {'INPUT_MAX_RETRY_TIME': 'apples'})
+    def test_maxTimeRaisesWithBadValue(self):
+        with self.assertRaises(Exception) as context:
+            self.testObj.getRetryMaxTime()
+        self.assertExceptionContains(
+            context,
+            "'INPUT_MAX_RETRY_TIME' environment variable" +
+            " expected to be numeric")
+
+    def assertExceptionContains(self, context, expected: str):
+        actual = str(context.exception)
+        self.assertTrue(
+            expected in actual,
+            f'Expected exception to contain "{expected}", but was "{actual}"')
 
 
 if __name__ == '__main__':
