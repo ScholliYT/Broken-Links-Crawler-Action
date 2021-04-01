@@ -65,7 +65,9 @@ class TestDeadSeeker(unittest.TestCase):
 
     def test_request_response(self):
         self.config.verbose = True
-        self.config.linkacceptor = LinkAcceptorBuilder().addExcludePrefix('https://www.google.com').build()
+        self.config.linkacceptor = \
+            LinkAcceptorBuilder().addExcludePrefix(
+                    'https://www.google.com').build()
         seeker = DeadSeeker(self.config)
         response = seeker.seek([self.url])
         self.assertEqual(2, response)
