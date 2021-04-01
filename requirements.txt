@@ -1,4 +1,4 @@
-backoff==1.10.0
 validators
 aiohttp
 aiodns
+aiohttp-retry
