@@ -26,10 +26,11 @@ class UrlTarget():
 class UrlFetchResponse():
     def __init__(
             self, urlTarget: UrlTarget,
-            status: str, elapsed: str, html: str):
+            status: int, elapsed: str, message: str, html: str):
         self.urlTarget = urlTarget
         self.status = status
         self.elapsed = elapsed
+        self.message = message
         self.html = html
 
 
@@ -55,16 +56,16 @@ class DeadSeeker:
         start = time.time()  # measure load time (HEAD only)
         url = urlTarget.url
         html = ''
-        status = 'unknown'
+        status = -1
         end: float = -1
+        message = ''
         try:
             async with session.head(
                     url,
                     headers={'User-Agent': self.config.agent}) as headResponse:
                 end = time.time()
-                statusNum = headResponse.status
-                status = str(statusNum)
-                if statusNum == 200:
+                status = headResponse.status
+                if status == 200:
                     isHtml = 'html' in headResponse.headers['Content-Type']
                     onSite = urlTarget.home in url
                     if(isHtml and onSite):
@@ -74,13 +75,13 @@ class DeadSeeker:
                                 ) as getResponse:
                             html = await getResponse.text(encoding="utf-8")
         except aiohttp.ClientResponseError as e:
-            status = str(e.status)
-        except aiohttp.ClientResponseError as e:
-            status = str(e)
+            status = e.status
+        except aiohttp.ClientError as e:
+            message = str(e)
         if end < 0:
             end = time.time()
         elapsed = "{0:.2f} ms".format((end - start)*1000)
-        return UrlFetchResponse(urlTarget, status, elapsed, html)
+        return UrlFetchResponse(urlTarget, status, elapsed, message, html)
 
     async def _main(self, urls: List[str]) -> int:
         num_failures = 0
@@ -105,9 +106,12 @@ class DeadSeeker:
                 for task in asyncio.as_completed(tasks):  # completed first
                     resp = await task
                     status = resp.status
+                    if(status != 200):
+                        num_failures += 1
                     url = resp.urlTarget.url
                     elapsed = resp.elapsed
-                    self._log(f'{status} - {url} - {elapsed}')
+                    message = status if status > 0 else resp.message
+                    self._log(f'{message} - {url} - {elapsed}')
                     if(resp.html):
                         home = resp.urlTarget.home
                         linkparser.reset()
