@@ -12,9 +12,39 @@ Based on this work: https://github.com/healeycodes/Broken-Link-Crawler
 
 **Required** The url of the website to check.
 
+### `include_url_prefix`
+
+**Optional** Comma separated list of url prefixes to include. You may only want to crawl urls that use "https://".
+
 ### `exclude_url_prefix`
 
-**Optional** Comma separated list of url prefixes to exclude. Some sites do not respond properly to bots and you might want to exclude those known sites to prevent a failed build.
+**Optional** Comma separated list of url prefixes to exclude (default mailto:,tel:). Some sites do not respond properly to bots and you might want to exclude those known sites to prevent a failed build. 
+
+### `include_url_suffix`
+
+**Optional** Comma separated list of url suffixes to include. You may only want to crawl urls that end with ".html".
+
+### `exclude_url_suffix`
+
+**Optional** Comma separated list of url suffixes to exclude. You may want to skip images by using ".jpg,.gif,.png".
+
+### `include_url_contained`
+
+**Optional** Comma separated list of url substrings to include. You may only want to crawl urls that are hosted on your primay
+domain, so you could use "mydomain.com", which would include all of your subdomains, regardless the protocol you use.
+
+### `exclude_url_contained`
+
+**Optional** Comma separated list of url substrings to exclude. You may want to skip specific domains for external links that
+you do not want to fetch from, such as "knownadprovider.com".
+
+### `web_agent_string`
+
+**Optional** The string to use for the web agent when crawling pages.  
+The default is:  
+```
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36
+```
 
 ### `verbose`
 
