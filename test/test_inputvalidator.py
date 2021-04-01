@@ -1,4 +1,4 @@
-from deadseeker.input_validator import InputValidator
+from deadseeker.inputvalidator import InputValidator
 import os
 import unittest
 from unittest.mock import patch
