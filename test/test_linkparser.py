@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import MagicMock
 import os
 
-TESTFILE_LOC = os.path.join(os.path.dirname(__file__), "test.html")
+TESTFILE_LOC = os.path.join(os.path.dirname(__file__), "test_linkparser.html")
 
 
 class TestLinkParser(unittest.TestCase):
