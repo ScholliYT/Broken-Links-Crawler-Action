@@ -6,7 +6,6 @@ from .linkparser import LinkParser
 from aiohttp_retry import RetryClient, ExponentialRetry  # type: ignore
 from typing import List, Set, Deque
 import time
-import logging
 
 DEFAULT_WEB_AGENT: str = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' +\
     ' AppleWebKit/537.36 (KHTML, like Gecko)' +\
