@@ -1,6 +1,5 @@
 import asyncio
 import aiohttp
-from .linkacceptor import LinkAcceptor, LinkAcceptorBuilder
 from urllib.parse import urlparse, urljoin
 from .linkparser import LinkParser
 from typing import List, Set, Deque, Optional
