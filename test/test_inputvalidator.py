@@ -124,7 +124,7 @@ class TestInputValidator(unittest.TestCase):
             self.testObj.getRetryMaxTries()
         self.assertExceptionContains(
             context,
-            "'INPUT_MAX_RETRIES' environment variable expected to be numeric")
+            "'INPUT_MAX_RETRIES' environment variable expected to be a number")
 
     def test_defaultMaxTime(self):
         self.assertEqual(
@@ -144,7 +144,7 @@ class TestInputValidator(unittest.TestCase):
         self.assertExceptionContains(
             context,
             "'INPUT_MAX_RETRY_TIME' environment variable" +
-            " expected to be numeric")
+            " expected to be a number")
 
     def test_defaultMaxDepth(self):
         self.assertEqual(
@@ -164,7 +164,7 @@ class TestInputValidator(unittest.TestCase):
         self.assertExceptionContains(
             context,
             "'INPUT_MAX_DEPTH' environment variable" +
-            " expected to be numeric")
+            " expected to be a number")
 
     def test_defaultWebAgent(self):
         self.assertEqual(
