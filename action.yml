@@ -5,7 +5,7 @@ branding:
   icon: check-circle
 inputs:
   website_url:  # id of input
-    description: 'Which website to check'
+    description: 'Which websites to check'
     required: true
   include_url_prefix:
     description: 'Comma separated list of URL prefixes to include'
@@ -43,6 +43,10 @@ inputs:
     description: 'Maximum request retry count'
     required: false
     default: 4
+  max_depth:
+    description: 'Maximum site depth level'
+    required: false
+    default: -1
 runs:
   using: 'docker'
   image: 'Dockerfile'

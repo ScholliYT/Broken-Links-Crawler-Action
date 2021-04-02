@@ -4,7 +4,8 @@ from typing import List
 from .deadseeker import (
     DEFAULT_RETRY_MAX_TRIES,
     DEFAULT_RETRY_MAX_TIME,
-    DEFAULT_WEB_AGENT
+    DEFAULT_WEB_AGENT,
+    DEFAULT_MAX_DEPTH
 )
 
 
@@ -24,6 +25,9 @@ class InputValidator:
 
     def getRetryMaxTime(self) -> int:
         return self._numeric('INPUT_MAX_RETRY_TIME', DEFAULT_RETRY_MAX_TIME)
+
+    def getMaxDepth(self) -> int:
+        return self._numeric('INPUT_MAX_DEPTH', DEFAULT_MAX_DEPTH)
 
     def isVerbos(self) -> bool:
         verboseStr = os.environ.get('INPUT_VERBOSE') or 'false'

@@ -53,11 +53,15 @@ Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)
 
 ### `max_retry_time`
 
-**Optional** Maximum time for request retries (default 30).
+**Optional** Maximum seconds for request retries (default 30).
 
 ### `max_retries`
 
 **Optional** Maximum request retry count (default 4).
+
+### `max_depth`
+
+**Optional** Maximum levels deep to check, -1 = unlimited depth (default -1).
 
 ## Outputs
 

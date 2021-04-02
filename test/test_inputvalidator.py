@@ -2,7 +2,8 @@ from deadseeker.inputvalidator import InputValidator
 from deadseeker.deadseeker import (
     DEFAULT_RETRY_MAX_TRIES,
     DEFAULT_RETRY_MAX_TIME,
-    DEFAULT_WEB_AGENT
+    DEFAULT_WEB_AGENT,
+    DEFAULT_MAX_DEPTH
 )
 import os
 import unittest
@@ -143,6 +144,26 @@ class TestInputValidator(unittest.TestCase):
         self.assertExceptionContains(
             context,
             "'INPUT_MAX_RETRY_TIME' environment variable" +
+            " expected to be numeric")
+
+    def test_defaultMaxDepth(self):
+        self.assertEqual(
+            DEFAULT_MAX_DEPTH, self.testObj.getMaxDepth())
+
+    @patch.dict(os.environ,
+                {'INPUT_MAX_DEPTH': '5'})
+    def test_maxDepthMatchesGoodValue(self):
+        self.assertEqual(
+            5, self.testObj.getMaxDepth())
+
+    @patch.dict(os.environ,
+                {'INPUT_MAX_DEPTH': 'apples'})
+    def test_maxDepthRaisesWithBadValue(self):
+        with self.assertRaises(Exception) as context:
+            self.testObj.getMaxDepth()
+        self.assertExceptionContains(
+            context,
+            "'INPUT_MAX_DEPTH' environment variable" +
             " expected to be numeric")
 
     def test_defaultWebAgent(self):

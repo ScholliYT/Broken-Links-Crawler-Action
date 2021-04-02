@@ -28,9 +28,9 @@ config.linkacceptor = LinkAcceptorBuilder()\
                         .addExcludeContained(
                             *inputvalidator.getExcludeContained())\
                         .build()
-
+config.max_depth = inputvalidator.getMaxDepth()
 urls = inputvalidator.getUrls()
 seeker = DeadSeeker(config)
-if(seeker.seek(urls) > 0):
+if(len(seeker.seek(urls).failures) > 0):
     print("::error ::Found some broken links!")
     sys.exit(1)

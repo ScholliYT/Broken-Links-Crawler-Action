@@ -4,7 +4,7 @@ from .linkacceptor import LinkAcceptor, LinkAcceptorBuilder
 from urllib.parse import urlparse, urljoin
 from .linkparser import LinkParser
 from aiohttp_retry import RetryClient, ExponentialRetry  # type: ignore
-from typing import List, Set, Deque
+from typing import List, Set, Deque, Optional
 import time
 
 DEFAULT_WEB_AGENT: str = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' +\
@@ -14,23 +14,23 @@ DEFAULT_RETRY_MAX_TRIES: int = 4
 DEFAULT_RETRY_MAX_TIME: int = 30
 DEFAULT_VERBOSE: bool = False
 DEFAULT_EXCLUDE_PREFIX: List[str] = ['mailto:', 'tel:']
+DEFAULT_MAX_DEPTH: int = -1
 
 
 class UrlTarget():
-    def __init__(self, home, url):
+    def __init__(self, home: str, url: str, depth: int) -> None:
         self.home = home
         self.url = url
+        self.depth = depth
 
 
 class UrlFetchResponse():
-    def __init__(
-            self, urlTarget: UrlTarget,
-            status: int, elapsed: str, message: str, html: str):
-        self.urlTarget = urlTarget
-        self.status = status
-        self.elapsed = elapsed
-        self.message = message
-        self.html = html
+    def __init__(self, urltarget: UrlTarget):
+        self.urltarget = urltarget
+        self.elapsed: float
+        self.status: Optional[int] = None
+        self.error: Optional[Exception] = None
+        self.html: Optional[str] = None
 
 
 class DeadSeekerConfig:
@@ -38,57 +38,65 @@ class DeadSeekerConfig:
         self.verbose: bool = DEFAULT_VERBOSE
         self.max_time: int = DEFAULT_RETRY_MAX_TIME
         self.max_tries: int = DEFAULT_RETRY_MAX_TRIES
+        self.max_depth: int = DEFAULT_MAX_DEPTH
         self.linkacceptor: LinkAcceptor = \
             LinkAcceptorBuilder()\
             .addExcludePrefix(*DEFAULT_EXCLUDE_PREFIX).build()
         self.agent: str = DEFAULT_WEB_AGENT
 
 
+class SeekResults:
+    def __init__(self):
+        self.successes: List[UrlFetchResponse] = list()
+        self.failures: List[UrlFetchResponse] = list()
+        self.elapsed: float
+
+
 class DeadSeeker:
     def __init__(self, config: DeadSeekerConfig) -> None:
         self.config = config
 
-    async def _getUrlFetchResponse(
+    async def _get_urlfetchresponse(
             self,
             session: aiohttp.ClientSession,
-            urlTarget: UrlTarget) -> UrlFetchResponse:
+            urltarget: UrlTarget) -> UrlFetchResponse:
+        resp = UrlFetchResponse(urltarget)
         start = time.time()  # measure load time (HEAD only)
-        url = urlTarget.url
-        html = ''
-        status = -1
+        url = urltarget.url
         end: float = -1
-        message = ''
         try:
             async with session.head(
                     url,
-                    headers={'User-Agent': self.config.agent}) as headResponse:
+                    headers={'User-Agent': self.config.agent}) as headresponse:
                 end = time.time()
-                status = headResponse.status
-                if status == 200:
-                    isHtml = 'html' in headResponse.headers['Content-Type']
-                    onSite = urlTarget.home in url
-                    if(isHtml and onSite):
-                        async with session.get(
-                                url,
-                                headers={'User-Agent': self.config.agent}
-                                ) as getResponse:
-                            html = await getResponse.text(encoding="utf-8")
+                resp.status = headresponse.status
+                isHtml = 'html' in headresponse.headers['Content-Type']
+                onSite = urltarget.home in url
+                if(isHtml and onSite):
+                    async with session.get(
+                            url,
+                            headers={'User-Agent': self.config.agent}
+                            ) as getresponse:
+                        resp.html = await getresponse.text()
         except aiohttp.ClientResponseError as e:
-            status = e.status
+            resp.status = e.status
+            resp.error = e
         except aiohttp.ClientError as e:
-            message = str(e)
+            resp.status = -1
+            resp.error = e
         if end < 0:
             end = time.time()
-        elapsed = "{0:.2f} ms".format((end - start)*1000)
-        return UrlFetchResponse(urlTarget, status, elapsed, message, html)
+        resp.elapsed = (end - start)*1000
+        return resp
 
-    async def _main(self, urls: List[str]) -> int:
-        num_failures = 0
+    async def _main(self, urls: List[str]) -> SeekResults:
+        start = time.time()
+        results = SeekResults()
         visited: Set[str] = set()
         targets: Deque[UrlTarget] = Deque()
         for url in urls:
             visited.add(url)
-            targets.appendleft(UrlTarget(url, url))
+            targets.appendleft(UrlTarget(url, url, self.config.max_depth))
         linkparser = LinkParser(self.config.linkacceptor)
         retry_options = ExponentialRetry(
                             attempts=self.config.max_tries,
@@ -98,40 +106,47 @@ class DeadSeeker:
             while targets:
                 tasks = []
                 while targets:
-                    urlTarget = targets.pop()
+                    urltarget = targets.pop()
                     tasks.append(
                         asyncio.create_task(
-                            self._getUrlFetchResponse(session, urlTarget)))
+                            self._get_urlfetchresponse(session, urltarget)))
                 for task in asyncio.as_completed(tasks):  # completed first
                     resp = await task
-                    status = resp.status
-                    if(status != 200):
-                        num_failures += 1
-                    url = resp.urlTarget.url
-                    elapsed = resp.elapsed
-                    message = status if status > 0 else resp.message
-                    self._log(f'{message} - {url} - {elapsed}')
-                    if(resp.html):
-                        home = resp.urlTarget.home
+                    self._log_result(resp)
+                    if(resp.error):
+                        results.failures.append(resp)
+                    else:
+                        results.successes.append(resp)
+                    url = resp.urltarget.url
+                    depth = resp.urltarget.depth
+                    if(resp.html and depth != 0):
+                        home = resp.urltarget.home
                         linkparser.reset()
                         linkparser.feed(resp.html)
                         for newurl in linkparser.links:
                             if not bool(
                                     urlparse(newurl).netloc):  # relative link?
-                                newurl = urljoin(resp.urlTarget.home, newurl)
+                                newurl = urljoin(resp.urltarget.home, newurl)
                             if newurl not in visited:
                                 visited.add(newurl)
-                                targets.appendleft(UrlTarget(home, newurl))
-        return num_failures
+                                targets.appendleft(
+                                    UrlTarget(home, newurl, depth - 1))
+        results.elapsed = (time.time() - start) * 1000
+        return results
+
+    def _log_result(self, resp: UrlFetchResponse):
+        if self.config.verbose:
+            status = resp.status
+            message = status if status > 0 else str(resp.error)
+            url = resp.urltarget.url
+            elapsed = f'{resp.elapsed:.2f} ms'
+            self._log(f'{message} - {url} - {elapsed}')
 
     def _log(self, message: str) -> None:
         if self.config.verbose:
             print(message)
 
-    def seek(self, urls: List[str]) -> int:
-        start = time.time()
-        num_failures = asyncio.run(self._main(urls))
-        end = time.time()
-        elapsedTime = "{0:.2f} ms".format((end - start)*1000)
-        self._log(f'Process took {elapsedTime}')
-        return num_failures
+    def seek(self, urls: List[str]) -> SeekResults:
+        results = asyncio.run(self._main(urls))
+        self._log(f'Process took {results.elapsed:.2f}')
+        return results
