@@ -88,3 +88,21 @@ docker run -e INPUT_WEBSITE_URL="https://github.com/ScholliYT/Broken-Links-Crawl
 You can run the full suite of automated tests on your local machine by using the "act" tool to simulate the github workflow action that executs during commit, more information here:  
 https://github.com/nektos/act
 
+### Running linting and code formatting checks
+
+You can run linting and code formatting checks using the `flake8` command:
+```
+flake8 . --count --show-source --max-complexity=10 --statistics
+```
+
+### Running Tests
+
+You can run tests using the `pytest` command:
+```
+pytest --cov=deadseeker --cov-fail-under=95 --cov-branch --cov-report=term-missing
+```
+
+To generate an html report that visually displays uncovered lines, use this version:
+```
+pytest --cov=deadseeker --cov-fail-under=95 --cov-branch --cov-report=term-missing --cov-report=html
+```
