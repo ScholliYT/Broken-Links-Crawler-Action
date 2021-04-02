@@ -51,4 +51,3 @@ class TestAction(unittest.TestCase):
         import deadseeker.action
         # must realod because import caches
         reload(deadseeker.action)
-
