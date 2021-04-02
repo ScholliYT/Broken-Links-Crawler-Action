@@ -36,5 +36,5 @@ if(config.verbose):
     logging.basicConfig(
         level=logging.DEBUG)
 if(len(seeker.seek(urls).failures) > 0):
-    print("::error ::Found some broken links!")
+    logging.critical("::error ::Found some broken links!")
     sys.exit(1)
