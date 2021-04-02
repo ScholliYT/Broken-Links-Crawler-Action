@@ -70,7 +70,8 @@ class TestDeadSeeker(unittest.TestCase):
                     'https://www.google.com').build()
         seeker = DeadSeeker(self.config)
         response = seeker.seek([self.url])
-        self.assertEqual(2, response)
+        actualfailed = len(response.failures)
+        self.assertEqual(2, actualfailed)
 
 
 if __name__ == '__main__':
