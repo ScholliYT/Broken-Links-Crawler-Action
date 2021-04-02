@@ -6,6 +6,7 @@ from .linkparser import LinkParser
 from aiohttp_retry import RetryClient, ExponentialRetry  # type: ignore
 from typing import List, Set, Deque, Optional
 import time
+import logging
 
 DEFAULT_WEB_AGENT: str = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' +\
     ' AppleWebKit/537.36 (KHTML, like Gecko)' +\
@@ -15,6 +16,8 @@ DEFAULT_RETRY_MAX_TIME: int = 30
 DEFAULT_VERBOSE: bool = False
 DEFAULT_EXCLUDE_PREFIX: List[str] = ['mailto:', 'tel:']
 DEFAULT_MAX_DEPTH: int = -1
+
+logger = logging.getLogger(__name__)
 
 
 class UrlTarget():
@@ -138,13 +141,9 @@ class DeadSeeker:
             message = status if status else str(resp.error)
             url = resp.urltarget.url
             elapsed = f'{resp.elapsed:.2f} ms'
-            self._log(f'{message} - {url} - {elapsed}')
-
-    def _log(self, message: str) -> None:
-        if self.config.verbose:
-            print(message)
+            logger.info(f'{message} - {url} - {elapsed}')
 
     def seek(self, urls: List[str]) -> SeekResults:
         results = asyncio.run(self._main(urls))
-        self._log(f'Process took {results.elapsed:.2f}')
+        logger.debug(f'Process took {results.elapsed:.2f}')
         return results
