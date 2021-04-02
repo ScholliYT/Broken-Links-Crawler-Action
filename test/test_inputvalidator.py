@@ -68,25 +68,21 @@ class TestInputValidator(unittest.TestCase):
         for verboseStr in [
                 'true', 't', 'yes', 'y', 'True',
                 'T', 'Yes', 'Y', 'TRUE', 'YES']:
-            with patch.dict(
-                    os.environ,
-                    {'INPUT_VERBOSE': verboseStr}):
-                self.assertTrue(
-                    self.testObj.isVerbos(),
-                    'Expected value to evaluate to' +
-                    f' verbose true: {verboseStr}')
+            self.env['INPUT_VERBOSE'] = verboseStr
+            self.assertTrue(
+                self.testObj.isVerbos(),
+                'Expected value to evaluate to' +
+                f' verbose true: {verboseStr}')
 
     def test_verboseFalseWhenFalse(self):
         for verboseStr in [
                 'false', 'f', 'no', 'n', 'False',
                 'F', 'No', 'N', 'FALSE', 'NO']:
-            with patch.dict(
-                    os.environ,
-                    {'INPUT_VERBOSE': verboseStr}):
-                self.assertFalse(
-                    self.testObj.isVerbos(),
-                    'Expected value to evaluate to' +
-                    f' verbose false: {verboseStr}')
+            self.env['INPUT_VERBOSE'] = verboseStr
+            self.assertFalse(
+                self.testObj.isVerbos(),
+                'Expected value to evaluate to' +
+                f' verbose false: {verboseStr}')
 
     def test_defaultIncludeExcludeValueIsEmpty(self):
         for methodName in INCLUDE_EXCLUDE_METHODS_BY_VARNAME.values():
