@@ -3,18 +3,11 @@ import aiohttp
 from .linkacceptor import LinkAcceptor, LinkAcceptorBuilder
 from urllib.parse import urlparse, urljoin
 from .linkparser import LinkParser
-from aiohttp_retry import RetryClient, ExponentialRetry  # type: ignore
 from typing import List, Set, Deque, Optional
 import time
 import logging
-
-DEFAULT_WEB_AGENT: str = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' +\
-    ' AppleWebKit/537.36 (KHTML, like Gecko)' +\
-    ' Chrome/60.0.3112.113 Safari/537.36'
-DEFAULT_RETRY_MAX_TRIES: int = 4
-DEFAULT_RETRY_MAX_TIME: int = 30
-DEFAULT_EXCLUDE_PREFIX: List[str] = ['mailto:', 'tel:']
-DEFAULT_MAX_DEPTH: int = -1
+from .clientsessionfactory import createClientSession
+from .deadseekerconfig import DeadSeekerConfig
 
 logger = logging.getLogger(__name__)
 
@@ -33,17 +26,6 @@ class UrlFetchResponse():
         self.status: int = 0
         self.error: Optional[Exception] = None
         self.html: Optional[str] = None
-
-
-class DeadSeekerConfig:
-    def __init__(self) -> None:
-        self.max_time: int = DEFAULT_RETRY_MAX_TIME
-        self.max_tries: int = DEFAULT_RETRY_MAX_TRIES
-        self.max_depth: int = DEFAULT_MAX_DEPTH
-        self.linkacceptor: LinkAcceptor = \
-            LinkAcceptorBuilder()\
-            .addExcludePrefix(*DEFAULT_EXCLUDE_PREFIX).build()
-        self.agent: str = DEFAULT_WEB_AGENT
 
 
 class SeekResults:
@@ -94,14 +76,7 @@ class DeadSeeker:
             visited.add(url)
             targets.appendleft(UrlTarget(url, url, self.config.max_depth))
         linkparser = LinkParser(self.config.linkacceptor)
-        retry_options = ExponentialRetry(
-                            attempts=self.config.max_tries,
-                            max_timeout=self.config.max_time,
-                            exceptions=[aiohttp.ClientError])
-        async with RetryClient(
-                raise_for_status=True,
-                headers={'User-Agent': self.config.agent},
-                retry_options=retry_options) as session:
+        async with createClientSession(self.config) as session:
             while targets:
                 tasks = []
                 while targets:

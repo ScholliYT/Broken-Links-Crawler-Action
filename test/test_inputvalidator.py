@@ -1,5 +1,5 @@
 from deadseeker.inputvalidator import InputValidator
-from deadseeker.deadseeker import (
+from deadseeker.deadseekerconfig import (
     DEFAULT_RETRY_MAX_TRIES,
     DEFAULT_RETRY_MAX_TIME,
     DEFAULT_WEB_AGENT,

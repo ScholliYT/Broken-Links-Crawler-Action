@@ -1,6 +1,7 @@
 from .inputvalidator import InputValidator
 from .linkacceptor import LinkAcceptorBuilder
-from .deadseeker import DeadSeekerConfig, DeadSeeker
+from .deadseeker import DeadSeeker
+from .deadseekerconfig import DeadSeekerConfig
 import sys
 import os
 import logging
