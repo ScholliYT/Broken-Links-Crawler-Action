@@ -28,7 +28,7 @@ class UrlFetchResponse():
     def __init__(self, urltarget: UrlTarget):
         self.urltarget = urltarget
         self.elapsed: float
-        self.status: Optional[int] = None
+        self.status: int = 0
         self.error: Optional[Exception] = None
         self.html: Optional[str] = None
 
@@ -65,18 +65,13 @@ class DeadSeeker:
         url = urltarget.url
         end: float = -1
         try:
-            async with session.head(
-                    url,
-                    headers={'User-Agent': self.config.agent}) as headresponse:
+            async with session.head(url) as headresponse:
                 end = time.time()
                 resp.status = headresponse.status
-                isHtml = 'html' in headresponse.headers['Content-Type']
-                onSite = urltarget.home in url
-                if(isHtml and onSite):
-                    async with session.get(
-                            url,
-                            headers={'User-Agent': self.config.agent}
-                            ) as getresponse:
+                has_html = 'html' in headresponse.headers['Content-Type']
+                onsite = urltarget.home in url
+                if(has_html and onsite):
+                    async with session.get(url) as getresponse:
                         resp.html = await getresponse.text()
         except aiohttp.ClientResponseError as e:
             resp.status = e.status
@@ -102,7 +97,9 @@ class DeadSeeker:
                             attempts=self.config.max_tries,
                             exceptions=[aiohttp.ClientError])
         async with RetryClient(
-                raise_for_status=True, retry_options=retry_options) as session:
+                raise_for_status=True,
+                headers={'User-Agent': self.config.agent},
+                retry_options=retry_options) as session:
             while targets:
                 tasks = []
                 while targets:
@@ -137,7 +134,7 @@ class DeadSeeker:
     def _log_result(self, resp: UrlFetchResponse):
         if self.config.verbose:
             status = resp.status
-            message = status if status > 0 else str(resp.error)
+            message = status if status else str(resp.error)
             url = resp.urltarget.url
             elapsed = f'{resp.elapsed:.2f} ms'
             self._log(f'{message} - {url} - {elapsed}')
