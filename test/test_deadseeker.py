@@ -4,8 +4,7 @@ import unittest
 from unittest.mock import patch
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from http import HTTPStatus
-from deadseeker.deadseeker import DeadSeeker, DeadSeekerConfig
-from deadseeker.linkacceptor import LinkAcceptorBuilder
+from deadseeker import DeadSeeker, SeekerConfig, LinkAcceptorBuilder
 import socket
 from threading import Thread
 import os
@@ -64,7 +63,7 @@ class TestDeadSeeker(unittest.TestCase):
         cls.url = f'http://localhost:{port}'
 
     def setUp(self):
-        self.config = DeadSeekerConfig()
+        self.config = SeekerConfig()
         self.logger = logging.getLogger('deadseeker.deadseeker')
         self.builder = LinkAcceptorBuilder()
 

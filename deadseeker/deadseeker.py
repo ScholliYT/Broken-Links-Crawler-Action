@@ -2,40 +2,22 @@ import asyncio
 import aiohttp
 from urllib.parse import urlparse, urljoin
 from .linkparser import LinkParser
-from typing import List, Set, Deque, Optional
+from typing import List, Set, Deque
 import time
 import logging
 from .clientsessionfactory import createClientSession
-from .deadseekerconfig import DeadSeekerConfig
+from .common import (
+    SeekerConfig,
+    UrlFetchResponse,
+    UrlTarget,
+    SeekResults
+)
 
 logger = logging.getLogger(__name__)
 
 
-class UrlTarget():
-    def __init__(self, home: str, url: str, depth: int) -> None:
-        self.home = home
-        self.url = url
-        self.depth = depth
-
-
-class UrlFetchResponse():
-    def __init__(self, urltarget: UrlTarget):
-        self.urltarget = urltarget
-        self.elapsed: float
-        self.status: int = 0
-        self.error: Optional[Exception] = None
-        self.html: Optional[str] = None
-
-
-class SeekResults:
-    def __init__(self):
-        self.successes: List[UrlFetchResponse] = list()
-        self.failures: List[UrlFetchResponse] = list()
-        self.elapsed: float
-
-
 class DeadSeeker:
-    def __init__(self, config: DeadSeekerConfig) -> None:
+    def __init__(self, config: SeekerConfig) -> None:
         self.config = config
 
     async def _get_urlfetchresponse(

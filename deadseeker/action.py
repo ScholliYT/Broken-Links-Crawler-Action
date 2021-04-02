@@ -1,7 +1,7 @@
 from .inputvalidator import InputValidator
 from .linkacceptor import LinkAcceptorBuilder
 from .deadseeker import DeadSeeker
-from .deadseekerconfig import DeadSeekerConfig
+from .common import SeekerConfig
 import sys
 import os
 import logging
@@ -29,7 +29,7 @@ else:
     logging.basicConfig(level=verbosity)
 
 
-config = DeadSeekerConfig()
+config = SeekerConfig()
 config.max_tries = inputvalidator.get_retry_maxtries()
 config.max_time = inputvalidator.get_retry_maxtime()
 config.linkacceptor = LinkAcceptorBuilder()\

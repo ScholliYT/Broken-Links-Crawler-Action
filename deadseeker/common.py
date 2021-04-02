@@ -1,4 +1,4 @@
-from typing import List
+from typing import Optional, List
 from .linkacceptor import LinkAcceptorBuilder, LinkAcceptor
 
 DEFAULT_WEB_AGENT: str = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' +\
@@ -10,7 +10,7 @@ DEFAULT_EXCLUDE_PREFIX: List[str] = ['mailto:', 'tel:']
 DEFAULT_MAX_DEPTH: int = -1
 
 
-class DeadSeekerConfig:
+class SeekerConfig:
     def __init__(self) -> None:
         self.max_time: int = DEFAULT_RETRY_MAX_TIME
         self.max_tries: int = DEFAULT_RETRY_MAX_TRIES
@@ -19,3 +19,26 @@ class DeadSeekerConfig:
             LinkAcceptorBuilder()\
             .addExcludePrefix(*DEFAULT_EXCLUDE_PREFIX).build()
         self.agent: str = DEFAULT_WEB_AGENT
+
+
+class UrlTarget():
+    def __init__(self, home: str, url: str, depth: int) -> None:
+        self.home = home
+        self.url = url
+        self.depth = depth
+
+
+class UrlFetchResponse():
+    def __init__(self, urltarget: UrlTarget):
+        self.urltarget = urltarget
+        self.elapsed: float
+        self.status: int = 0
+        self.error: Optional[Exception] = None
+        self.html: Optional[str] = None
+
+
+class SeekResults:
+    def __init__(self):
+        self.successes: List[UrlFetchResponse] = list()
+        self.failures: List[UrlFetchResponse] = list()
+        self.elapsed: float

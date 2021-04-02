@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import os
-from deadseeker.deadseeker import DeadSeeker, SeekResults
+from deadseeker import DeadSeeker, SeekResults
 from importlib import reload
 from logging import DEBUG, INFO, WARN, ERROR, CRITICAL
 import logging

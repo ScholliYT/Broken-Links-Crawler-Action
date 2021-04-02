@@ -1,10 +1,10 @@
-from deadseeker.inputvalidator import InputValidator
-from deadseeker.deadseekerconfig import (
+from deadseeker.common import (
     DEFAULT_RETRY_MAX_TRIES,
     DEFAULT_RETRY_MAX_TIME,
     DEFAULT_WEB_AGENT,
     DEFAULT_MAX_DEPTH
 )
+from deadseeker.inputvalidator import InputValidator
 import unittest
 from logging import DEBUG, INFO, WARN, ERROR, CRITICAL
 import logging

@@ -2,7 +2,7 @@ import validators  # type: ignore
 from typing import List, Dict, Union
 import re
 import logging
-from .deadseekerconfig import (
+from deadseeker.common import (
     DEFAULT_RETRY_MAX_TRIES,
     DEFAULT_RETRY_MAX_TIME,
     DEFAULT_WEB_AGENT,

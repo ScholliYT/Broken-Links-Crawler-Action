@@ -1,4 +1,4 @@
-from .deadseekerconfig import DeadSeekerConfig
+from .common import SeekerConfig
 import aiohttp
 import logging
 from types import SimpleNamespace
@@ -19,7 +19,7 @@ async def _on_request_start(
             f'::warn ::Retry Attempt #{current_attempt}: {params.url}')
 
 
-def createClientSession(config: DeadSeekerConfig):
+def createClientSession(config: SeekerConfig):
     trace_config = TraceConfig()
     trace_config.on_request_start.append(_on_request_start)
     retry_options = ExponentialRetry(
