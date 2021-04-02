@@ -34,10 +34,17 @@ jobs:
     - name: Test with pytest
       run: |
         pytest --cov=deadseeker --cov-fail-under=95 --cov-branch --cov-report=term-missing
-    - name: Validate dockerfile
-      uses: ghe-actions/dockerfile-validator@v1
-      with:
-        dockerfile: 'Dockerfile'
-        lint: 'hadolint'
+    - name: Set ci docker label
+      run: echo "CI_DOCKER_LABEL=broken-links-crawler-action:ci-$(date +%s)" >> $GITHUB_ENV
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag broken-links-crawler-action:ci-$(date +%s)
+      run: docker build . --file Dockerfile --tag ${{ env.CI_DOCKER_LABEL }}
+    - name: Test the Docker image
+      run: |
+        docker run \
+          -e INPUT_WEBSITE_URL="https://github.com/ScholliYT/Broken-Links-Crawler-Action" \
+          -e INPUT_VERBOSE="true" \
+          -e INPUT_MAX_RETRY_TIME=30 \
+          -e INPUT_MAX_RETRIES=5 \
+          -e INPUT_MAX_DEPTH=0 \
+          -e INPUT_EXCLUDE_URL_PREFIX="mailto:,https://www.linkedin.com,https://linkedin.com" \
+          ${{ env.CI_DOCKER_LABEL }}
