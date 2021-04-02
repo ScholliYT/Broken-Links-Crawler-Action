@@ -95,6 +95,7 @@ class DeadSeeker:
         linkparser = LinkParser(self.config.linkacceptor)
         retry_options = ExponentialRetry(
                             attempts=self.config.max_tries,
+                            max_timeout=self.config.max_time,
                             exceptions=[aiohttp.ClientError])
         async with RetryClient(
                 raise_for_status=True,
