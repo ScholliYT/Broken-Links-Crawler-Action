@@ -33,7 +33,7 @@ class InputValidator:
         return self._numeric('INPUT_MAX_DEPTH', DEFAULT_MAX_DEPTH)
 
     def isVerbos(self) -> bool:
-        verboseStr = os.environ.get('INPUT_VERBOSE') or 'false'
+        verboseStr = self.inputs.get('INPUT_VERBOSE') or 'false'
         verbose = bool(
             verboseStr and
             verboseStr.lower() in ['true', 't', 'yes', 'y'])
