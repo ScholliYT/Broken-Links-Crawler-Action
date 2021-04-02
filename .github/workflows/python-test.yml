@@ -19,8 +19,9 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        # installing dependencies used by this action
         pip install flake8 pytest
-        # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        # installing dependencies used by the project
         if [ -f test-requirements.txt ]; then \
           pip install -r test-requirements.txt; \
         elif [ -f requirements.txt ]; then \
