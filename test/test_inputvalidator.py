@@ -5,9 +5,7 @@ from deadseeker.deadseeker import (
     DEFAULT_WEB_AGENT,
     DEFAULT_MAX_DEPTH
 )
-import os
 import unittest
-from unittest.mock import patch
 from typing import Dict
 
 INCLUDE_EXCLUDE_METHODS_BY_VARNAME: Dict[str, str] = {

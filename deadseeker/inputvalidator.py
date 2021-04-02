@@ -1,5 +1,4 @@
 import validators  # type: ignore
-import os
 from typing import List, Dict
 from .deadseeker import (
     DEFAULT_RETRY_MAX_TRIES,
