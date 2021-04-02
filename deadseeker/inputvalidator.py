@@ -63,9 +63,9 @@ class InputValidator:
     def _numeric(self, name: str, default: int) -> int:
         valueStr = os.environ.get(name)
         if valueStr:
-            assert valueStr.isnumeric(), \
+            assert valueStr.lstrip('-').isdigit(), \
                     f"'{name}' environment variable" +\
-                    " expected to be numeric"
+                    " expected to be a number"
             return int(valueStr)
         return default
 
