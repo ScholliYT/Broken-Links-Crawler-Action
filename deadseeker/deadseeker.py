@@ -136,7 +136,7 @@ class DeadSeeker:
         return results
 
     def _log_result(self, resp: UrlFetchResponse):
-        if self.config.verbose:
+        if logging.INFO >= logger.getEffectiveLevel():
             status = resp.status
             message = status if status else str(resp.error)
             url = resp.urltarget.url
