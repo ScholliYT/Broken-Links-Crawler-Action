@@ -5,7 +5,7 @@ import logging
 
 
 search_attrs = set(['href', 'src'])
-logger = logging.getLogger('deadseeker.LinkParser')
+logger = logging.getLogger(__name__)
 
 
 class LinkParser(HTMLParser):
