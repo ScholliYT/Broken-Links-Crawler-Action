@@ -3,27 +3,27 @@ from unittest.mock import patch, MagicMock
 import os
 from deadseeker.deadseeker import DeadSeeker, SeekResults
 from importlib import reload
+import logging
 
 
 class TestAction(unittest.TestCase):
 
     def setUp(self):
+        self.env = {
+            "INPUT_WEBSITE_URL": "https://www.ncpilgrimage.org",
+            "INPUT_MAX_RETRIES": "",
+            "INPUT_MAX_RETRY_TIME": "",
+            "INPUT_VERBOSE": "true",
+            "INPUT_INCLUDE_URL_PREFIX": "",
+            "INPUT_EXCLUDE_URL_PREFIX": "mailto:,tel:,/cdn-cgi/",
+            "INPUT_INCLUDE_URL_SUFFIX": "",
+            "INPUT_EXCLUDE_URL_SUFFIX": "",
+            "INPUT_INCLUDE_URL_CONTAINED": "",
+            "INPUT_EXCLUDE_URL_CONTAINED": "",
+            "INPUT_WEB_AGENT_STRING": "",
+        }
         self.environ_patch = \
-            patch.dict(
-                os.environ,
-                {
-                    "INPUT_WEBSITE_URL": "https://www.ncpilgrimage.org",
-                    "INPUT_MAX_RETRIES": "",
-                    "INPUT_MAX_RETRY_TIME": "",
-                    "INPUT_VERBOSE": "true",
-                    "INPUT_INCLUDE_URL_PREFIX": "",
-                    "INPUT_EXCLUDE_URL_PREFIX": "mailto:,tel:,/cdn-cgi/",
-                    "INPUT_INCLUDE_URL_SUFFIX": "",
-                    "INPUT_EXCLUDE_URL_SUFFIX": "",
-                    "INPUT_INCLUDE_URL_CONTAINED": "",
-                    "INPUT_EXCLUDE_URL_CONTAINED": "",
-                    "INPUT_WEB_AGENT_STRING": "",
-                })
+            patch.dict(os.environ, self.env)
         self.environ_patch.start()
         self.seek_patch = patch.object(DeadSeeker, 'seek')
         self.seek = self.seek_patch.start()
@@ -48,6 +48,20 @@ class TestAction(unittest.TestCase):
         self.import_action()
         self.seek.assert_called()
         self.exit.assert_called_with(1)
+
+    def test_verboseTrueSetsLoggingToDebug(self):
+        with patch.dict(os.environ, {'INPUT_VERBOSE': 'true'}),\
+                patch.object(logging, 'basicConfig') as mock_debug:
+            self.import_action()
+            mock_debug.assert_called_once_with(level=logging.DEBUG)
+
+    def test_verboseFalseSetsLoggingToSevere(self):
+        with patch.dict(os.environ, {'INPUT_VERBOSE': 'false'}),\
+                patch.object(logging, 'basicConfig') as mock_debug:
+            self.import_action()
+            mock_debug.assert_called_once_with(
+                level=logging.CRITICAL,
+                format='%(message)s')
 
     def import_action(self):
         import deadseeker.action
