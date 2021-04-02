@@ -10,7 +10,7 @@ from .deadseeker import (
 
 
 class InputValidator:
-    def getUrls(self) -> List[str]:
+    def get_urls(self) -> List[str]:
         website_urls = self._splitAndTrim('INPUT_WEBSITE_URL')
         assert website_urls, \
             "'INPUT_WEBSITE_URL' environment variable expected to be provided!"
@@ -20,13 +20,13 @@ class InputValidator:
                 f" expected to contain valid url: {url}"
         return website_urls
 
-    def getRetryMaxTries(self) -> int:
+    def get_retry_maxtries(self) -> int:
         return self._numeric('INPUT_MAX_RETRIES', DEFAULT_RETRY_MAX_TRIES)
 
-    def getRetryMaxTime(self) -> int:
+    def get_retry_maxtime(self) -> int:
         return self._numeric('INPUT_MAX_RETRY_TIME', DEFAULT_RETRY_MAX_TIME)
 
-    def getMaxDepth(self) -> int:
+    def get_maxdepth(self) -> int:
         return self._numeric('INPUT_MAX_DEPTH', DEFAULT_MAX_DEPTH)
 
     def isVerbos(self) -> bool:
@@ -36,25 +36,25 @@ class InputValidator:
             verboseStr.lower() in ['true', 't', 'yes', 'y'])
         return verbose
 
-    def getIncludePrefix(self) -> List[str]:
+    def get_includeprefix(self) -> List[str]:
         return self._splitAndTrim('INPUT_INCLUDE_URL_PREFIX')
 
-    def getExcludePrefix(self) -> List[str]:
+    def get_excludeprefix(self) -> List[str]:
         return self._splitAndTrim('INPUT_EXCLUDE_URL_PREFIX')
 
-    def getIncludeSuffix(self) -> List[str]:
+    def get_includesuffix(self) -> List[str]:
         return self._splitAndTrim('INPUT_INCLUDE_URL_SUFFIX')
 
-    def getExcludeSuffix(self) -> List[str]:
+    def get_excludesuffix(self) -> List[str]:
         return self._splitAndTrim('INPUT_EXCLUDE_URL_SUFFIX')
 
-    def getIncludeContained(self) -> List[str]:
+    def get_includecontained(self) -> List[str]:
         return self._splitAndTrim('INPUT_INCLUDE_URL_CONTAINED')
 
-    def getExcludeContained(self) -> List[str]:
+    def get_excludecontained(self) -> List[str]:
         return self._splitAndTrim('INPUT_EXCLUDE_URL_CONTAINED')
 
-    def getWebAgent(self) -> str:
+    def get_webagent(self) -> str:
         valueStr = os.environ.get('INPUT_WEB_AGENT_STRING')
         if valueStr:
             return valueStr

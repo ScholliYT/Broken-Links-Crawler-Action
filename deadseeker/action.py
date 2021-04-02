@@ -12,25 +12,25 @@ deadseeker class
 """
 inputvalidator = InputValidator()
 config = DeadSeekerConfig()
-config.max_tries = inputvalidator.getRetryMaxTries()
-config.max_time = inputvalidator.getRetryMaxTime()
+config.max_tries = inputvalidator.get_retry_maxtries()
+config.max_time = inputvalidator.get_retry_maxtime()
 config.verbose = inputvalidator.isVerbos()
 config.linkacceptor = LinkAcceptorBuilder()\
                         .addIncludePrefix(
-                            *inputvalidator.getIncludePrefix())\
+                            *inputvalidator.get_includeprefix())\
                         .addExcludePrefix(
-                            *inputvalidator.getExcludePrefix())\
+                            *inputvalidator.get_excludeprefix())\
                         .addIncludeSuffix(
-                            *inputvalidator.getIncludeSuffix())\
+                            *inputvalidator.get_includesuffix())\
                         .addExcludeSuffix(
-                            *inputvalidator.getExcludeSuffix())\
+                            *inputvalidator.get_excludesuffix())\
                         .addIncludeContained(
-                            *inputvalidator.getIncludeContained())\
+                            *inputvalidator.get_includecontained())\
                         .addExcludeContained(
-                            *inputvalidator.getExcludeContained())\
+                            *inputvalidator.get_excludecontained())\
                         .build()
-config.max_depth = inputvalidator.getMaxDepth()
-urls = inputvalidator.getUrls()
+config.max_depth = inputvalidator.get_maxdepth()
+urls = inputvalidator.get_urls()
 seeker = DeadSeeker(config)
 if(config.verbose):
     logging.basicConfig(

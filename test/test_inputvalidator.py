@@ -11,12 +11,12 @@ from unittest.mock import patch
 from typing import Dict
 
 INCLUDE_EXCLUDE_METHODS_BY_VARNAME: Dict[str, str] = {
-    'INPUT_INCLUDE_URL_PREFIX': 'getIncludePrefix',
-    'INPUT_EXCLUDE_URL_PREFIX': 'getExcludePrefix',
-    'INPUT_INCLUDE_URL_SUFFIX': 'getIncludeSuffix',
-    'INPUT_EXCLUDE_URL_SUFFIX': 'getExcludeSuffix',
-    'INPUT_INCLUDE_URL_CONTAINED': 'getIncludeContained',
-    'INPUT_EXCLUDE_URL_CONTAINED': 'getExcludeContained',
+    'INPUT_INCLUDE_URL_PREFIX': 'get_includeprefix',
+    'INPUT_EXCLUDE_URL_PREFIX': 'get_excludeprefix',
+    'INPUT_INCLUDE_URL_SUFFIX': 'get_includesuffix',
+    'INPUT_EXCLUDE_URL_SUFFIX': 'get_excludesuffix',
+    'INPUT_INCLUDE_URL_CONTAINED': 'get_includecontained',
+    'INPUT_EXCLUDE_URL_CONTAINED': 'get_excludecontained',
 }
 
 
@@ -28,7 +28,7 @@ class TestInputValidator(unittest.TestCase):
 
     def test_emptyUrlThrowsException(self):
         with self.assertRaises(Exception) as context:
-            self.testObj.getUrls()
+            self.testObj.get_urls()
         self.assertExceptionContains(
             context,
             '\'INPUT_WEBSITE_URL\' environment' +
@@ -37,7 +37,7 @@ class TestInputValidator(unittest.TestCase):
     @patch.dict(os.environ, {'INPUT_WEBSITE_URL': 'bananas'})
     def test_badUrlThrowsException(self):
         with self.assertRaises(Exception) as context:
-            self.testObj.getUrls()
+            self.testObj.get_urls()
         self.assertExceptionContains(
             context,
             "'INPUT_WEBSITE_URL' environment variable" +
@@ -45,8 +45,8 @@ class TestInputValidator(unittest.TestCase):
 
     @patch.dict(os.environ, {'INPUT_WEBSITE_URL': 'https://www.google.com'})
     def test_goodUrlReturned(self):
-        self.testObj.getUrls()
-        urls = self.testObj.getUrls()
+        self.testObj.get_urls()
+        urls = self.testObj.get_urls()
         self.assertEqual(1, len(urls))
         self.assertTrue('https://www.google.com' in urls)
 
@@ -54,7 +54,7 @@ class TestInputValidator(unittest.TestCase):
                 {'INPUT_WEBSITE_URL':
                     'https://www.google.com,https://www.apple.com'})
     def test_multipleGoodUrlsReturned(self):
-        urls = self.testObj.getUrls()
+        urls = self.testObj.get_urls()
         self.assertEqual(2, len(urls))
         self.assertTrue('https://www.google.com' in urls)
         self.assertTrue('https://www.apple.com' in urls)
@@ -109,38 +109,38 @@ class TestInputValidator(unittest.TestCase):
 
     def test_defaultMaxTries(self):
         self.assertEqual(
-            DEFAULT_RETRY_MAX_TRIES, self.testObj.getRetryMaxTries())
+            DEFAULT_RETRY_MAX_TRIES, self.testObj.get_retry_maxtries())
 
     @patch.dict(os.environ,
                 {'INPUT_MAX_RETRIES': '5'})
     def test_maxTriesMatchesGoodValue(self):
         self.assertEqual(
-            5, self.testObj.getRetryMaxTries())
+            5, self.testObj.get_retry_maxtries())
 
     @patch.dict(os.environ,
                 {'INPUT_MAX_RETRIES': 'apples'})
     def test_maxTriesRaisesWithBadValue(self):
         with self.assertRaises(Exception) as context:
-            self.testObj.getRetryMaxTries()
+            self.testObj.get_retry_maxtries()
         self.assertExceptionContains(
             context,
             "'INPUT_MAX_RETRIES' environment variable expected to be a number")
 
     def test_defaultMaxTime(self):
         self.assertEqual(
-            DEFAULT_RETRY_MAX_TIME, self.testObj.getRetryMaxTime())
+            DEFAULT_RETRY_MAX_TIME, self.testObj.get_retry_maxtime())
 
     @patch.dict(os.environ,
                 {'INPUT_MAX_RETRY_TIME': '5'})
     def test_maxTimeMatchesGoodValue(self):
         self.assertEqual(
-            5, self.testObj.getRetryMaxTime())
+            5, self.testObj.get_retry_maxtime())
 
     @patch.dict(os.environ,
                 {'INPUT_MAX_RETRY_TIME': 'apples'})
     def test_maxTimeRaisesWithBadValue(self):
         with self.assertRaises(Exception) as context:
-            self.testObj.getRetryMaxTime()
+            self.testObj.get_retry_maxtime()
         self.assertExceptionContains(
             context,
             "'INPUT_MAX_RETRY_TIME' environment variable" +
@@ -148,19 +148,19 @@ class TestInputValidator(unittest.TestCase):
 
     def test_defaultMaxDepth(self):
         self.assertEqual(
-            DEFAULT_MAX_DEPTH, self.testObj.getMaxDepth())
+            DEFAULT_MAX_DEPTH, self.testObj.get_maxdepth())
 
     @patch.dict(os.environ,
                 {'INPUT_MAX_DEPTH': '5'})
     def test_maxDepthMatchesGoodValue(self):
         self.assertEqual(
-            5, self.testObj.getMaxDepth())
+            5, self.testObj.get_maxdepth())
 
     @patch.dict(os.environ,
                 {'INPUT_MAX_DEPTH': 'apples'})
     def test_maxDepthRaisesWithBadValue(self):
         with self.assertRaises(Exception) as context:
-            self.testObj.getMaxDepth()
+            self.testObj.get_maxdepth()
         self.assertExceptionContains(
             context,
             "'INPUT_MAX_DEPTH' environment variable" +
@@ -168,13 +168,13 @@ class TestInputValidator(unittest.TestCase):
 
     def test_defaultWebAgent(self):
         self.assertEqual(
-            DEFAULT_WEB_AGENT, self.testObj.getWebAgent())
+            DEFAULT_WEB_AGENT, self.testObj.get_webagent())
 
     @patch.dict(os.environ,
                 {'INPUT_WEB_AGENT_STRING': 'My Awesome Web Agent 1.0'})
     def test_webAgentOverrideValue(self):
         self.assertEqual(
-            'My Awesome Web Agent 1.0', self.testObj.getWebAgent())
+            'My Awesome Web Agent 1.0', self.testObj.get_webagent())
 
     def assertExceptionContains(self, context, expected: str):
         actual = str(context.exception)
