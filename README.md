@@ -10,7 +10,8 @@ Based on this work: https://github.com/healeycodes/Broken-Link-Crawler
 
 ### `website_url`
 
-**Required** The url of the website to check.
+**Required** The url of the website to check.  You can provide a comma separated list of urls if you would like to 
+crawl multiple websites.
 
 ### `include_url_prefix`
 
