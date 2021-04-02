@@ -71,7 +71,7 @@ class TestDeadSeeker(unittest.TestCase):
             LinkAcceptorBuilder().addExcludePrefix(
                     'https://www.google.com').build()
         seeker = DeadSeeker(self.config)
-        logger = logging.getLogger('deadseeker.DeadSeeker')
+        logger = logging.getLogger('deadseeker.deadseeker')
         with patch.object(logger, 'getEffectiveLevel') as log_level:
             log_level.return_value = DEBUG
             response = seeker.seek([self.url])
