@@ -37,7 +37,12 @@ jobs:
     - name: Set ci docker label
       run: echo "CI_DOCKER_LABEL=broken-links-crawler-action:ci-$(date +%s)" >> $GITHUB_ENV
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{ env.CI_DOCKER_LABEL }}
+      uses: nick-invision/retry@v2
+      with:
+        timeout_seconds: 120
+        max_attempts: 3
+        retry_on: error
+        command: docker build . --file Dockerfile --tag ${{ env.CI_DOCKER_LABEL }}
     - name: Test the Docker image
       run: |
         docker run \
