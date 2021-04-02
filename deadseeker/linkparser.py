@@ -1,9 +1,11 @@
 from .linkacceptor import LinkAcceptor
 from html.parser import HTMLParser
 from typing import List
+import logging
 
 
 search_attrs = set(['href', 'src'])
+logger = logging.getLogger('deadseeker.LinkParser')
 
 
 class LinkParser(HTMLParser):
@@ -20,6 +22,10 @@ class LinkParser(HTMLParser):
         '''Override parent method and check tag for our attributes'''
         for attr in attrs:
             # ('href', 'http://google.com')
-            if (attr[0] in search_attrs
-                    and self.linkacceptor.accepts(attr[1])):
-                self.links.append(attr[1])
+            if attr[0] in search_attrs:
+                url = attr[1]
+                if self.linkacceptor.accepts(url):
+                    logger.debug(f'Accepting url: {url}')
+                    self.links.append(attr[1])
+                else:
+                    logger.debug(f'Skipping url: {url}')
