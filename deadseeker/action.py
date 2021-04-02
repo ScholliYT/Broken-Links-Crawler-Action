@@ -2,6 +2,7 @@ from .inputvalidator import InputValidator
 from .linkacceptor import LinkAcceptorBuilder
 from .deadseeker import DeadSeekerConfig, DeadSeeker
 import sys
+import logging
 
 """
 This file works with inputvalidator to bridge
@@ -31,6 +32,9 @@ config.linkacceptor = LinkAcceptorBuilder()\
 config.max_depth = inputvalidator.getMaxDepth()
 urls = inputvalidator.getUrls()
 seeker = DeadSeeker(config)
+if(config.verbose):
+    logging.basicConfig(
+        level=logging.DEBUG)
 if(len(seeker.seek(urls).failures) > 0):
     print("::error ::Found some broken links!")
     sys.exit(1)
