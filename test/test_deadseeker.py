@@ -1,6 +1,7 @@
 # Adapted from:
 # https://realpython.com/testing-third-party-apis-with-mock-servers/
 import unittest
+from unittest.mock import patch
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from http import HTTPStatus
 from deadseeker.deadseeker import DeadSeeker, DeadSeekerConfig
@@ -9,6 +10,8 @@ import socket
 from threading import Thread
 import os
 from typing import ClassVar
+from logging import DEBUG
+import logging
 
 DIRECTORY = os.path.join(os.path.dirname(__file__), "mock_server")
 
@@ -64,14 +67,16 @@ class TestDeadSeeker(unittest.TestCase):
         self.config = DeadSeekerConfig()
 
     def test_request_response(self):
-        self.config.verbose = True
         self.config.linkacceptor = \
             LinkAcceptorBuilder().addExcludePrefix(
                     'https://www.google.com').build()
         seeker = DeadSeeker(self.config)
-        response = seeker.seek([self.url])
-        actualfailed = len(response.failures)
-        self.assertEqual(2, actualfailed)
+        logger = logging.getLogger('deadseeker.DeadSeeker')
+        with patch.object(logger, 'getEffectiveLevel') as log_level:
+            log_level.return_value = DEBUG
+            response = seeker.seek([self.url])
+            actualfailed = len(response.failures)
+            self.assertEqual(2, actualfailed)
 
 
 if __name__ == '__main__':

@@ -32,7 +32,7 @@ inputs:
     required: false
     default: ''
   verbose:
-    description: 'Turn verbose mode on/off'
+    description: 'Set logging verbosity level: true/false/yes/no/on/off/debug/info/warning/error/critical'
     required: false
     default: 'false'
   max_retry_time:

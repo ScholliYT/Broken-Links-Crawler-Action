@@ -6,6 +6,8 @@ from deadseeker.deadseeker import (
     DEFAULT_MAX_DEPTH
 )
 import unittest
+from logging import DEBUG, INFO, WARN, ERROR, CRITICAL
+import logging
 from typing import Dict
 
 INCLUDE_EXCLUDE_METHODS_BY_VARNAME: Dict[str, str] = {
@@ -59,28 +61,49 @@ class TestInputValidator(unittest.TestCase):
 
     def test_verboseFalseByDefault(self):
         self.assertFalse(
-            self.testObj.isVerbos(),
+            self.testObj.get_verbosity(),
             'Expected default value for verbos to be False')
 
     def test_verboseTrueWhenTrue(self):
         for verboseStr in [
-                'true', 't', 'yes', 'y', 'True',
-                'T', 'Yes', 'Y', 'TRUE', 'YES']:
+                'true', 't', 'True', 'T', 'TRUE',
+                'yes', 'y', 'Yes', 'Y', 'YES',
+                'on', 'On', 'ON']:
             self.env['INPUT_VERBOSE'] = verboseStr
             self.assertTrue(
-                self.testObj.isVerbos(),
+                self.testObj.get_verbosity(),
                 'Expected value to evaluate to' +
                 f' verbose true: {verboseStr}')
 
     def test_verboseFalseWhenFalse(self):
         for verboseStr in [
-                'false', 'f', 'no', 'n', 'False',
-                'F', 'No', 'N', 'FALSE', 'NO']:
+                'false', 'f', 'False', 'F', 'FALSE',
+                'no', 'n', 'No', 'N', 'NO',
+                'off', 'Off', 'OFF']:
             self.env['INPUT_VERBOSE'] = verboseStr
             self.assertFalse(
-                self.testObj.isVerbos(),
+                self.testObj.get_verbosity(),
                 'Expected value to evaluate to' +
                 f' verbose false: {verboseStr}')
+
+    def test_verboseLogLevel(self):
+        levelsByString: Dict[str, int] = {
+            'debug': DEBUG, 'Debug': DEBUG, 'DEBUG': DEBUG,
+            'info': INFO, 'Info': INFO, 'INFO': INFO,
+            'warn': WARN, 'Warn': WARN, 'WARN': WARN,
+            'warning': WARN, 'Warning': WARN, 'WARNING': WARN,
+            'error': ERROR, 'Error': ERROR, 'ERROR': ERROR,
+            'critical': CRITICAL, 'Critical': CRITICAL, 'CRITICAL': CRITICAL
+        }
+        for verboseStr in levelsByString:
+            self.env['INPUT_VERBOSE'] = verboseStr
+            actual = self.testObj.get_verbosity()
+            expected = levelsByString[verboseStr]
+            self.assertEqual(
+                actual,
+                expected,
+                'Expected value to evaluate to' +
+                f' level {logging.getLevelName(expected)}: {verboseStr}')
 
     def test_defaultIncludeExcludeValueIsEmpty(self):
         for methodName in INCLUDE_EXCLUDE_METHODS_BY_VARNAME.values():

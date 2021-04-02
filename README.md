@@ -49,7 +49,7 @@ Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)
 
 ### `verbose`
 
-**Optional** Turn verbose mode on/off (default false).
+**Optional** Set logging verbosity level: true/false/yes/no/on/off/debug/info/warning/error/critical (default false).
 
 ### `max_retry_time`
 

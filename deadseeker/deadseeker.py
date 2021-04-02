@@ -13,7 +13,6 @@ DEFAULT_WEB_AGENT: str = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' +\
     ' Chrome/60.0.3112.113 Safari/537.36'
 DEFAULT_RETRY_MAX_TRIES: int = 4
 DEFAULT_RETRY_MAX_TIME: int = 30
-DEFAULT_VERBOSE: bool = False
 DEFAULT_EXCLUDE_PREFIX: List[str] = ['mailto:', 'tel:']
 DEFAULT_MAX_DEPTH: int = -1
 
@@ -38,7 +37,6 @@ class UrlFetchResponse():
 
 class DeadSeekerConfig:
     def __init__(self) -> None:
-        self.verbose: bool = DEFAULT_VERBOSE
         self.max_time: int = DEFAULT_RETRY_MAX_TIME
         self.max_tries: int = DEFAULT_RETRY_MAX_TRIES
         self.max_depth: int = DEFAULT_MAX_DEPTH
@@ -138,10 +136,18 @@ class DeadSeeker:
     def _log_result(self, resp: UrlFetchResponse):
         if logging.INFO >= logger.getEffectiveLevel():
             status = resp.status
-            message = status if status else str(resp.error)
             url = resp.urltarget.url
             elapsed = f'{resp.elapsed:.2f} ms'
-            logger.info(f'{message} - {url} - {elapsed}')
+            error = resp.error
+            if error:
+                errortype = type(error).__name__
+                if status:
+                    logger.error(f'::error ::{errortype}: {status} - {url}')
+                else:
+                    logger.error(
+                        f'::error ::{errortype}: {str(error)} - {url}')
+            else:
+                logger.info(f'{status} - {url} - {elapsed}')
 
     def seek(self, urls: List[str]) -> SeekResults:
         results = asyncio.run(self._main(urls))

@@ -1,5 +1,7 @@
 import validators  # type: ignore
-from typing import List, Dict
+from typing import List, Dict, Union
+import re
+import logging
 from .deadseeker import (
     DEFAULT_RETRY_MAX_TRIES,
     DEFAULT_RETRY_MAX_TIME,
@@ -31,12 +33,19 @@ class InputValidator:
     def get_maxdepth(self) -> int:
         return self._numeric('INPUT_MAX_DEPTH', DEFAULT_MAX_DEPTH)
 
-    def isVerbos(self) -> bool:
-        verboseStr = self.inputs.get('INPUT_VERBOSE') or 'false'
-        verbose = bool(
-            verboseStr and
-            verboseStr.lower() in ['true', 't', 'yes', 'y'])
-        return verbose
+    def get_verbosity(self) -> Union[bool, int]:
+        verboseStr = self.inputs.get('INPUT_VERBOSE')
+        if(verboseStr):
+            truepattern = '^t|true|y|yes|on$'
+            if(re.search(truepattern, verboseStr, flags=re.IGNORECASE)):
+                return True
+            levelpattern = '^(debug|info|warn|warning|error|critical)$'
+            levelmatch = re.search(
+                levelpattern, verboseStr, flags=re.IGNORECASE)
+            if(levelmatch):
+                levelname = levelmatch.group(0).upper()
+                return logging.getLevelName(levelname)
+        return False
 
     def get_includeprefix(self) -> List[str]:
         return self._splitAndTrim('INPUT_INCLUDE_URL_PREFIX')

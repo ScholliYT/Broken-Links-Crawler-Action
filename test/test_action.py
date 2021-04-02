@@ -3,6 +3,7 @@ from unittest.mock import patch, MagicMock
 import os
 from deadseeker.deadseeker import DeadSeeker, SeekResults
 from importlib import reload
+from logging import DEBUG, INFO, WARN, ERROR, CRITICAL
 import logging
 
 
@@ -53,7 +54,9 @@ class TestAction(unittest.TestCase):
         with patch.dict(os.environ, {'INPUT_VERBOSE': 'true'}),\
                 patch.object(logging, 'basicConfig') as mock_debug:
             self.import_action()
-            mock_debug.assert_called_once_with(level=logging.DEBUG)
+            mock_debug.assert_called_once_with(
+                level=logging.INFO,
+                format='%(message)s')
 
     def test_verboseFalseSetsLoggingToSevere(self):
         with patch.dict(os.environ, {'INPUT_VERBOSE': 'false'}),\
@@ -62,6 +65,15 @@ class TestAction(unittest.TestCase):
             mock_debug.assert_called_once_with(
                 level=logging.CRITICAL,
                 format='%(message)s')
+
+    def test_verboseLogLevelSetsLoggingToSevere(self):
+        for level in [DEBUG, INFO, WARN, ERROR, CRITICAL]:
+            levelname = logging.getLevelName(level)
+            with patch.dict(os.environ, {'INPUT_VERBOSE': levelname.lower()}),\
+                    patch.object(logging, 'basicConfig') as mock_debug:
+                self.import_action()
+                mock_debug.assert_called_once_with(
+                    level=level)
 
     def import_action(self):
         import deadseeker.action
