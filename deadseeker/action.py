@@ -35,6 +35,10 @@ seeker = DeadSeeker(config)
 if(config.verbose):
     logging.basicConfig(
         level=logging.DEBUG)
+else:
+    logging.basicConfig(
+        level=logging.CRITICAL,
+        format='%(message)s')
 if(len(seeker.seek(urls).failures) > 0):
     logging.critical("::error ::Found some broken links!")
     sys.exit(1)
