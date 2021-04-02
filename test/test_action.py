@@ -1,7 +1,7 @@
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 import os
-from deadseeker.deadseeker import DeadSeeker
+from deadseeker.deadseeker import DeadSeeker, SeekResults
 from importlib import reload
 
 
@@ -29,6 +29,7 @@ class TestAction(unittest.TestCase):
         self.seek = self.seek_patch.start()
         self.exit_patch = patch('sys.exit')
         self.exit = self.exit_patch.start()
+        self.seekresults = SeekResults()
 
     def tearDown(self):
         self.environ_patch.stop()
@@ -36,13 +37,14 @@ class TestAction(unittest.TestCase):
         self.exit_patch.stop()
 
     def test_testActionNoExitWhenNoFailed(self):
-        self.seek.return_value = 0
+        self.seek.return_value = self.seekresults
         self.import_action()
         self.seek.assert_called()
         self.exit.assert_not_called()
 
     def test_testActionExitWhenFailed(self):
-        self.seek.return_value = 1
+        self.seekresults.failures.append(MagicMock())
+        self.seek.return_value = self.seekresults
         self.import_action()
         self.seek.assert_called()
         self.exit.assert_called_with(1)
