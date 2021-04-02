@@ -1,6 +1,6 @@
 import validators  # type: ignore
 import os
-from typing import List
+from typing import List, Dict
 from .deadseeker import (
     DEFAULT_RETRY_MAX_TRIES,
     DEFAULT_RETRY_MAX_TIME,
@@ -10,6 +10,9 @@ from .deadseeker import (
 
 
 class InputValidator:
+    def __init__(self, inputs: Dict[str, str]):
+        self.inputs = inputs
+
     def get_urls(self) -> List[str]:
         website_urls = self._splitAndTrim('INPUT_WEBSITE_URL')
         assert website_urls, \
@@ -55,13 +58,13 @@ class InputValidator:
         return self._splitAndTrim('INPUT_EXCLUDE_URL_CONTAINED')
 
     def get_webagent(self) -> str:
-        valueStr = os.environ.get('INPUT_WEB_AGENT_STRING')
+        valueStr = self.inputs.get('INPUT_WEB_AGENT_STRING')
         if valueStr:
             return valueStr
         return DEFAULT_WEB_AGENT
 
     def _numeric(self, name: str, default: int) -> int:
-        valueStr = os.environ.get(name)
+        valueStr = self.inputs.get(name)
         if valueStr:
             assert valueStr.lstrip('-').isdigit(), \
                     f"'{name}' environment variable" +\
@@ -70,5 +73,5 @@ class InputValidator:
         return default
 
     def _splitAndTrim(self, name) -> List[str]:
-        valueStr = os.environ.get(name)
+        valueStr = self.inputs.get(name)
         return [] if not valueStr else [x.strip() for x in valueStr.split(',')]

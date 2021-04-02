@@ -2,6 +2,7 @@ from .inputvalidator import InputValidator
 from .linkacceptor import LinkAcceptorBuilder
 from .deadseeker import DeadSeekerConfig, DeadSeeker
 import sys
+import os
 import logging
 
 """
@@ -10,7 +11,7 @@ the inputs from the git workflow action configuration
 and convert into the inputs required for the
 deadseeker class
 """
-inputvalidator = InputValidator()
+inputvalidator = InputValidator(dict(os.environ))
 config = DeadSeekerConfig()
 config.max_tries = inputvalidator.get_retry_maxtries()
 config.max_time = inputvalidator.get_retry_maxtime()
