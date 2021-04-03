@@ -125,8 +125,6 @@ class TestDeadSeeker(unittest.TestCase):
                 actual_infos,
                 f'Unexpected actual responses: {actual_infos}')
 
-
-
     def _seek_with_logging(self):
         self.config.linkacceptor = self.builder.build()
         seeker = DeadSeeker(self.config)
