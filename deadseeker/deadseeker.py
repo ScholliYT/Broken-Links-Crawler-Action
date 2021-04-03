@@ -81,7 +81,7 @@ class DeadSeeker:
                         for newurl in linkparser.links:
                             if not bool(
                                     urlparse(newurl).netloc):  # relative link?
-                                newurl = urljoin(resp.urltarget.home, newurl)
+                                newurl = urljoin(url, newurl)
                             if newurl not in visited:
                                 visited.add(newurl)
                                 targets.appendleft(

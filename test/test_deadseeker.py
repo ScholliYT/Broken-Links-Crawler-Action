@@ -102,7 +102,8 @@ class TestDeadSeeker(unittest.TestCase):
                 f'200 - {self.url}/page1.html - ',
                 f'200 - {self.url}/subpages/subpage1.html - ',
                 f'200 - {self.url}/page2.html - ',
-                f'200 - {self.url}/subpages/subpage2.html - '
+                f'200 - {self.url}/subpages/subpage2.html - ',
+                f'200 - {self.url}/index.html - '
             ]
             actual_infos: List[str] = []
             for call in info_mock.call_args_list:
