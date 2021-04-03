@@ -83,6 +83,25 @@ The easiest way to run this action locally is to use Docker. Just build a new im
 docker build --tag broken-links-crawler-action:latest .
 docker run -e INPUT_WEBSITE_URL="https://github.com/ScholliYT/Broken-Links-Crawler-Action" -e INPUT_VERBOSE="true" -e INPUT_MAX_RETRY_TIME=30 -e INPUT_MAX_RETRIES=5 -e INPUT_EXCLUDE_URL_PREFIX="mailto:,https://www.linkedin.com,https://linkedin.com" broken-links-crawler-action:latest
 ```
+
+### Installing test dependencies
+
+Several utilities are used for testing the code out.  To install all of the required dependencies, please 
+use the following command:
+
+```
+pip install -r test-dependences.txt
+```
+
+### Pre-commit hook
+
+To execute quality checks automatically during a commit, make sure that the git hook script is set up by
+running the following command:
+
+```
+pre-commit install
+```
+
 ### Automated Testing
 
 You can run the full suite of automated tests on your local machine by using the "act" tool to simulate the github workflow action that executs during commit, more information here:  
