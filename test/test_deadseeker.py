@@ -100,6 +100,7 @@ class TestDeadSeeker(unittest.TestCase):
             expected_info_prefixes = [
                 f'200 - {self.url} - ',
                 f'200 - {self.url}/page1.html - ',
+                f'200 - {self.url}/subpages/subpage1.html - ',
                 f'200 - {self.url}/page2.html - '
             ]
             actual_infos: List[str] = []
