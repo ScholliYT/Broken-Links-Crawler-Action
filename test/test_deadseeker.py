@@ -112,7 +112,10 @@ class TestDeadSeeker(unittest.TestCase):
             self.assertEqual(len(expected_info_prefixes), len(actual_infos))
             for expected_prefix, actual \
                     in zip(expected_info_prefixes, actual_infos):
-                self.assertTrue(actual.startswith(expected_prefix))
+                self.assertTrue(
+                    actual.startswith(expected_prefix),
+                    'Expected info message to start with ' +
+                    f'"{expected_prefix}", but instead was "{actual}"')
 
     def _seek_with_logging(self):
         self.config.linkacceptor = self.builder.build()
