@@ -5,7 +5,7 @@ from .linkparser import LinkParser
 from typing import List, Set, Deque
 import time
 import logging
-from .clientsessionfactory import createClientSession
+from .clientsessionfactory import ClientSessionFactory
 from .common import (
     SeekerConfig,
     UrlFetchResponse,
@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 class DeadSeeker:
     def __init__(self, config: SeekerConfig) -> None:
         self.config = config
+        self.clientSessionFactory = ClientSessionFactory()
 
     async def _get_urlfetchresponse(
             self,
@@ -57,7 +58,8 @@ class DeadSeeker:
             visited.add(url)
             targets.appendleft(UrlTarget(url, url, self.config.max_depth))
         linkparser = LinkParser(self.config.linkacceptor)
-        async with createClientSession(self.config) as session:
+        async with self.clientSessionFactory.createClientSession(
+                self.config) as session:
             while targets:
                 tasks = []
                 while targets:
