@@ -19,6 +19,7 @@ class SeekerConfig:
             LinkAcceptorBuilder()\
             .addExcludePrefix(*DEFAULT_EXCLUDE_PREFIX).build()
         self.agent: str = DEFAULT_WEB_AGENT
+        self.responsehandler = UrlFetchResponseHandler()
 
 
 class UrlTarget():
@@ -35,6 +36,11 @@ class UrlFetchResponse():
         self.status: int = 0
         self.error: Optional[Exception] = None
         self.html: Optional[str] = None
+
+
+class UrlFetchResponseHandler:
+    def handle_response(self, resp: UrlFetchResponse) -> None:
+        pass
 
 
 class SeekResults:

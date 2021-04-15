@@ -2,6 +2,7 @@ from .inputvalidator import InputValidator
 from .linkacceptor import LinkAcceptorBuilder
 from .deadseeker import DeadSeeker
 from .common import SeekerConfig
+from .loggingresponsehandler import LoggingUrlFetchResponseHandler
 import sys
 import os
 import logging
@@ -30,6 +31,7 @@ else:
 
 
 config = SeekerConfig()
+config.responsehandler = LoggingUrlFetchResponseHandler()
 config.max_tries = inputvalidator.get_retry_maxtries()
 config.max_time = inputvalidator.get_retry_maxtime()
 config.linkacceptor = LinkAcceptorBuilder()\

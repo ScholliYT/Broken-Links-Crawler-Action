@@ -69,7 +69,7 @@ class DeadSeeker:
                             self._get_urlfetchresponse(session, urltarget)))
                 for task in asyncio.as_completed(tasks):  # completed first
                     resp = await task
-                    self._log_result(resp)
+                    self.config.responsehandler.handle_response(resp)
                     if(resp.error):
                         results.failures.append(resp)
                     else:
@@ -90,22 +90,6 @@ class DeadSeeker:
                                     UrlTarget(home, newurl, depth - 1))
         results.elapsed = (time.time() - start) * 1000
         return results
-
-    def _log_result(self, resp: UrlFetchResponse):
-        if logging.INFO >= logger.getEffectiveLevel():
-            status = resp.status
-            url = resp.urltarget.url
-            elapsed = f'{resp.elapsed:.2f} ms'
-            error = resp.error
-            if error:
-                errortype = type(error).__name__
-                if status:
-                    logger.error(f'::error ::{errortype}: {status} - {url}')
-                else:
-                    logger.error(
-                        f'::error ::{errortype}: {str(error)} - {url}')
-            else:
-                logger.info(f'{status} - {url} - {elapsed}')
 
     def seek(self, urls: List[str]) -> SeekResults:
         results = asyncio.run(self._main(urls))

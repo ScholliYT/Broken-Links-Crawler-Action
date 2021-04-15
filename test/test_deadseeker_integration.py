@@ -4,7 +4,12 @@ import unittest
 from unittest.mock import patch
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from http import HTTPStatus
-from deadseeker import DeadSeeker, SeekerConfig, LinkAcceptorBuilder
+from deadseeker import (
+    DeadSeeker,
+    SeekerConfig,
+    LinkAcceptorBuilder,
+    LoggingUrlFetchResponseHandler
+)
 import socket
 from threading import Thread
 import os
@@ -64,8 +69,9 @@ class TestDeadSeeker(unittest.TestCase):
 
     def setUp(self):
         self.config = SeekerConfig()
-        self.logger = logging.getLogger('deadseeker.deadseeker')
+        self.logger = logging.getLogger('deadseeker.loggingresponsehandler')
         self.builder = LinkAcceptorBuilder()
+        self.config.responsehandler = LoggingUrlFetchResponseHandler()
 
     def test_numberFailedIs2(self):
         self.builder.addExcludePrefix('https://www.google.com')
