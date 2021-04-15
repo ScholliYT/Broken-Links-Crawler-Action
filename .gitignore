@@ -141,3 +141,6 @@ dmypy.json
 cython_debug/
 .mutmut-cache
 .hammett-db
+
+# mutmut report dir
+html/
