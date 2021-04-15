@@ -8,6 +8,7 @@ from .common import (
     UrlTarget
 )
 from .loggingresponsehandler import LoggingUrlFetchResponseHandler
+from .action import run_action
 
 
 __all__ = [
@@ -19,5 +20,6 @@ __all__ = [
     'SeekResults',
     'UrlFetchResponse',
     'UrlTarget',
-    'LoggingUrlFetchResponseHandler'
+    'LoggingUrlFetchResponseHandler',
+    'run_action'
 ]
