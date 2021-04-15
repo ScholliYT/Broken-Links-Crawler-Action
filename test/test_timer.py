@@ -8,7 +8,7 @@ class TestTimer(unittest.TestCase):
     def setUp(self):
         self.time_patch = patch('time.time')
         self.time = self.time_patch.start()
-        self.time.side_effect = [100.0, 300.0, 800.0, 1300.0, 2300.0]
+        self.time.side_effect = [100.0, 300.0]
         # important: don't construct timer until after
         # mocking time...
         self.testobj = Timer()
