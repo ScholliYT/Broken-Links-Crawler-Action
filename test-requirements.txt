@@ -5,3 +5,4 @@ pytest-cov
 pre-commit
 asynctest
 pytest-aiohttp
+mypy
