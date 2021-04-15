@@ -16,7 +16,7 @@ deadseeker class
 """
 
 
-def run_action():
+def run_action() -> None:
     inputvalidator = InputValidator(dict(os.environ))
 
     verbosity: Union[bool, int] = inputvalidator.get_verbosity()
