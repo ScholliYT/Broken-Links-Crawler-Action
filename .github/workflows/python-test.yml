@@ -34,7 +34,7 @@ jobs:
         # stop the build if there are any unit test failures
         # or if our tests do not cover a significant 
         # amount of code
-        pytest -m "not integrationtest" --cov-fail-under=95
+        pytest -m "not integrationtest" --cov=deadseeker --cov-fail-under=95 --cov-branch --cov-report=term-missing
     - name: Mutation Test with mutmut
       run: |
         # stop the build if the tests that we wrote are
