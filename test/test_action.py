@@ -2,9 +2,9 @@ import unittest
 from unittest.mock import patch, MagicMock
 import os
 from deadseeker import DeadSeeker, SeekResults
-from importlib import reload
 from logging import DEBUG, INFO, WARN, ERROR, CRITICAL
 import logging
+from deadseeker.action import run_action
 
 
 class TestAction(unittest.TestCase):
@@ -39,21 +39,21 @@ class TestAction(unittest.TestCase):
 
     def test_testActionNoExitWhenNoFailed(self):
         self.seek.return_value = self.seekresults
-        self.import_action()
+        run_action()
         self.seek.assert_called()
         self.exit.assert_not_called()
 
     def test_testActionExitWhenFailed(self):
         self.seekresults.failures.append(MagicMock())
         self.seek.return_value = self.seekresults
-        self.import_action()
+        run_action()
         self.seek.assert_called()
         self.exit.assert_called_with(1)
 
     def test_verboseTrueSetsLoggingToDebug(self):
         with patch.dict(os.environ, {'INPUT_VERBOSE': 'true'}),\
                 patch.object(logging, 'basicConfig') as mock_debug:
-            self.import_action()
+            run_action()
             mock_debug.assert_called_once_with(
                 level=logging.INFO,
                 format='%(message)s')
@@ -61,7 +61,7 @@ class TestAction(unittest.TestCase):
     def test_verboseFalseSetsLoggingToSevere(self):
         with patch.dict(os.environ, {'INPUT_VERBOSE': 'false'}),\
                 patch.object(logging, 'basicConfig') as mock_debug:
-            self.import_action()
+            run_action()
             mock_debug.assert_called_once_with(
                 level=logging.CRITICAL,
                 format='%(message)s')
@@ -71,11 +71,6 @@ class TestAction(unittest.TestCase):
             levelname = logging.getLevelName(level)
             with patch.dict(os.environ, {'INPUT_VERBOSE': levelname.lower()}),\
                     patch.object(logging, 'basicConfig') as mock_debug:
-                self.import_action()
+                run_action()
                 mock_debug.assert_called_once_with(
                     level=level)
-
-    def import_action(self):
-        import deadseeker.action
-        # must realod because import caches
-        reload(deadseeker.action)
