@@ -8,3 +8,9 @@ exclude_lines =
 
     # Don't complain if tests don't hit defensive assertion code:
     raise NotImplementedError
+
+    # Skip action invocation
+    if __name__ == '__main__':
+
+    # don't complain if pass isn't covered
+    pass
