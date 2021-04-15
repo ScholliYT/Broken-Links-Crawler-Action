@@ -80,6 +80,6 @@ class InputValidator:
             return int(valueStr)
         return default
 
-    def _splitAndTrim(self, name) -> List[str]:
+    def _splitAndTrim(self, name: str) -> List[str]:
         valueStr = self.inputs.get(name)
         return [] if not valueStr else [x.strip() for x in valueStr.split(',')]
