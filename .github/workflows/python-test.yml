@@ -20,20 +20,36 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         # installing dependencies used by this action
-        pip install flake8 pytest
+        pip install flake8 pytest mypy mutmut
         # installing dependencies used by the project
         if [ -f test-requirements.txt ]; then \
           pip install -r test-requirements.txt; \
         elif [ -f requirements.txt ]; then \
            pip install -r requirements.txt; \
         fi
-    - name: Lint with flake8
+    - name: Python Lint with flake8
       run: |
         # stop the build if there are any formating or code quality failures
-        flake8 . --count --show-source --max-complexity=10 --statistics
-    - name: Test with pytest
+        flake8
+    - name: Type Lint with mypy
       run: |
-        pytest --cov=deadseeker --cov-fail-under=95 --cov-branch --cov-report=term-missing
+        # stop the build if there are any missing type declarations
+        mypy
+    - name: Unit and Coverage Test with pytest
+      run: |
+        # stop the build if there are any unit test failures
+        # or if our tests do not cover a significant 
+        # amount of code
+        pytest -m "not integrationtest" --cov-fail-under=95
+    - name: Mutation Test with mutmut
+      run: |
+        # stop the build if the tests that we wrote are
+        # not very good
+        mutmut
+    - name: Integration Test with pytest
+      run: |
+        # stop the build if there are any integration test failures
+        pytest -m "integrationtest"
     - name: Set ci docker label
       run: echo "CI_DOCKER_LABEL=broken-links-crawler-action:ci-$(date +%s)" >> $GITHUB_ENV
     - name: Build the Docker image
