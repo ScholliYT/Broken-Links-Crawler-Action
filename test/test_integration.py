@@ -16,6 +16,7 @@ import os
 from typing import ClassVar, List
 from logging import DEBUG
 import logging
+import pytest
 
 DIRECTORY = os.path.join(os.path.dirname(__file__), "mock_server")
 
@@ -48,7 +49,8 @@ def get_free_port():
     return port
 
 
-class TestDeadSeeker(unittest.TestCase):
+@pytest.mark.integrationtest
+class TestIntegration(unittest.TestCase):
     url: ClassVar[str]
     mock_server: ClassVar[HTTPServer]
     mock_server_thread: ClassVar[Thread]
