@@ -19,14 +19,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        # installing dependencies used by this action
-        pip install flake8 pytest mypy mutmut
         # installing dependencies used by the project
-        if [ -f test-requirements.txt ]; then \
-          pip install -r test-requirements.txt; \
-        elif [ -f requirements.txt ]; then \
-           pip install -r requirements.txt; \
-        fi
+        pip install -r test-requirements.txt
     - name: Python Lint with flake8
       run: |
         # stop the build if there are any formating or code quality failures
