@@ -1,6 +1,6 @@
 from .linkacceptor import LinkAcceptor
 from html.parser import HTMLParser
-from typing import List
+from typing import List, Tuple, Optional
 import logging
 
 
@@ -14,18 +14,20 @@ class LinkParser(HTMLParser):
         self.links: List[str] = list()
         super().__init__()
 
-    def reset(self):
+    def reset(self) -> None:
         super().reset()
         self.links.clear()
 
-    def handle_starttag(self, tag, attrs):
+    def handle_starttag(
+            self, tag: str, attrs: List[Tuple[str, Optional[str]]]) -> None:
         '''Override parent method and check tag for our attributes'''
         for attr in attrs:
             # ('href', 'http://google.com')
             if attr[0] in search_attrs:
                 url = attr[1]
-                if self.linkacceptor.accepts(url):
-                    logger.debug(f'Accepting url: {url}')
-                    self.links.append(attr[1])
-                else:
-                    logger.debug(f'Skipping url: {url}')
+                if url:
+                    if self.linkacceptor.accepts(url):
+                        logger.debug(f'Accepting url: {url}')
+                        self.links.append(url)
+                    else:
+                        logger.debug(f'Skipping url: {url}')
