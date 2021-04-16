@@ -4,9 +4,9 @@ import time
 class Timer:
     def __init__(self) -> None:
         self.start: float = time.time()
-        self.end: float = -1
+        self.end: float
 
     def stop(self) -> float:
-        if(self.end < 0):
+        if(not self.end):
             self.end = time.time()
         return self.end - self.start
