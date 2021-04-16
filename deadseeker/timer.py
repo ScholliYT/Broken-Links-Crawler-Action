@@ -1,10 +1,11 @@
 import time
+from typing import Optional
 
 
 class Timer:
     def __init__(self) -> None:
         self.start: float = time.time()
-        self.end: float
+        self.end: Optional[float] = None
 
     def stop(self) -> float:
         if(not self.end):
