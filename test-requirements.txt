@@ -6,3 +6,5 @@ pre-commit
 asynctest
 pytest-aiohttp
 mypy
+aiounittest
+aioresponses
