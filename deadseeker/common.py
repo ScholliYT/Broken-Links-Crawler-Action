@@ -20,6 +20,7 @@ class SeekerConfig:
             .addExcludePrefix(*DEFAULT_EXCLUDE_PREFIX).build()
         self.agent: str = DEFAULT_WEB_AGENT
         self.responsehandler = UrlFetchResponseHandler()
+        self.alwaysget: bool = False
 
 
 class UrlTarget():
@@ -44,7 +45,7 @@ class UrlFetchResponseHandler:
 
 
 class SeekResults:
-    def __init__(self):
+    def __init__(self) -> None:
         self.successes: List[UrlFetchResponse] = list()
         self.failures: List[UrlFetchResponse] = list()
         self.elapsed: float
