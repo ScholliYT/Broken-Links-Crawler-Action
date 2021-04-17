@@ -1,4 +1,4 @@
-from unittest import Mock
+from unittest.mock import Mock
 
 
 # The normal Mock class doesn't specifically declare
