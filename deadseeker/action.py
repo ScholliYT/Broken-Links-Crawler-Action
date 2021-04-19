@@ -1,5 +1,4 @@
 from .inputvalidator import InputValidator
-from .linkacceptor import LinkAcceptorBuilder
 from .deadseeker import DeadSeeker
 from .common import SeekerConfig
 from .loggingresponsehandler import LoggingUrlFetchResponseHandler
@@ -33,28 +32,20 @@ def run_action() -> None:
         logging.basicConfig(level=verbosity)
 
     config = SeekerConfig()
-    config.responsehandler = LoggingUrlFetchResponseHandler()
     config.max_tries = inputvalidator.get_retry_maxtries()
     config.max_time = inputvalidator.get_retry_maxtime()
-    config.linkacceptor = LinkAcceptorBuilder()\
-        .addIncludePrefix(
-            *inputvalidator.get_includeprefix())\
-        .addExcludePrefix(
-            *inputvalidator.get_excludeprefix())\
-        .addIncludeSuffix(
-            *inputvalidator.get_includesuffix())\
-        .addExcludeSuffix(
-            *inputvalidator.get_excludesuffix())\
-        .addIncludeContained(
-            *inputvalidator.get_includecontained())\
-        .addExcludeContained(
-            *inputvalidator.get_excludecontained())\
-        .build()
+    for inclusion in ['in', 'ex']:
+        for strategy in ['prefix', 'suffix', 'contained']:
+            attrname = f'{inclusion}clude{strategy}'
+            getmethodname = f'get_{attrname}'
+            getmethod = getattr(inputvalidator, getmethodname)
+            value = getmethod()
+            setattr(config, attrname, value)
     config.max_depth = inputvalidator.get_maxdepth()
     urls = inputvalidator.get_urls()
     seeker = DeadSeeker(config)
-
-    if(len(seeker.seek(urls).failures) > 0):
+    responsehandler = LoggingUrlFetchResponseHandler()
+    if(len(seeker.seek(urls, responsehandler).failures, ) > 0):
         logging.critical("::error ::Found some broken links!")
         sys.exit(1)
 
