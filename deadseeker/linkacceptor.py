@@ -1,5 +1,6 @@
 from typing import List, TypeVar, Generic
 from abc import abstractmethod, ABC
+from .common import SeekerConfig
 
 T = TypeVar('T')  # pragma: no mutate
 
@@ -8,6 +9,24 @@ class LinkAcceptor(ABC):
     @abstractmethod  # pragma: no mutate
     def accepts(self, link: str) -> bool:
         pass
+
+
+class LinkAcceptorFactory(ABC):
+    @abstractmethod  # pragma: no mutate
+    def get_link_acceptor(self, config: SeekerConfig) -> LinkAcceptor:
+        pass
+
+
+class DefaultLinkAcceptorFactory(LinkAcceptorFactory):
+    def get_link_acceptor(self, config: SeekerConfig) -> LinkAcceptor:
+        return LinkAcceptorBuilder()\
+            .addIncludePrefix(*config.includeprefix)\
+            .addExcludePrefix(*config.excludeprefix)\
+            .addIncludeSuffix(*config.includesuffix)\
+            .addExcludeSuffix(*config.excludesuffix)\
+            .addIncludeContained(*config.includecontained)\
+            .addExcludeContained(*config.excludecontained)\
+            .build()
 
 
 class AbstractLinkAcceptor(LinkAcceptor, Generic[T]):

@@ -1,7 +1,12 @@
 import unittest
+from unittest.mock import Mock, patch
 from deadseeker.linkacceptor import (
     LinkAcceptorBuilder,
-    AcceptAllLinkAcceptor)
+    LinkAcceptor,
+    DefaultLinkAcceptorFactory,
+    AcceptAllLinkAcceptor
+)
+from deadseeker.common import SeekerConfig
 from typing import List
 
 STRING_1 = 'bananas'
@@ -76,6 +81,38 @@ class TestLinkAcceptor(unittest.TestCase):
 
     def accepts(self, value: str):
         return self.builder.build().accepts(value)
+
+
+class TestDefaultLinkAcceptorFactory(unittest.TestCase):
+
+    def setUp(self):
+        self.config = Mock(spec=SeekerConfig)
+        self.testobj = DefaultLinkAcceptorFactory()
+
+    @patch('deadseeker.linkacceptor.LinkAcceptorBuilder')
+    def test_returns_link_acceptor(self, mock_class):
+        for inclusion in ['in', 'ex']:
+            for strategy in ['prefix', 'suffix', 'contained']:
+                attrname = f'{inclusion}clude{strategy}'
+                setattr(self.config, attrname, [attrname])
+        mock_instance = mock_class()
+        mock_instance.addIncludePrefix.return_value = mock_instance
+        mock_instance.addExcludePrefix.return_value = mock_instance
+        mock_instance.addIncludeSuffix.return_value = mock_instance
+        mock_instance.addExcludeSuffix.return_value = mock_instance
+        mock_instance.addIncludeContained.return_value = mock_instance
+        mock_instance.addExcludeContained.return_value = mock_instance
+        expected = Mock(spec=LinkAcceptor)
+        mock_instance.build.return_value = expected
+        actual = self.testobj.get_link_acceptor(self.config)
+        self.assertIs(expected, actual)
+
+        for inclusion in ['In', 'Ex']:
+            for strategy in ['Prefix', 'Suffix', 'Contained']:
+                attrname = f'{inclusion}clude{strategy}'.lower()
+                methodname = f'add{inclusion}clude{strategy}'
+                method = getattr(mock_instance, methodname)
+                method.assert_any_call(attrname)
 
 
 if __name__ == '__main__':
