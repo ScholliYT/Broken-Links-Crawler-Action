@@ -2,13 +2,41 @@ from .linkacceptor import LinkAcceptor
 from html.parser import HTMLParser
 from typing import List, Tuple, Optional
 import logging
+from abc import abstractmethod, ABC
 
 
 search_attrs = set(['href', 'src'])
 logger = logging.getLogger(__name__)
 
 
-class LinkParser(HTMLParser):
+class LinkParserFactory(ABC):
+    @abstractmethod  # pragma: no mutate
+    def get_link_parser(self, linkacceptor: LinkAcceptor) -> HTMLParser:
+        pass
+
+
+class LinkParser(ABC):
+    @abstractmethod  # pragma: no mutate
+    def parse(self, html: str) -> List[str]:
+        pass
+
+
+class DefaultLinkParserFactory(LinkParserFactory):
+    def get_link_parser(self, linkacceptor: LinkAcceptor) -> LinkParser:
+        return DefaultLinkParser(linkacceptor)
+
+
+class DefaultLinkParser:
+    def __init__(self, linkacceptor: LinkAcceptor) -> None:
+        self.linkacceptor = linkacceptor
+
+    def parse(self, html: str):
+        parser = LinkHtmlParser(self.linkacceptor)
+        parser.feed(html)
+        return parser.links
+
+
+class LinkHtmlParser(HTMLParser):
     def __init__(self, linkacceptor: LinkAcceptor):
         self.linkacceptor = linkacceptor
         self.links: List[str] = list()
