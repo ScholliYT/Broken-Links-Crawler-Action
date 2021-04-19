@@ -1,5 +1,4 @@
 from typing import Optional, List
-from .linkacceptor import LinkAcceptorBuilder, LinkAcceptor
 
 DEFAULT_WEB_AGENT: str = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' +\
     ' AppleWebKit/537.36 (KHTML, like Gecko)' +\
@@ -15,12 +14,14 @@ class SeekerConfig:
         self.max_time: int = DEFAULT_RETRY_MAX_TIME
         self.max_tries: int = DEFAULT_RETRY_MAX_TRIES
         self.max_depth: int = DEFAULT_MAX_DEPTH
-        self.linkacceptor: LinkAcceptor = \
-            LinkAcceptorBuilder()\
-            .addExcludePrefix(*DEFAULT_EXCLUDE_PREFIX).build()
+        self.includeprefix: List[str] = []
+        self.excludeprefix: List[str] = DEFAULT_EXCLUDE_PREFIX
+        self.includesuffix: List[str] = []
+        self.excludesuffix: List[str] = []
+        self.includecontained: List[str] = []
+        self.excludecontained: List[str] = []
         self.agent: str = DEFAULT_WEB_AGENT
-        self.responsehandler = UrlFetchResponseHandler()
-        self.alwaysget: bool = False
+        self.alwaysgetonsite: bool = False
 
 
 class UrlTarget():
