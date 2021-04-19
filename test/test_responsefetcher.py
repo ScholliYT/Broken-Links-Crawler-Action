@@ -23,7 +23,7 @@ class TestDefaultResponseFetcherFactory(unittest.TestCase):
         self.assertTrue(isinstance(result, HeadThenGetIfHtmlResponseFetcher))
 
     def test_always_get_is_returned_when_enabled(self):
-        self.config.alwaysget = True
+        self.config.alwaysgetonsite = True
         result = self.testobj.get_response_fetcher(self.config)
         self.assertTrue(isinstance(result, AlwaysGetIfOnSiteResponseFetcher))
 
@@ -172,7 +172,8 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
     @aioresponses()
     async def test_if_other_site_and_html(
             self, m):
-        self._prep_request(m, TEST_OTHER_URL, content_type=TYPE_HTML)
+        self._prep_request(
+            m, TEST_OTHER_URL, method='HEAD', content_type=TYPE_HTML)
         async with ClientSession() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
@@ -198,7 +199,8 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
     @aioresponses()
     async def test_if_other_site_and_not_html(
             self, m):
-        self._prep_request(m, TEST_OTHER_URL, content_type=TYPE_JSON)
+        self._prep_request(
+            m, TEST_OTHER_URL, method='HEAD', content_type=TYPE_JSON)
         async with ClientSession() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
@@ -240,10 +242,12 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
             self,
             mockresponses,
             url: str,
+            method: str = 'GET',
             **kwargs):
         self.urltarget.url = url
-        mockresponses.get(
+        mockresponses.add(
             url,
+            method,
             body=TEST_BODY,
             **kwargs
         )

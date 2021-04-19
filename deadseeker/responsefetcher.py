@@ -25,7 +25,7 @@ class DefaultResponseFetcherFactory(ResponseFetcherFactory):
     def get_response_fetcher(
             self,
             config: SeekerConfig) -> ResponseFetcher:
-        if(config.alwaysget):
+        if(config.alwaysgetonsite):
             return AlwaysGetIfOnSiteResponseFetcher()
         return HeadThenGetIfHtmlResponseFetcher()
 
@@ -99,7 +99,7 @@ class AlwaysGetIfOnSiteResponseFetcher(HeadThenGetIfHtmlResponseFetcher):
                     resp.html = await getresponse.text()
                 timer.stop()
         else:
-            super()._inner_fetch(
+            await super()._inner_fetch(
                 session,
                 resp,
                 urltarget,
