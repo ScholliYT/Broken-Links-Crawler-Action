@@ -22,13 +22,9 @@ class TestLoggingResponseHandler(unittest.TestCase):
         with patch.object(self.logger, 'error') as error_mock,\
                 patch.object(self.logger, 'info') as info_mock:
             self.testobj.handle_response(self.resp)
-            expected = '200 - http://testing.test.com/ - 1234.12ms'
-            self.assertTrue(
-                info_mock.called_with_args(expected),
-                f'Expected info message to be logged: {expected}')
-            self.assertFalse(
-                error_mock.called,
-                'Did not expect any error logs!')
+            expected = '200 - http://testing.test.com/ - 1234.12 ms'
+            info_mock.assert_called_with(expected)
+            error_mock.assert_not_called()
 
     def test_error_logs_when_responseerror(self):
         self.resp.status = 400
@@ -38,12 +34,8 @@ class TestLoggingResponseHandler(unittest.TestCase):
             self.testobj.handle_response(self.resp)
             expected = '::error ::ClientError: 400' +\
                 ' - http://testing.test.com/'
-            self.assertTrue(
-                error_mock.called_with_args(expected),
-                f'Expected error message to be logged: {expected}')
-            self.assertFalse(
-                info_mock.called,
-                'Did not expect any info logs!')
+            error_mock.assert_called_with(expected)
+            info_mock.assert_not_called()
 
     def test_error_logs_when_no_status_error(self):
         self.resp.error = ClientError('test error')
@@ -52,12 +44,8 @@ class TestLoggingResponseHandler(unittest.TestCase):
             self.testobj.handle_response(self.resp)
             expected = '::error ::ClientError: test error' +\
                 ' - http://testing.test.com/'
-            self.assertTrue(
-                error_mock.called_with_args(expected),
-                f'Expected error message to be logged: {expected}')
-            self.assertFalse(
-                info_mock.called,
-                'Did not expect any info logs!')
+            error_mock.assert_called_with(expected)
+            info_mock.assert_not_called()
 
 
 if __name__ == '__main__':
