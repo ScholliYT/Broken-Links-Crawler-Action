@@ -9,31 +9,31 @@ search_attrs = set(['href', 'src'])
 logger = logging.getLogger(__name__)
 
 
-class LinkParserFactory(ABC):
-    @abstractmethod  # pragma: no mutate
-    def get_link_parser(self, linkacceptor: LinkAcceptor) -> HTMLParser:
-        pass
-
-
 class LinkParser(ABC):
     @abstractmethod  # pragma: no mutate
     def parse(self, html: str) -> List[str]:
         pass
 
 
-class DefaultLinkParserFactory(LinkParserFactory):
+class LinkParserFactory(ABC):
+    @abstractmethod  # pragma: no mutate
     def get_link_parser(self, linkacceptor: LinkAcceptor) -> LinkParser:
-        return DefaultLinkParser(linkacceptor)
+        pass
 
 
-class DefaultLinkParser:
+class DefaultLinkParser(LinkParser):
     def __init__(self, linkacceptor: LinkAcceptor) -> None:
         self.linkacceptor = linkacceptor
 
-    def parse(self, html: str):
+    def parse(self, html: str) -> List[str]:
         parser = LinkHtmlParser(self.linkacceptor)
         parser.feed(html)
         return parser.links
+
+
+class DefaultLinkParserFactory(LinkParserFactory):
+    def get_link_parser(self, linkacceptor: LinkAcceptor) -> LinkParser:
+        return DefaultLinkParser(linkacceptor)
 
 
 class LinkHtmlParser(HTMLParser):
