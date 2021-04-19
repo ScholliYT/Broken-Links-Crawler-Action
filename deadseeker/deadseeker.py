@@ -1,6 +1,6 @@
 import asyncio
 from urllib.parse import urlparse, urljoin
-from typing import List, Set, Deque, Optional
+from typing import List, Set, Deque, Optional, Union
 from .timer import Timer
 import logging
 from .clientsession import ClientSessionFactory, DefaultClientSessionFactory
@@ -16,11 +16,11 @@ from .responsefetcher import (
     DefaultResponseFetcherFactory
 )
 from .linkacceptor import (
-    LinkAcceptor,
     LinkAcceptorFactory,
     DefaultLinkAcceptorFactory
 )
 from .linkparser import (
+    LinkParser,
     LinkParserFactory,
     DefaultLinkParserFactory
 )
@@ -82,7 +82,7 @@ class DeadSeeker:
             self,
             visited: Set[str],
             targets: Deque[UrlTarget],
-            linkparser: LinkAcceptor,
+            linkparser: LinkParser,
             resp: UrlFetchResponse) -> None:
         depth = resp.urltarget.depth
         if resp.html and depth != 0:
@@ -99,7 +99,7 @@ class DeadSeeker:
 
     def seek(
             self,
-            urls: List[str],
+            urls: Union[str, List[str]],
             responsehandler: UrlFetchResponseHandler = None) -> SeekResults:
         url_list = [urls] if isinstance(urls, str) else urls
         results = asyncio.run(self._main(url_list, responsehandler))
