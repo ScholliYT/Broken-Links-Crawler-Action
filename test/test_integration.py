@@ -4,19 +4,14 @@ import unittest
 from unittest.mock import patch
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from http import HTTPStatus
-from deadseeker import (
-    DeadSeeker,
-    SeekerConfig,
-    LinkAcceptorBuilder,
-    LoggingUrlFetchResponseHandler
-)
 import socket
 from threading import Thread
 import os
+import sys
 from typing import ClassVar, List
-from logging import DEBUG
 import logging
 import pytest
+from deadseeker.action import run_action
 
 DIRECTORY = os.path.join(os.path.dirname(__file__), "mock_server")
 
@@ -70,31 +65,41 @@ class TestIntegration(unittest.TestCase):
         cls.url = f'http://localhost:{port}'
 
     def setUp(self):
-        self.config = SeekerConfig()
         self.logger = logging.getLogger('deadseeker.loggingresponsehandler')
-        self.builder = LinkAcceptorBuilder()
-        self.config.responsehandler = LoggingUrlFetchResponseHandler()
+        self.env = {
+            "INPUT_WEBSITE_URL": self.url,
+            "INPUT_MAX_RETRIES": "3",
+            "INPUT_MAX_RETRY_TIME": "30",
+            "INPUT_VERBOSE": "true"
+        }
+        self.exit_patch = patch.object(sys, 'exit')
+        self.exit = self.exit_patch.start()
 
-    def test_numberFailedIs2(self):
-        self.builder.addExcludePrefix('https://www.google.com')
-        response = self._seek_with_logging()
-        actualfailed = len(response.failures)
-        self.assertEqual(2, actualfailed)
+    def tearDown(self):
+        self.exit_patch.stop()
 
-    def test_numberFailedIs0WithMoreExcludes(self):
-        self.builder.addExcludePrefix(
-            'https://www.google.com',
-            '/page3.html',
-            '/page4.html')
-        response = self._seek_with_logging()
-        actualfailed = len(response.failures)
-        self.assertEqual(0, actualfailed)
+    def test_works(self):
+        self.env['INPUT_EXCLUDE_URL_PREFIX'] = \
+            'https://www.google.com,/page3.html,/page4.html'
+        with patch.dict(os.environ, self.env):
+            run_action()
+        self.exit.assert_not_called()
+
+    def test_exit_1_on_any_failure(self):
+        self.env['INPUT_EXCLUDE_URL_PREFIX'] = \
+            'https://www.google.com'
+        with patch.dict(os.environ, self.env):
+            run_action()
+        self.exit.assert_called_with(1)
 
     def test_messagesLogged(self):
-        self.builder.addExcludePrefix('https://www.google.com')
-        with patch.object(self.logger, 'error') as error_mock,\
+        self.env['INPUT_EXCLUDE_URL_PREFIX'] = \
+            'https://www.google.com'
+        with \
+                patch.dict(os.environ, self.env),\
+                patch.object(self.logger, 'error') as error_mock,\
                 patch.object(self.logger, 'info') as info_mock:
-            self._seek_with_logging()
+            run_action()
             expected_errors = [
                 f'::error ::ClientResponseError: 500 - {self.url}/page4.html',
                 f'::error ::ClientResponseError: 404 - {self.url}/page3.html'
@@ -132,13 +137,6 @@ class TestIntegration(unittest.TestCase):
             self.assertFalse(
                 actual_infos,
                 f'Unexpected actual responses: {actual_infos}')
-
-    def _seek_with_logging(self):
-        self.config.linkacceptor = self.builder.build()
-        seeker = DeadSeeker(self.config)
-        with patch.object(self.logger, 'getEffectiveLevel') as log_level:
-            log_level.return_value = DEBUG
-            return seeker.seek([self.url])
 
 
 if __name__ == '__main__':
