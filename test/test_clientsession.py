@@ -28,11 +28,16 @@ class TestDefaultClientSessionFactory(AsyncTestCase):
         self.traceconfig_mock = patch(
             'deadseeker.clientsession.TraceConfig')
         self.traceconfig = self.traceconfig_mock.start()
+        self.maxconcurrentrequestsbinder_patch = patch(
+            'deadseeker.clientsession.MaxConcurrentRequestsTraceConfigBinder')
+        self.maxconcurrentrequestsbinder = \
+            self.maxconcurrentrequestsbinder_patch.start()
 
     def tearDown(self):
         self.retryclient_mock.stop()
         self.exponentialretry_mock.stop()
         self.traceconfig_mock.stop()
+        self.maxconcurrentrequestsbinder_patch.stop()
 
     def test_retryclient_returned(self):
         actualresult = self.testObj.get_client_session(
@@ -84,6 +89,13 @@ class TestDefaultClientSessionFactory(AsyncTestCase):
             warning_mock.assert_called_with(
                     '::warn ::Retry Attempt #3 ' +
                     'of 3: http://test.com/')
+
+    def test_maxconcurrequests_bind_called(self):
+        self.testObj.get_client_session(
+                self.config)
+        instance = self.maxconcurrentrequestsbinder.return_value
+        instance.bind.assert_called_with(
+            self.traceconfig.return_value, self.config)
 
 
 if __name__ == '__main__':

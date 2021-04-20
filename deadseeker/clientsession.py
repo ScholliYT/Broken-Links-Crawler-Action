@@ -5,6 +5,7 @@ from types import SimpleNamespace
 from aiohttp import ClientSession, TraceConfig, TraceRequestStartParams
 from aiohttp_retry import RetryClient, ExponentialRetry  # type: ignore
 from abc import abstractmethod, ABC
+from .maxconcurrentrequests import MaxConcurrentRequestsTraceConfigBinder
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,7 @@ class DefaultClientSessionFactory(ClientSessionFactory):
         async def _on_request_start(
             session: ClientSession,
             trace_config_ctx: SimpleNamespace,
-            params: TraceRequestStartParams,
+            params: TraceRequestStartParams
         ) -> None:
             current_attempt = \
                 trace_config_ctx.trace_request_ctx['current_attempt']
@@ -31,6 +32,8 @@ class DefaultClientSessionFactory(ClientSessionFactory):
                     f'of {config.max_tries}: {params.url}')
         trace_config = TraceConfig()
         trace_config.on_request_start.append(_on_request_start)
+        MaxConcurrentRequestsTraceConfigBinder().bind(trace_config, config)
+
         retry_options = ExponentialRetry(
                             attempts=config.max_tries,
                             max_timeout=config.max_time,

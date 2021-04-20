@@ -51,6 +51,10 @@ inputs:
     description: 'Always use GET requests for onsite urls'
     required: false
     default: 'false'
+  max_concurrent_requests:
+    description: 'Limit total number of concurrent requests'
+    required: false
+    default: ''
 runs:
   using: 'docker'
   image: 'Dockerfile'
