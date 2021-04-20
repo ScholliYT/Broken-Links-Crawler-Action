@@ -118,14 +118,32 @@ You can run linting and code formatting checks using the `flake8` command:
 flake8 . --count --show-source --max-complexity=10 --statistics
 ```
 
+You can run type linting `mypy` command:
+```
+mypy
+```
+
 ### Running Tests
 
-You can run tests using the `pytest` command:
+#### Running Unit Tests
+
+To run the unit tests, use the `pytest` command like this:
 ```
-pytest --cov=deadseeker --cov-fail-under=95 --cov-branch --cov-report=term-missing
+pytest -m "not integrationtest" --cov=deadseeker --cov-fail-under=95 --cov-branch --cov-report=term-missing
 ```
 
 To generate an html report that visually displays uncovered lines, use this version:
 ```
-pytest --cov=deadseeker --cov-fail-under=95 --cov-branch --cov-report=term-missing --cov-report=html
+pytest -m "not integrationtest" --cov=deadseeker --cov-fail-under=95 --cov-branch --cov-report=term-missing
 ```
+
+#### Running Integration Tests
+
+To run the unit tests, use the `pytest` command like this:
+```
+pytest -m "integrationtest"
+```
+
+#### Mutation Testing
+
+Mutation testing changes the real code (creating a 'mutant') and runs all of the tests to make sure that at least one test fails.   This ensures that your tests are actually effective at testing the code, or it can also reveal unnecessary implementation code that should be refactored.   To run mutation testing, use the `mutmut run` command.  For details on missed mutants, run the `mutmut html` command to generate an html report of the missed mutants.
