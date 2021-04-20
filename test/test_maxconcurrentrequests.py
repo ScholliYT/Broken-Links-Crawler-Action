@@ -43,7 +43,7 @@ class TestMaxConcurrentRequestsTraceConfigBinder(AsyncTestCase):
         self.trace_config.on_request_exception.append.assert_not_called()
 
     def test_when_max_concurrequests_valued(self):
-        self.config.max_concurrequests = 3
+        self.config.max_concurrequests = 1
         self.testobj.bind(self.trace_config, self.config)
         self.sema_class.assert_called_with(self.config.max_concurrequests)
         self.trace_config.on_request_start.append.assert_called_once()
@@ -51,7 +51,7 @@ class TestMaxConcurrentRequestsTraceConfigBinder(AsyncTestCase):
         self.trace_config.on_request_exception.append.assert_called_once()
 
     def test_request_end_same_as_request_exception(self):
-        self.config.max_concurrequests = 3
+        self.config.max_concurrequests = 2
         self.testobj.bind(self.trace_config, self.config)
         end_func = self.get_inner_func(self.trace_config.on_request_end)
         except_func = \
