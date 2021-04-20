@@ -56,7 +56,7 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
-            self.assertTrue(200, response.status)
+            self.assertEqual(200, response.status)
             self.assertEqual(TEST_BODY, response.html)
             self.assertIsNone(response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
@@ -69,7 +69,7 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
-            self.assertTrue(200, response.status)
+            self.assertEqual(200, response.status)
             self.assertNotEqual(TEST_BODY, response.html)
             self.assertIsNone(response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
@@ -82,7 +82,7 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
-            self.assertTrue(200, response.status)
+            self.assertEqual(200, response.status)
             self.assertNotEqual(TEST_BODY, response.html)
             self.assertIsNone(response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
@@ -95,7 +95,7 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
-            self.assertTrue(200, response.status)
+            self.assertEqual(200, response.status)
             self.assertNotEqual(TEST_BODY, response.html)
             self.assertIsNone(response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
@@ -109,7 +109,7 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
-            self.assertTrue(404, response.status)
+            self.assertEqual(404, response.status)
             self.assertNotEqual(TEST_BODY, response.html)
             self.assertIs(exception, response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
@@ -164,7 +164,7 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
-            self.assertTrue(200, response.status)
+            self.assertEqual(200, response.status)
             self.assertEqual(TEST_BODY, response.html)
             self.assertIsNone(response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
@@ -178,7 +178,7 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
-            self.assertTrue(200, response.status)
+            self.assertEqual(200, response.status)
             self.assertNotEqual(TEST_BODY, response.html)
             self.assertIsNone(response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
@@ -191,7 +191,7 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
-            self.assertTrue(200, response.status)
+            self.assertEqual(200, response.status)
             self.assertNotEqual(TEST_BODY, response.html)
             self.assertIsNone(response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
@@ -205,7 +205,7 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
-            self.assertTrue(200, response.status)
+            self.assertEqual(200, response.status)
             self.assertNotEqual(TEST_BODY, response.html)
             self.assertIsNone(response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
@@ -219,7 +219,7 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
-            self.assertTrue(404, response.status)
+            self.assertEqual(404, response.status)
             self.assertNotEqual(TEST_BODY, response.html)
             self.assertIs(exception, response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
