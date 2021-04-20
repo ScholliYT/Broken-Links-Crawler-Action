@@ -14,7 +14,7 @@ class ResponseFetcher:
 
 
 class ResponseFetcherFactory(ABC):
-    @abstractmethod
+    @abstractmethod  # pragma: no mutate
     def get_response_fetcher(
             self,
             config: SeekerConfig) -> ResponseFetcher:
@@ -48,7 +48,7 @@ class AbstractResponseFetcher(ResponseFetcher, ABC):
         resp.elapsed = timer.stop()*1000
         return resp
 
-    @abstractmethod
+    @abstractmethod  # pragma: no mutate
     async def _inner_fetch(
             self,
             session: ClientSession,
