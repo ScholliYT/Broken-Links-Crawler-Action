@@ -31,4 +31,4 @@ jobs:
       run: |
         # stop the build if the tests that we wrote are
         # not very good
-        mutmut run
+        mutmut run --swallow-output
