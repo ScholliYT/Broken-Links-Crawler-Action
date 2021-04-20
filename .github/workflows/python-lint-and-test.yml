@@ -58,5 +58,6 @@ jobs:
           -e INPUT_MAX_DEPTH=1 \
           -e INPUT_MAX_CONCURRENT_REQUESTS=1 \
           -e INPUT_INCLUDE_URL_CONTAINED='ScholliYT/Broken-Links-Crawler-Action' \
+          -e INPUT_EXCLUDE_URL_CONTAINED='/tree' \
           -e INPUT_EXCLUDE_URL_PREFIX="mailto:,https://www.linkedin.com,https://linkedin.com" \
           ${{ env.CI_DOCKER_LABEL }}
