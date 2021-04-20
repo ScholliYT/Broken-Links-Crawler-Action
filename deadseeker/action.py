@@ -14,6 +14,8 @@ and convert into the inputs required for the
 deadseeker class
 """
 
+logger = logging.getLogger(__name__)
+
 
 def run_action() -> None:
     inputvalidator = InputValidator(dict(os.environ))
@@ -46,9 +48,9 @@ def run_action() -> None:
     seeker = DeadSeeker(config)
     responsehandler = LoggingUrlFetchResponseHandler()
     if(len(seeker.seek(urls, responsehandler).failures, ) > 0):
-        logging.critical("::error ::Found some broken links!")
+        logger.critical("::error ::Found some broken links!")
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no mutate
     run_action()
