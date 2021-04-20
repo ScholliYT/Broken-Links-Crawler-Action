@@ -61,7 +61,7 @@ class DeadSeeker:
             while targets:
                 tasks = []
                 while targets:
-                    urltarget = targets.pop()
+                    urltarget = targets.pop()  # pragma: no mutate
                     tasks.append(
                         asyncio.create_task(
                             responsefetcher.fetch_response(
