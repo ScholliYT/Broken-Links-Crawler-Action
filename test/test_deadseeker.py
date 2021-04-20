@@ -9,10 +9,25 @@ from deadseeker.common import (
     UrlTarget
 )
 from deadseeker.deadseeker import DeadSeeker
-from deadseeker.clientsession import ClientSessionFactory
-from deadseeker.responsefetcher import ResponseFetcherFactory, ResponseFetcher
-from deadseeker.linkacceptor import LinkAcceptorFactory, LinkAcceptor
-from deadseeker.linkparser import LinkParserFactory, LinkParser
+from deadseeker.clientsession import (
+    ClientSessionFactory,
+    DefaultClientSessionFactory
+)
+from deadseeker.responsefetcher import (
+    DefaultResponseFetcherFactory,
+    ResponseFetcherFactory,
+    ResponseFetcher
+)
+from deadseeker.linkacceptor import (
+    DefaultLinkAcceptorFactory,
+    LinkAcceptorFactory,
+    LinkAcceptor
+)
+from deadseeker.linkparser import (
+    DefaultLinkParserFactory,
+    LinkParserFactory,
+    LinkParser
+)
 from deadseeker.timer import Timer
 from aiohttp import ClientSession, ClientResponseError, ClientError
 
@@ -170,9 +185,9 @@ class TestDeadSeeker(unittest.TestCase):
         self.config = Mock(spec=SeekerConfig)
         self.config.max_depth = -1
         self.testobj = DeadSeeker(self.config)
-        self.testobj.clientsession = Mock(spec=ClientSessionFactory)
+        self.testobj.clientsessionfactory = Mock(spec=ClientSessionFactory)
         self.session = AsyncContextManagerMock()
-        self.testobj.clientsession.get_client_session.return_value = \
+        self.testobj.clientsessionfactory.get_client_session.return_value = \
             self.session
         self.testobj.responsefetcherfactory = Mock(spec=ResponseFetcherFactory)
         self.responsefetcher = Mock(spec=ResponseFetcher)
@@ -204,8 +219,11 @@ class TestDeadSeeker(unittest.TestCase):
         linkparser = Mock(spec=LinkParser)
         linkparser.parse.side_effect = parse_mock
 
-        self.testobj.linkparserfactory.get_link_parser.return_value = \
-            linkparser
+        def get_link_parser_mock(linkacceptor: LinkAcceptor):
+            self.assertIs(linkacceptor, self.linkacceptor)
+            return linkparser
+        self.testobj.linkparserfactory.get_link_parser.side_effect = \
+            get_link_parser_mock
         self.responsehandler = Mock(spec=UrlFetchResponseHandler)
         self.timer_stop_patch = patch.object(Timer, 'stop')
         self.timer_stop = self.timer_stop_patch.start()
@@ -294,6 +312,22 @@ class TestDeadSeeker(unittest.TestCase):
             self.responsehandler.handle_response.assert_any_call(result)
         for result in results.failures:
             self.responsehandler.handle_response.assert_any_call(result)
+
+    def test_defaults(self):
+        deadseeker = DeadSeeker(self.config)
+        self.assertTrue(
+            isinstance(
+                deadseeker.clientsessionfactory, DefaultClientSessionFactory))
+        self.assertTrue(
+            isinstance(
+                deadseeker.linkacceptorfactory, DefaultLinkAcceptorFactory))
+        self.assertTrue(
+            isinstance(
+                deadseeker.linkparserfactory, DefaultLinkParserFactory))
+        self.assertTrue(
+            isinstance(
+                deadseeker.responsefetcherfactory,
+                DefaultResponseFetcherFactory))
 
 
 if __name__ == '__main__':

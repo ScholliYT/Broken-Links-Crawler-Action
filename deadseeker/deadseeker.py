@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 class DeadSeeker:
     def __init__(self, config: SeekerConfig) -> None:
         self.config = config
-        self.clientsession: ClientSessionFactory =\
+        self.clientsessionfactory: ClientSessionFactory =\
             DefaultClientSessionFactory()
         self.responsefetcherfactory: ResponseFetcherFactory =\
             DefaultResponseFetcherFactory()
@@ -56,7 +56,7 @@ class DeadSeeker:
         linkparser = self.linkparserfactory.get_link_parser(linkacceptor)
         responsefetcher = self.responsefetcherfactory.get_response_fetcher(
                                 self.config)
-        async with self.clientsession.get_client_session(
+        async with self.clientsessionfactory.get_client_session(
                 self.config) as session:
             while targets:
                 tasks = []
