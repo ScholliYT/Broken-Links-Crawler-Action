@@ -29,7 +29,7 @@ class TestInputValidator(unittest.TestCase):
     def test_emptyUrlThrowsException(self):
         with self.assertRaises(Exception) as context:
             self.testObj.get_urls()
-        self.assertExceptionContains(
+        self.assert_exception_message(
             context,
             '\'INPUT_WEBSITE_URL\' environment' +
             ' variable expected to be provided!')
@@ -38,7 +38,7 @@ class TestInputValidator(unittest.TestCase):
         self.env['INPUT_WEBSITE_URL'] = 'bananas'
         with self.assertRaises(Exception) as context:
             self.testObj.get_urls()
-        self.assertExceptionContains(
+        self.assert_exception_message(
             context,
             "'INPUT_WEBSITE_URL' environment variable" +
             " expected to contain valid url: bananas")
@@ -157,7 +157,7 @@ class TestInputValidator(unittest.TestCase):
         self.env['INPUT_MAX_RETRIES'] = 'apples'
         with self.assertRaises(Exception) as context:
             self.testObj.get_retry_maxtries()
-        self.assertExceptionContains(
+        self.assert_exception_message(
             context,
             "'INPUT_MAX_RETRIES' environment variable expected to be a number")
 
@@ -174,7 +174,7 @@ class TestInputValidator(unittest.TestCase):
         self.env['INPUT_MAX_RETRY_TIME'] = 'apples'
         with self.assertRaises(Exception) as context:
             self.testObj.get_retry_maxtime()
-        self.assertExceptionContains(
+        self.assert_exception_message(
             context,
             "'INPUT_MAX_RETRY_TIME' environment variable" +
             " expected to be a number")
@@ -192,7 +192,7 @@ class TestInputValidator(unittest.TestCase):
         self.env['INPUT_MAX_DEPTH'] = 'apples'
         with self.assertRaises(Exception) as context:
             self.testObj.get_maxdepth()
-        self.assertExceptionContains(
+        self.assert_exception_message(
             context,
             "'INPUT_MAX_DEPTH' environment variable" +
             " expected to be a number")
@@ -206,11 +206,12 @@ class TestInputValidator(unittest.TestCase):
         self.assertEqual(
             'My Awesome Web Agent 1.0', self.testObj.get_webagent())
 
-    def assertExceptionContains(self, context, expected: str):
+    def assert_exception_message(self, context, expected: str):
         actual = str(context.exception)
-        self.assertTrue(
-            expected in actual,
-            f'Expected exception to contain "{expected}", but was "{actual}"')
+        self.assertEqual(
+            expected, actual,
+            'Expected exception message to be ' +
+            f'"{expected}", but was "{actual}"')
 
 
 if __name__ == '__main__':

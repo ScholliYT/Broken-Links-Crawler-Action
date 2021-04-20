@@ -38,7 +38,7 @@ class InputValidator:
         if(verboseStr):
             if(self._get_boolean(verboseStr)):
                 return True
-            levelpattern = '^(debug|info|warn|warning|error|critical)$'
+            levelpattern = '^debug|info|warn(?:ing)?|error|critical$'
             levelmatch = re.search(
                 levelpattern, verboseStr, flags=re.IGNORECASE)
             if(levelmatch):
@@ -82,9 +82,10 @@ class InputValidator:
     def _numeric(self, name: str, default: int) -> int:
         valueStr = self.inputs.get(name)
         if valueStr:
-            assert valueStr.lstrip('-').isdigit(), \
-                    f"'{name}' environment variable" +\
-                    " expected to be a number"
+            numpattern = '^-?\\d+$'
+            assert re.search(numpattern, valueStr), \
+                f"'{name}' environment variable" +\
+                " expected to be a number"
             return int(valueStr)
         return default
 
