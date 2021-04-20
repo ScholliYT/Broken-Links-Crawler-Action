@@ -1,7 +1,7 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Python application
+name: Lint and Test Project
 
 on: [push, pull_request]
 
@@ -35,11 +35,6 @@ jobs:
         # or if our tests do not cover a significant 
         # amount of code
         pytest -m "not integrationtest" --cov=deadseeker --cov-fail-under=95 --cov-branch --cov-report=term-missing
-    - name: Mutation Test with mutmut
-      run: |
-        # stop the build if the tests that we wrote are
-        # not very good
-        mutmut run
     - name: Integration Test with pytest
       run: |
         # stop the build if there are any integration test failures
