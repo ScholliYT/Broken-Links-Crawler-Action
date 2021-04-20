@@ -1,35 +1,52 @@
 import unittest
 from unittest.mock import patch, MagicMock
-import os
 from deadseeker.common import (
     SeekResults,
     SeekerConfig
 )
+from deadseeker.inputvalidator import InputValidator
 from logging import DEBUG, INFO, WARN, ERROR, CRITICAL
 import logging
 from deadseeker.action import run_action
+
+TEST_URLS = ['http://test.com/']
+TEST_MAX_DEPTH = 2
+TEST_MAX_TRIES = 3
+TEST_MAX_TIME = 30
+TEST_INCLUDE_PREFIX = ['includeprefix']
+TEST_EXCLUDE_PREFIX = ['excludeprefix']
+TEST_INCLUDE_SUFFIX = ['includesuffix']
+TEST_EXCLUDE_SUFFIX = ['excludesuffix']
+TEST_INCLUDE_CONTAINED = ['includecontained']
+TEST_EXCLUDE_CONTAINED = ['excludecontained']
+TEST_ALWAYS_GET_ONSITE = True
 
 
 class TestAction(unittest.TestCase):
 
     def setUp(self):
-        self.env = {
-            "INPUT_WEBSITE_URL": "https://www.ncpilgrimage.org",
-            "INPUT_MAX_RETRIES": "3",
-            "INPUT_MAX_RETRY_TIME": "30",
-            "INPUT_MAX_DEPTH": "2",
-            "INPUT_VERBOSE": "true",
-            "INPUT_INCLUDE_URL_PREFIX": "",
-            "INPUT_EXCLUDE_URL_PREFIX": "mailto:,tel:,/cdn-cgi/",
-            "INPUT_INCLUDE_URL_SUFFIX": "",
-            "INPUT_EXCLUDE_URL_SUFFIX": "",
-            "INPUT_INCLUDE_URL_CONTAINED": "",
-            "INPUT_EXCLUDE_URL_CONTAINED": "",
-            "INPUT_WEB_AGENT_STRING": "",
-        }
-        self.environ_patch = \
-            patch.dict(os.environ, self.env)
-        self.environ_patch.start()
+        self.inputvalidator_patch = patch('deadseeker.action.InputValidator')
+        self.inputvalidator_class = self.inputvalidator_patch.start()
+        self.inputvalidator: InputValidator = \
+            self.inputvalidator_class.return_value
+        self.inputvalidator.get_urls.return_value = TEST_URLS
+        self.inputvalidator.get_maxdepth.return_value = TEST_MAX_DEPTH
+        self.inputvalidator.get_retry_maxtime.return_value = TEST_MAX_TIME
+        self.inputvalidator.get_retry_maxtries.return_value = TEST_MAX_TRIES
+        self.inputvalidator.get_includeprefix.return_value = \
+            TEST_INCLUDE_PREFIX
+        self.inputvalidator.get_excludeprefix.return_value = \
+            TEST_EXCLUDE_PREFIX
+        self.inputvalidator.get_includesuffix.return_value = \
+            TEST_INCLUDE_SUFFIX
+        self.inputvalidator.get_excludesuffix.return_value = \
+            TEST_EXCLUDE_SUFFIX
+        self.inputvalidator.get_includecontained.return_value = \
+            TEST_INCLUDE_CONTAINED
+        self.inputvalidator.get_excludecontained.return_value = \
+            TEST_EXCLUDE_CONTAINED
+        self.inputvalidator.get_alwaysgetonsite.return_value = \
+            TEST_ALWAYS_GET_ONSITE
         self.deadseeker_patch = patch('deadseeker.action.DeadSeeker')
         self.deadseeker = self.deadseeker_patch.start()
         self.seek = self.deadseeker.return_value.seek
@@ -44,7 +61,7 @@ class TestAction(unittest.TestCase):
         self.loggingresponsehandler = self.loggingresponsehandler_patch.start()
 
     def tearDown(self):
-        self.environ_patch.stop()
+        self.inputvalidator_patch.stop()
         self.deadseeker_patch.stop()
         self.exit_patch.stop()
         self.critical_mock.stop()
@@ -54,7 +71,7 @@ class TestAction(unittest.TestCase):
         self.seek.return_value = self.seekresults
         run_action()
         self.seek.assert_called_with(
-            ['https://www.ncpilgrimage.org'],
+            TEST_URLS,
             self.loggingresponsehandler())
         self.exit.assert_not_called()
 
@@ -68,7 +85,7 @@ class TestAction(unittest.TestCase):
         self.seek.return_value = self.seekresults
         run_action()
         self.seek.assert_called_with(
-            ['https://www.ncpilgrimage.org'],
+            TEST_URLS,
             self.loggingresponsehandler())
         self.exit.assert_called_with(1)
 
@@ -79,16 +96,16 @@ class TestAction(unittest.TestCase):
         self.critical.assert_called_with('::error ::Found some broken links!')
 
     def test_verboseTrueSetsLoggingToDebug(self):
-        with patch.dict(os.environ, {'INPUT_VERBOSE': 'true'}),\
-                patch.object(logging, 'basicConfig') as mock_debug:
+        self.inputvalidator.get_verbosity.return_value = True
+        with patch.object(logging, 'basicConfig') as mock_debug:
             run_action()
             mock_debug.assert_called_once_with(
                 level=logging.INFO,
                 format='%(message)s')
 
     def test_verboseFalseSetsLoggingToSevere(self):
-        with patch.dict(os.environ, {'INPUT_VERBOSE': 'false'}),\
-                patch.object(logging, 'basicConfig') as mock_debug:
+        self.inputvalidator.get_verbosity.return_value = False
+        with patch.object(logging, 'basicConfig') as mock_debug:
             run_action()
             mock_debug.assert_called_once_with(
                 level=logging.CRITICAL,
@@ -96,9 +113,8 @@ class TestAction(unittest.TestCase):
 
     def test_verboseLogLevelSetsLoggingToSevere(self):
         for level in [DEBUG, INFO, WARN, ERROR, CRITICAL]:
-            levelname = logging.getLevelName(level)
-            with patch.dict(os.environ, {'INPUT_VERBOSE': levelname.lower()}),\
-                    patch.object(logging, 'basicConfig') as mock_debug:
+            self.inputvalidator.get_verbosity.return_value = level
+            with patch.object(logging, 'basicConfig') as mock_debug:
                 run_action()
                 mock_debug.assert_called_once_with(
                     level=level)
@@ -107,13 +123,14 @@ class TestAction(unittest.TestCase):
         run_action()
         self.deadseeker.assert_called_once()
         config: SeekerConfig = self.deadseeker.call_args.args[0]
-        self.assertEqual(config.max_tries, 3)
-        self.assertEqual(config.max_time, 30)
-        self.assertEqual(config.max_depth, 2)
-        self.assertEqual(config.includeprefix, [])
+        self.assertEqual(config.max_tries, TEST_MAX_TRIES)
+        self.assertEqual(config.max_time, TEST_MAX_TIME)
+        self.assertEqual(config.max_depth, TEST_MAX_DEPTH)
+        self.assertEqual(config.includeprefix, TEST_INCLUDE_PREFIX)
         self.assertEqual(
-            config.excludeprefix, ['mailto:', 'tel:', '/cdn-cgi/'])
-        self.assertEqual(config.includesuffix, [])
-        self.assertEqual(config.excludesuffix, [])
-        self.assertEqual(config.includecontained, [])
-        self.assertEqual(config.excludecontained, [])
+            config.excludeprefix, TEST_EXCLUDE_PREFIX)
+        self.assertEqual(config.includesuffix, TEST_INCLUDE_SUFFIX)
+        self.assertEqual(config.excludesuffix, TEST_EXCLUDE_SUFFIX)
+        self.assertEqual(config.includecontained, TEST_INCLUDE_CONTAINED)
+        self.assertEqual(config.excludecontained, TEST_EXCLUDE_CONTAINED)
+        self.assertEqual(config.alwaysgetonsite, TEST_ALWAYS_GET_ONSITE)

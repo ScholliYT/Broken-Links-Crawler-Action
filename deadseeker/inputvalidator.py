@@ -1,5 +1,5 @@
 import validators  # type: ignore
-from typing import List, Dict, Union
+from typing import List, Dict, Union, Optional
 import re
 import logging
 from deadseeker.common import (
@@ -36,8 +36,7 @@ class InputValidator:
     def get_verbosity(self) -> Union[bool, int]:
         verboseStr = self.inputs.get('INPUT_VERBOSE')
         if(verboseStr):
-            truepattern = '^t|true|y|yes|on$'
-            if(re.search(truepattern, verboseStr, flags=re.IGNORECASE)):
+            if(self._get_boolean(verboseStr)):
                 return True
             levelpattern = '^(debug|info|warn|warning|error|critical)$'
             levelmatch = re.search(
@@ -46,6 +45,15 @@ class InputValidator:
                 levelname = levelmatch.group(0).upper()
                 return logging.getLevelName(levelname)
         return False
+
+    def get_alwaysgetonsite(self) -> bool:
+        return self._get_boolean(self.inputs.get('INPUT_ALWAYS_GET_ONSITE'))
+
+    def _get_boolean(self, valueStr: Optional[str]) -> bool:
+        truepattern = '^t|true|y|yes|on$'
+        return bool(
+                valueStr and
+                re.search(truepattern, valueStr, flags=re.IGNORECASE))
 
     def get_includeprefix(self) -> List[str]:
         return self._splitAndTrim('INPUT_INCLUDE_URL_PREFIX')

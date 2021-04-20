@@ -47,6 +47,10 @@ inputs:
     description: 'Maximum site depth level'
     required: false
     default: -1
+  always_get_onsite:
+    description: 'Always use GET requests for onsite urls'
+    required: false
+    default: 'false'
 runs:
   using: 'docker'
   image: 'Dockerfile'

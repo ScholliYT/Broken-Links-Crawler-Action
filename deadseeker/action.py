@@ -36,6 +36,7 @@ def run_action() -> None:
     config = SeekerConfig()
     config.max_tries = inputvalidator.get_retry_maxtries()
     config.max_time = inputvalidator.get_retry_maxtime()
+    config.alwaysgetonsite = inputvalidator.get_alwaysgetonsite()
     for inclusion in ['in', 'ex']:
         for strategy in ['prefix', 'suffix', 'contained']:
             attrname = f'{inclusion}clude{strategy}'

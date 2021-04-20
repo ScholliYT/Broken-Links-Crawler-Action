@@ -77,7 +77,7 @@ class TestInputValidator(unittest.TestCase):
 
     def test_verboseFalseWhenFalse(self):
         for verboseStr in [
-                'false', 'f', 'False', 'F', 'FALSE',
+                '', 'false', 'f', 'False', 'F', 'FALSE',
                 'no', 'n', 'No', 'N', 'NO',
                 'off', 'Off', 'OFF']:
             self.env['INPUT_VERBOSE'] = verboseStr
@@ -85,6 +85,28 @@ class TestInputValidator(unittest.TestCase):
                 self.testObj.get_verbosity(),
                 'Expected value to evaluate to' +
                 f' verbose false: {verboseStr}')
+
+    def test_alwaysgetonsite_true(self):
+        for valueStr in [
+                'true', 't', 'True', 'T', 'TRUE',
+                'yes', 'y', 'Yes', 'Y', 'YES',
+                'on', 'On', 'ON']:
+            self.env['INPUT_ALWAYS_GET_ONSITE'] = valueStr
+            self.assertTrue(
+                self.testObj.get_alwaysgetonsite(),
+                'Expected value to evaluate to' +
+                f' verbose true: {valueStr}')
+
+    def test_alwaysgetonsite_false(self):
+        for valueStr in [
+                '', 'false', 'f', 'False', 'F', 'FALSE',
+                'no', 'n', 'No', 'N', 'NO',
+                'off', 'Off', 'OFF']:
+            self.env['INPUT_ALWAYS_GET_ONSITE'] = valueStr
+            self.assertFalse(
+                self.testObj.get_alwaysgetonsite(),
+                'Expected value to evaluate to' +
+                f' verbose false: {valueStr}')
 
     def test_verboseLogLevel(self):
         levelsByString: Dict[str, int] = {
