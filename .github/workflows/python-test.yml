@@ -39,7 +39,7 @@ jobs:
       run: |
         # stop the build if the tests that we wrote are
         # not very good
-        mutmut
+        mutmut run
     - name: Integration Test with pytest
       run: |
         # stop the build if there are any integration test failures
