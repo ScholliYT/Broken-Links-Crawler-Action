@@ -138,7 +138,7 @@ pytest -m "not integrationtest" --cov=deadseeker --cov-fail-under=95 --cov-branc
 
 To generate an html report that visually displays uncovered lines, use this version:
 ```
-pytest -m "not integrationtest" --cov=deadseeker --cov-fail-under=95 --cov-branch --cov-report=term-missing
+pytest -m "not integrationtest" --cov=deadseeker --cov-fail-under=95 --cov-branch --cov-report=term-missing --cov-report=html
 ```
 
 #### Running Integration Tests
