@@ -72,7 +72,8 @@ class HeadThenGetIfHtmlResponseFetcher(AbstractResponseFetcher):
         async with session.head(url) as headresponse:
             timer.stop()
             resp.status = headresponse.status
-            has_html = 'html' in headresponse.headers['Content-Type']
+            has_html = ('Content-Type' in headresponse.headers and
+                        'html' in headresponse.headers['Content-Type'])
             onsite = urltarget.home in url
             if(has_html and onsite):
                 async with session.get(url) as getresponse:
@@ -94,7 +95,8 @@ class AlwaysGetIfOnSiteResponseFetcher(HeadThenGetIfHtmlResponseFetcher):
         if(onsite):
             async with session.get(url) as getresponse:
                 resp.status = getresponse.status
-                has_html = 'html' in getresponse.headers['Content-Type']
+                has_html = ('Content-Type' in getresponse.headers and
+                            'html' in getresponse.headers['Content-Type'])
                 if(has_html):
                     resp.html = await getresponse.text()
                 timer.stop()
