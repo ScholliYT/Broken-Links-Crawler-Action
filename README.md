@@ -71,8 +71,6 @@ Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)
 
 **Optional** By default, the crawler will not attempt to throttle the total number of concurrent requests.  By setting this value to a number greater than zero (0), the crawler will not exceed that number of concurrent requests at once. This can be useful for when crawling a site that has rate limits. (default unlimited).
 
-## Outputs
-
 ## Example usage
 ```yml
 uses: ScholliYT/Broken-Links-Crawler-Action@v2.1.1
