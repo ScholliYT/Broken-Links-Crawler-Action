@@ -1,10 +1,10 @@
 -r requirements.txt
-flake8=3.9.0
-pytest=6.2.2
-pytest-cov=2.11.1
-pre-commit=2.11.1
-pytest-aiohttp=0.3.0
-mypy=0.812
-aiounittest=1.4.0
-aioresponses=0.7.2
-mutmut=2.1.0
+flake8==3.9.0
+pytest==6.2.2
+pytest-cov==2.11.1
+pre-commit==2.11.1
+pytest-aiohttp==0.3.0
+mypy==0.812
+aiounittest==1.4.0
+aioresponses==0.7.2
+mutmut==2.1.0
