@@ -7,7 +7,7 @@ DEFAULT_RETRY_MAX_TRIES: int = 4
 DEFAULT_RETRY_MAX_TIME: int = 30
 DEFAULT_EXCLUDE_PREFIX: List[str] = ['mailto:', 'tel:']
 DEFAULT_MAX_DEPTH: int = -1
-DEFAULT_MAX_CONCURRENT_REQUESTS: int = 0
+DEFAULT_CONNECT_LIMIT_PER_HOST: int = 0
 
 
 class SeekerConfig:
@@ -23,8 +23,8 @@ class SeekerConfig:
         self.excludecontained: List[str] = []
         self.agent: str = DEFAULT_WEB_AGENT
         self.alwaysgetonsite: bool = False
-        self.max_concurrequests: int = \
-            DEFAULT_MAX_CONCURRENT_REQUESTS
+        self.connect_limit_per_host: int = \
+            DEFAULT_CONNECT_LIMIT_PER_HOST
 
 
 class UrlTarget():

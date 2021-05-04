@@ -20,6 +20,7 @@ class TestDefaultClientSessionFactory(AsyncTestCase):
         self.config.agent = TEST_AGENT
         self.config.max_tries = 3
         self.config.max_time = 45
+        self.config.connect_limit_per_host = 0
         self.retryclient_mock = patch('deadseeker.clientsession.RetryClient')
         self.retryclient = self.retryclient_mock.start()
         self.exponentialretry_mock = patch(
@@ -28,16 +29,16 @@ class TestDefaultClientSessionFactory(AsyncTestCase):
         self.traceconfig_mock = patch(
             'deadseeker.clientsession.TraceConfig')
         self.traceconfig = self.traceconfig_mock.start()
-        self.maxconcurrentrequestsbinder_patch = patch(
-            'deadseeker.clientsession.MaxConcurrentRequestsTraceConfigBinder')
-        self.maxconcurrentrequestsbinder = \
-            self.maxconcurrentrequestsbinder_patch.start()
+        self.tcpconnector_patch = patch(
+            'deadseeker.clientsession.TCPConnector')
+        self.tcpconnector = \
+            self.tcpconnector_patch.start()
 
     def tearDown(self):
         self.retryclient_mock.stop()
         self.exponentialretry_mock.stop()
         self.traceconfig_mock.stop()
-        self.maxconcurrentrequestsbinder_patch.stop()
+        self.tcpconnector_patch.stop()
 
     def test_retryclient_returned(self):
         actualresult = self.testObj.get_client_session(
@@ -45,6 +46,7 @@ class TestDefaultClientSessionFactory(AsyncTestCase):
         self.assertIs(actualresult, self.retryclient.return_value)
         self.retryclient.assert_called_with(
                 raise_for_status=True,
+                connector=self.tcpconnector.return_value,
                 headers={'User-Agent': TEST_AGENT},
                 retry_options=self.exponentialretry.return_value,
                 trace_configs=[self.traceconfig.return_value])
@@ -90,12 +92,32 @@ class TestDefaultClientSessionFactory(AsyncTestCase):
                     '::warn ::Retry Attempt #3 ' +
                     'of 3: http://test.com/')
 
-    def test_maxconcurrequests_bind_called(self):
+    def test_zero_used_if_connect_limit_is_zero(self):
+        self.config.connect_limit_per_host = 0
         self.testObj.get_client_session(
                 self.config)
-        instance = self.maxconcurrentrequestsbinder.return_value
-        instance.bind.assert_called_with(
-            self.traceconfig.return_value, self.config)
+        self.tcpconnector.assert_called_with(
+            limit_per_host=0,
+            ttl_dns_cache=600
+        )
+
+    def test_zero_used_if_connect_limit_lt_zero(self):
+        self.config.connect_limit_per_host = -100
+        self.testObj.get_client_session(
+                self.config)
+        self.tcpconnector.assert_called_with(
+            limit_per_host=0,
+            ttl_dns_cache=600
+        )
+
+    def test_one_used_if_connect_limit_is_one(self):
+        self.config.connect_limit_per_host = 1
+        self.testObj.get_client_session(
+                self.config)
+        self.tcpconnector.assert_called_with(
+            limit_per_host=1,
+            ttl_dns_cache=600
+        )
 
 
 if __name__ == '__main__':

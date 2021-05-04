@@ -7,7 +7,7 @@ from deadseeker.common import (
     DEFAULT_RETRY_MAX_TIME,
     DEFAULT_WEB_AGENT,
     DEFAULT_MAX_DEPTH,
-    DEFAULT_MAX_CONCURRENT_REQUESTS
+    DEFAULT_CONNECT_LIMIT_PER_HOST
 )
 
 
@@ -34,9 +34,9 @@ class InputValidator:
     def get_maxdepth(self) -> int:
         return self._numeric('INPUT_MAX_DEPTH', DEFAULT_MAX_DEPTH)
 
-    def get_maxconcurrequests(self) -> int:
+    def get_connect_limit_per_host(self) -> int:
         return self._numeric(
-            'INPUT_MAX_CONCURRENT_REQUESTS', DEFAULT_MAX_CONCURRENT_REQUESTS)
+            'INPUT_CONNECT_LIMIT_PER_HOST', DEFAULT_CONNECT_LIMIT_PER_HOST)
 
     def get_verbosity(self) -> Union[bool, int]:
         verboseStr = self.inputs.get('INPUT_VERBOSE')

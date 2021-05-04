@@ -31,9 +31,9 @@ class TestSeekerConfig(unittest.TestCase):
         self.assertEqual(
             self.testobj.max_depth, -1)
 
-    def test_default_max_concurrequests(self):
+    def test_default_connect_limit_per_host(self):
         self.assertEqual(
-            self.testobj.max_concurrequests, 0)
+            self.testobj.connect_limit_per_host, 0)
 
     def test_default_include_prefix(self):
         self.assertEqual(

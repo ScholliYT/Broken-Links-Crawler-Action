@@ -67,9 +67,9 @@ Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)
 
 **Optional** By default, the crawler will use a HEAD request first, then will follow-up with a GET request if the response is html and the url represents a page on the same site as the root url.  By setting this value to 'true', the crawler will always us a GET request for any onsite url. (default false).
 
-### `max_concurrent_requests`
+### `connect_limit_per_host`
 
-**Optional** By default, the crawler will not attempt to throttle the total number of concurrent requests.  By setting this value to a number greater than zero (0), the crawler will not exceed that number of concurrent requests at once. This can be useful for when crawling a site that has rate limits. (default unlimited).
+**Optional** By default, the crawler will open as many connections at it needs to make the requests.  By setting this value to a number greater than zero (0), the crawler will not exceed that number of connections for each host. This can be useful for when crawling a site that has rate limits. (default unlimited).
 
 ## Example usage
 ```yml

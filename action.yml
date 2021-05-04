@@ -51,8 +51,8 @@ inputs:
     description: 'Always use GET requests for onsite urls'
     required: false
     default: 'false'
-  max_concurrent_requests:
-    description: 'Limit total number of concurrent requests'
+  connect_limit_per_host:
+    description: 'Limit number of tcp connections per host'
     required: false
     default: ''
 runs:

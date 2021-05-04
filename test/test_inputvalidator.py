@@ -3,7 +3,7 @@ from deadseeker.common import (
     DEFAULT_RETRY_MAX_TIME,
     DEFAULT_WEB_AGENT,
     DEFAULT_MAX_DEPTH,
-    DEFAULT_MAX_CONCURRENT_REQUESTS
+    DEFAULT_CONNECT_LIMIT_PER_HOST
 )
 from deadseeker.inputvalidator import InputValidator
 import unittest
@@ -198,23 +198,23 @@ class TestInputValidator(unittest.TestCase):
             "'INPUT_MAX_DEPTH' environment variable" +
             " expected to be a number")
 
-    def test_maxconcurrequests_default(self):
+    def test_connect_limit_per_host_default(self):
         self.assertEqual(
-            DEFAULT_MAX_CONCURRENT_REQUESTS,
-            self.testObj.get_maxconcurrequests())
+            DEFAULT_CONNECT_LIMIT_PER_HOST,
+            self.testObj.get_connect_limit_per_host())
 
-    def test_maxconcurrequests_good(self):
-        self.env['INPUT_MAX_CONCURRENT_REQUESTS'] = '6'
+    def test_connect_limit_per_host_good(self):
+        self.env['INPUT_CONNECT_LIMIT_PER_HOST'] = '6'
         self.assertEqual(
-            6, self.testObj.get_maxconcurrequests())
+            6, self.testObj.get_connect_limit_per_host())
 
-    def test_maxconcurrequests_bad(self):
-        self.env['INPUT_MAX_CONCURRENT_REQUESTS'] = 'apples'
+    def test_connect_limit_per_host_bad(self):
+        self.env['INPUT_CONNECT_LIMIT_PER_HOST'] = 'apples'
         with self.assertRaises(Exception) as context:
-            self.testObj.get_maxconcurrequests()
+            self.testObj.get_connect_limit_per_host()
         self.assert_exception_message(
             context,
-            "'INPUT_MAX_CONCURRENT_REQUESTS' environment variable" +
+            "'INPUT_CONNECT_LIMIT_PER_HOST' environment variable" +
             " expected to be a number")
 
     def test_defaultWebAgent(self):

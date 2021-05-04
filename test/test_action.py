@@ -20,7 +20,7 @@ TEST_EXCLUDE_SUFFIX = ['excludesuffix']
 TEST_INCLUDE_CONTAINED = ['includecontained']
 TEST_EXCLUDE_CONTAINED = ['excludecontained']
 TEST_ALWAYS_GET_ONSITE = True
-TEST_MAX_CONCUR_REQUESTS = 3
+TEST_CONNECT_LIMIT_PER_HOST = 3
 
 
 class TestAction(unittest.TestCase):
@@ -34,8 +34,8 @@ class TestAction(unittest.TestCase):
         self.inputvalidator.get_maxdepth.return_value = TEST_MAX_DEPTH
         self.inputvalidator.get_retry_maxtime.return_value = TEST_MAX_TIME
         self.inputvalidator.get_retry_maxtries.return_value = TEST_MAX_TRIES
-        self.inputvalidator.get_maxconcurrequests.return_value = \
-            TEST_MAX_CONCUR_REQUESTS
+        self.inputvalidator.get_connect_limit_per_host.return_value = \
+            TEST_CONNECT_LIMIT_PER_HOST
         self.inputvalidator.get_includeprefix.return_value = \
             TEST_INCLUDE_PREFIX
         self.inputvalidator.get_excludeprefix.return_value = \
@@ -137,4 +137,6 @@ class TestAction(unittest.TestCase):
         self.assertEqual(config.includecontained, TEST_INCLUDE_CONTAINED)
         self.assertEqual(config.excludecontained, TEST_EXCLUDE_CONTAINED)
         self.assertEqual(config.alwaysgetonsite, TEST_ALWAYS_GET_ONSITE)
-        self.assertEqual(config.max_concurrequests, TEST_MAX_CONCUR_REQUESTS)
+        self.assertEqual(
+            config.connect_limit_per_host,
+            TEST_CONNECT_LIMIT_PER_HOST)
