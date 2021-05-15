@@ -37,7 +37,7 @@ class DefaultClientSessionFactory(ClientSessionFactory):
         trace_config = TraceConfig()
         trace_config.on_request_start.append(_on_request_start)
         limit_per_host = config.connect_limit_per_host \
-            if config.connect_limit_per_host > 0 else 0
+            if config.connect_limit_per_host >= 0 else 0
         connector = TCPConnector(
             limit_per_host=limit_per_host,
             ttl_dns_cache=600  # 10-minute DNS cache
