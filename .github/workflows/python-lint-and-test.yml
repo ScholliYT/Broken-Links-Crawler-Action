@@ -1,0 +1,63 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Lint and Test Project
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        # installing dependencies used by the project
+        pip install -r test-requirements.txt
+    - name: Python Lint with flake8
+      run: |
+        # stop the build if there are any formating or code quality failures
+        flake8
+    - name: Type Lint with mypy
+      run: |
+        # stop the build if there are any missing type declarations
+        mypy
+    - name: Unit and Coverage Test with pytest
+      run: |
+        # stop the build if there are any unit test failures
+        # or if our tests do not cover a significant 
+        # amount of code
+        pytest -m "not integrationtest" --cov=deadseeker --cov-fail-under=95 --cov-branch --cov-report=term-missing
+    - name: Integration Test with pytest
+      run: |
+        # stop the build if there are any integration test failures
+        pytest -m "integrationtest"
+    - name: Set ci docker label
+      run: echo "CI_DOCKER_LABEL=broken-links-crawler-action:ci-$(date +%s)" >> $GITHUB_ENV
+    - name: Build the Docker image
+      uses: nick-invision/retry@v2
+      with:
+        timeout_seconds: 120
+        max_attempts: 3
+        retry_on: error
+        command: docker build . --file Dockerfile --tag ${{ env.CI_DOCKER_LABEL }}
+    - name: Test the Docker image
+      run: |
+        docker run \
+          -e INPUT_WEBSITE_URL="https://github.com/ScholliYT/Broken-Links-Crawler-Action" \
+          -e INPUT_VERBOSE="true" \
+          -e INPUT_MAX_RETRY_TIME=30 \
+          -e INPUT_MAX_RETRIES=5 \
+          -e INPUT_MAX_DEPTH=1 \
+          -e INPUT_CONNECT_LIMIT_PER_HOST=1 \
+          -e INPUT_INCLUDE_URL_CONTAINED='ScholliYT/Broken-Links-Crawler-Action' \
+          -e INPUT_EXCLUDE_URL_CONTAINED='/tree' \
+          -e INPUT_EXCLUDE_URL_PREFIX="mailto:,https://www.linkedin.com,https://linkedin.com" \
+          ${{ env.CI_DOCKER_LABEL }}

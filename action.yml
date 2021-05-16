@@ -5,14 +5,34 @@ branding:
   icon: check-circle
 inputs:
   website_url:  # id of input
-    description: 'Which website to check'
+    description: 'Which websites to check'
     required: true
+  include_url_prefix:
+    description: 'Comma separated list of URL prefixes to include'
+    required: false
+    default: ''
   exclude_url_prefix:
     description: 'Comma separated list of URL prefixes to ignore'
     required: false
-    default: 'mailto:'
+    default: 'mailto:,tel:'
+  include_url_suffix:
+    description: 'Comma separated list of URL suffixes to include'
+    required: false
+    default: ''
+  exclude_url_suffix:
+    description: 'Comma separated list of URL suffixes to ignore'
+    required: false
+    default: ''
+  include_url_contained:
+    description: 'Comma separated list of URL substrings to include'
+    required: false
+    default: ''
+  exclude_url_contained:
+    description: 'Comma separated list of URL substrings to ignore'
+    required: false
+    default: ''
   verbose:
-    description: 'Turn verbose mode on/off'
+    description: 'Set logging verbosity level: true/false/yes/no/on/off/debug/info/warning/error/critical'
     required: false
     default: 'false'
   max_retry_time:
@@ -23,6 +43,18 @@ inputs:
     description: 'Maximum request retry count'
     required: false
     default: 4
+  max_depth:
+    description: 'Maximum site depth level'
+    required: false
+    default: -1
+  always_get_onsite:
+    description: 'Always use GET requests for onsite urls'
+    required: false
+    default: 'false'
+  connect_limit_per_host:
+    description: 'Limit number of tcp connections per host'
+    required: false
+    default: ''
 runs:
   using: 'docker'
   image: 'Dockerfile'
