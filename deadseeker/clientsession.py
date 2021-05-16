@@ -36,8 +36,7 @@ class DefaultClientSessionFactory(ClientSessionFactory):
                     f'of {config.max_tries}: {params.url}')
         trace_config = TraceConfig()
         trace_config.on_request_start.append(_on_request_start)
-        limit_per_host = config.connect_limit_per_host \
-            if config.connect_limit_per_host >= 0 else 0
+        limit_per_host = max(0, config.connect_limit_per_host)
         connector = TCPConnector(
             limit_per_host=limit_per_host,
             ttl_dns_cache=600  # 10-minute DNS cache
