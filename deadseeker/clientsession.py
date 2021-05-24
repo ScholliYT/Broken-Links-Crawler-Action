@@ -1,12 +1,14 @@
 from .common import SeekerConfig
 import aiohttp
+import asyncio
 import logging
 from types import SimpleNamespace
 from aiohttp import (
     ClientSession,
     TraceConfig,
     TraceRequestStartParams,
-    TCPConnector
+    TCPConnector,
+    ClientTimeout
 )
 from aiohttp_retry import RetryClient, ExponentialRetry  # type: ignore
 from abc import abstractmethod, ABC
@@ -44,10 +46,14 @@ class DefaultClientSessionFactory(ClientSessionFactory):
         retry_options = ExponentialRetry(
                             attempts=config.max_tries,
                             max_timeout=config.max_time,
-                            exceptions=[aiohttp.ClientError])
+                            exceptions=[
+                                aiohttp.ClientError,
+                                asyncio.TimeoutError
+                            ])
         return RetryClient(
                 raise_for_status=True,
                 connector=connector,
+                timeout=ClientTimeout(total=60),
                 headers={'User-Agent': config.agent},
                 retry_options=retry_options,
                 trace_configs=[trace_config])
