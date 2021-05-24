@@ -54,7 +54,7 @@ inputs:
   connect_limit_per_host:
     description: 'Limit number of tcp connections per host'
     required: false
-    default: ''
+    default: '10'
 runs:
   using: 'docker'
   image: 'Dockerfile'

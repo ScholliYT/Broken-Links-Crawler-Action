@@ -33,7 +33,7 @@ class TestSeekerConfig(unittest.TestCase):
 
     def test_default_connect_limit_per_host(self):
         self.assertEqual(
-            self.testobj.connect_limit_per_host, 0)
+            self.testobj.connect_limit_per_host, 10)
 
     def test_default_include_prefix(self):
         self.assertEqual(

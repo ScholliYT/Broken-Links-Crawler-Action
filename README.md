@@ -69,7 +69,7 @@ Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)
 
 ### `connect_limit_per_host`
 
-**Optional** By default, the crawler will open as many connections at it needs to make the requests.  By setting this value to a number greater than zero (0), the crawler will not exceed that number of connections for each host. This can be useful for when crawling a site that has rate limits. (default unlimited).
+**Optional** By default, the crawler will open a maximum of 10 connections per host.  This can be useful for when crawling a site that has rate limits. Setting this value to zero will cause an unlimited number of connections per host, but this could inadvertently cause timeout errors if the target server gets overwhelmed with connections. (default 10).
 
 ## Example usage
 ```yml
