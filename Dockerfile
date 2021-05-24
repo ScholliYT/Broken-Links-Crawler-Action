@@ -1,15 +1,18 @@
 # Container image that runs your code
+# based on:
+# https://pythonspeed.com/articles/activate-virtualenv-dockerfile/
 FROM python:3.8-slim-buster
 
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
 # We copy just the requirements.txt first to leverage Docker cache
-COPY ./requirements.txt /app/requirements.txt
-
-WORKDIR /app
-
-RUN pip3 install -r requirements.txt
+COPY ./requirements.txt .
+RUN python -m pip install --upgrade pip && pip install -r requirements.txt
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
-COPY deadseeker /app/deadseeker/
+COPY deadseeker ./deadseeker
 
 # Code file to execute when the docker container starts up (`deadseeker.py`)
 CMD [ "python", "-m", "deadseeker.action" ]
