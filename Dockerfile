@@ -15,4 +15,4 @@ RUN python -m pip install --upgrade pip && pip install -r requirements.txt
 COPY deadseeker ./deadseeker
 
 # Code file to execute when the docker container starts up (`deadseeker.py`)
-CMD [ "python", "-m", "deadseeker.action" ]
+ENTRYPOINT [ "python", "-m", "deadseeker.action" ]
