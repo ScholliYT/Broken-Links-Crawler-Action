@@ -1,6 +1,11 @@
 import unittest
 from aiounittest import AsyncTestCase
-from aiohttp import ClientSession, ClientResponseError, ClientError
+from asyncio import TimeoutError
+from aiohttp import (
+    ClientSession,
+    ClientResponseError,
+    ClientError
+)
 from unittest.mock import Mock, patch
 from aioresponses import aioresponses
 from deadseeker.common import SeekerConfig
@@ -128,6 +133,20 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
             self.assertIs(exception, response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
 
+    @aioresponses()
+    async def test_if_timeout_error(
+            self, m):
+        exception = TimeoutError()
+        self._prep_request(m, TEST_HOME_URL, exception=exception)
+        async with ClientSession() as session:
+            response = await self.testobj.fetch_response(
+                    session, self.urltarget)
+            self.assertIs(self.urltarget, response.urltarget)
+            self.assertEqual(0, response.status)
+            self.assertNotEqual(TEST_BODY, response.html)
+            self.assertIs(exception, response.error)
+            self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
+
     def _prep_request(
             self,
             mockresponses,
@@ -228,6 +247,20 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
     async def test_if_connection_error(
             self, m):
         exception = ClientError()
+        self._prep_request(m, TEST_HOME_URL, exception=exception)
+        async with ClientSession() as session:
+            response = await self.testobj.fetch_response(
+                    session, self.urltarget)
+            self.assertIs(self.urltarget, response.urltarget)
+            self.assertEqual(0, response.status)
+            self.assertNotEqual(TEST_BODY, response.html)
+            self.assertIs(exception, response.error)
+            self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
+
+    @aioresponses()
+    async def test_if_timeout_error(
+            self, m):
+        exception = TimeoutError()
         self._prep_request(m, TEST_HOME_URL, exception=exception)
         async with ClientSession() as session:
             response = await self.testobj.fetch_response(

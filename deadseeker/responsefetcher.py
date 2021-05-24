@@ -43,7 +43,7 @@ class AbstractResponseFetcher(ResponseFetcher, ABC):
         except aiohttp.ClientResponseError as e:
             resp.status = e.status
             resp.error = e
-        except aiohttp.ClientError as e:
+        except Exception as e:
             resp.error = e
         resp.elapsed = timer.stop()*1000
         return resp
