@@ -9,7 +9,7 @@ WORKDIR /app
 RUN pip3 install -r requirements.txt
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
-COPY deadseeker.py /app/deadseeker.py
+COPY deadseeker /app/deadseeker/
 
 # Code file to execute when the docker container starts up (`deadseeker.py`)
-CMD [ "python", "/app/deadseeker.py" ]
+CMD [ "python", "-m", "deadseeker.action" ]
