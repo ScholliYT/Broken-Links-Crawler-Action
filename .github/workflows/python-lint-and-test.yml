@@ -60,4 +60,5 @@ jobs:
           -e INPUT_INCLUDE_URL_CONTAINED='ScholliYT/Broken-Links-Crawler-Action' \
           -e INPUT_EXCLUDE_URL_CONTAINED='/tree' \
           -e INPUT_EXCLUDE_URL_PREFIX="mailto:,https://www.linkedin.com,https://linkedin.com" \
+          -e INPUT_EXCLUDE_URL_SUFFIX=".zip" \
           ${{ env.CI_DOCKER_LABEL }}
