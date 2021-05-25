@@ -53,15 +53,22 @@ TEST1_URL_FAVICON = 'http://www.test1.com/favicon.ico'
 TEST1_URL_LOGO = 'http://www.test1.com/logo.png'
 
 TEST2_URL_HOME = 'http://www.test2.com/'
-TEST2_HTML_HOME = 'tes2_home'
+TEST2_HTML_HOME = 'test2_home'
 TEST2_URL_PAGE1 = 'http://www.test2.com/page1.html'
-TEST2_HTML_PAGE1 = 'tes2_page1'
+TEST2_HTML_PAGE1 = 'test2_page1'
 TEST2_URL_PAGE2 = 'http://www.test2.com/page2.html'
-TEST2_HTML_PAGE2 = 'tes2_page2'
+TEST2_HTML_PAGE2 = 'test2_page2'
 TEST2_URL_PAGE3 = 'http://www.test2.com/page3.html'
-TEST2_HTML_PAGE3 = 'tes2_page3'
+TEST2_HTML_PAGE3 = 'test2_page3'
 TEST2_URL_FAVICON = 'http://www.test2.com/favicon.ico'
 TEST2_URL_LOGO = 'http://www.test2.com/logo.png'
+
+TEST3_URL_HOME = 'https://www.test3.com/'
+TEST3_HTML_HOME = 'test3_home'
+TEST3_URL_PAGE1 = 'https://www.test3.com/page1/index.html'
+TEST3_HTML_PAGE1 = 'test3_page1'
+TEST3_URL_PAGE2 = 'https://www.test3.com/page2/index.html'
+TEST3_HTML_PAGE2 = 'test3_page2'
 
 ERROR_404 = ClientResponseError(None, None, status=404)
 ERROR_CONNECTION = ClientError()
@@ -115,7 +122,12 @@ TEST_RESPONSES_BY_URL = {
     TEST2_URL_PAGE3:
         MockedResponseCreator(html=TEST2_HTML_PAGE3),
     TEST2_URL_FAVICON: MockedResponseCreator(error=ERROR_CONNECTION),
-    TEST2_URL_LOGO: MockedResponseCreator(error=ERROR_404)
+    TEST2_URL_LOGO: MockedResponseCreator(error=ERROR_404),
+    TEST3_URL_HOME: MockedResponseCreator(html=TEST3_HTML_HOME),
+    TEST3_URL_PAGE1:
+        MockedResponseCreator(html=TEST3_HTML_PAGE1),
+    TEST3_URL_PAGE2:
+        MockedResponseCreator(html=TEST3_HTML_PAGE2)
 }
 
 TEST_PARSE_RESULTS_BY_HTML = {
@@ -172,6 +184,12 @@ TEST_PARSE_RESULTS_BY_HTML = {
         TEST2_URL_HOME,
         TEST1_URL_HOME  # external link to test site 1
     ],
+    TEST3_HTML_HOME: [
+        '../page1/index.html',  # issue ScholliYT/Broken-Links-Crawler-Action#5
+        '//www.test3.com/page2/index.html'
+    ],
+    TEST3_HTML_PAGE1: [],
+    TEST3_HTML_PAGE2: []
 }
 
 
@@ -300,6 +318,18 @@ class TestDeadSeeker(unittest.TestCase):
             TEST1_URL_LOGO,
             TEST1_URL_PAGE1,
             TEST1_URL_PAGE2
+        ])
+        failures = get_urls(results.failures)
+        self.assertEqual(failures, [])
+        self.assertEqual(4000.0, results.elapsed)
+
+    def test_site3_is_fully_crawled(self):
+        results = self.testobj.seek(TEST3_URL_HOME)
+        successes = get_urls(results.successes)
+        self.assertEqual(successes, [
+            TEST3_URL_HOME,
+            TEST3_URL_PAGE1,
+            TEST3_URL_PAGE2
         ])
         failures = get_urls(results.failures)
         self.assertEqual(failures, [])

@@ -1,5 +1,5 @@
 import asyncio
-from urllib.parse import urlparse, urljoin
+from urllib.parse import urljoin
 from typing import List, Set, Deque, Optional, Union
 from .timer import Timer
 import logging
@@ -88,10 +88,9 @@ class DeadSeeker:
         if resp.html and depth != 0:
             home = resp.urltarget.home
             links = linkparser.parse(resp.html)
+            base = resp.urltarget.url
             for newurl in links:
-                if not bool(
-                        urlparse(newurl).netloc):  # relative link?
-                    newurl = urljoin(resp.urltarget.url, newurl)
+                newurl = urljoin(base, newurl)
                 if newurl not in visited:
                     visited.add(newurl)
                     targets.appendleft(
