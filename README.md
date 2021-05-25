@@ -73,7 +73,7 @@ Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)
 
 ## Example usage
 ```yml
-uses: ScholliYT/Broken-Links-Crawler-Action@v2.1.1
+uses: ScholliYT/Broken-Links-Crawler-Action@v3
 with:
   website_url: 'https://github.com/ScholliYT/Broken-Links-Crawler-Action'
   exclude_url_prefix: 'mailto:,https://www.linkedin.com,https://linkedin.com'
