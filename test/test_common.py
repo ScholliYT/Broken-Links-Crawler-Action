@@ -35,6 +35,10 @@ class TestSeekerConfig(unittest.TestCase):
         self.assertEqual(
             self.testobj.connect_limit_per_host, 10)
 
+    def test_default_timeout(self):
+        self.assertEqual(
+            self.testobj.timeout, 60)
+
     def test_default_include_prefix(self):
         self.assertEqual(
             self.testobj.includeprefix, [])

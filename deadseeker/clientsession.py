@@ -53,7 +53,7 @@ class DefaultClientSessionFactory(ClientSessionFactory):
         return RetryClient(
                 raise_for_status=True,
                 connector=connector,
-                timeout=ClientTimeout(total=60),
+                timeout=ClientTimeout(total=config.timeout),
                 headers={'User-Agent': config.agent},
                 retry_options=retry_options,
                 trace_configs=[trace_config])

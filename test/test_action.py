@@ -21,6 +21,7 @@ TEST_INCLUDE_CONTAINED = ['includecontained']
 TEST_EXCLUDE_CONTAINED = ['excludecontained']
 TEST_ALWAYS_GET_ONSITE = True
 TEST_CONNECT_LIMIT_PER_HOST = 3
+TEST_TIMEOUT = 60
 
 
 class TestAction(unittest.TestCase):
@@ -36,6 +37,7 @@ class TestAction(unittest.TestCase):
         self.inputvalidator.get_retry_maxtries.return_value = TEST_MAX_TRIES
         self.inputvalidator.get_connect_limit_per_host.return_value = \
             TEST_CONNECT_LIMIT_PER_HOST
+        self.inputvalidator.get_timeout.return_value = TEST_TIMEOUT
         self.inputvalidator.get_includeprefix.return_value = \
             TEST_INCLUDE_PREFIX
         self.inputvalidator.get_excludeprefix.return_value = \
@@ -140,3 +142,4 @@ class TestAction(unittest.TestCase):
         self.assertEqual(
             config.connect_limit_per_host,
             TEST_CONNECT_LIMIT_PER_HOST)
+        self.assertEqual(config.timeout, TEST_TIMEOUT)

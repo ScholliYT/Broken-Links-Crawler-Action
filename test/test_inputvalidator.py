@@ -3,7 +3,8 @@ from deadseeker.common import (
     DEFAULT_RETRY_MAX_TIME,
     DEFAULT_WEB_AGENT,
     DEFAULT_MAX_DEPTH,
-    DEFAULT_CONNECT_LIMIT_PER_HOST
+    DEFAULT_CONNECT_LIMIT_PER_HOST,
+    DEFAULT_TIMEOUT
 )
 from deadseeker.inputvalidator import InputValidator
 import unittest
@@ -215,6 +216,25 @@ class TestInputValidator(unittest.TestCase):
         self.assert_exception_message(
             context,
             "'INPUT_CONNECT_LIMIT_PER_HOST' environment variable" +
+            " expected to be a number")
+
+    def test_timeout_default(self):
+        self.assertEqual(
+            DEFAULT_TIMEOUT,
+            self.testObj.get_timeout())
+
+    def test_timeout_good(self):
+        self.env['INPUT_TIMEOUT'] = '6'
+        self.assertEqual(
+            6, self.testObj.get_timeout())
+
+    def test_timeout_bad(self):
+        self.env['INPUT_TIMEOUT'] = 'apples'
+        with self.assertRaises(Exception) as context:
+            self.testObj.get_timeout()
+        self.assert_exception_message(
+            context,
+            "'INPUT_TIMEOUT' environment variable" +
             " expected to be a number")
 
     def test_defaultWebAgent(self):

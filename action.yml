@@ -55,6 +55,10 @@ inputs:
     description: 'Limit number of tcp connections per host'
     required: false
     default: '10'
+  timeout:
+    description: 'Number of seconds to wait for a request to complete'
+    required: false
+    default: '60'
 runs:
   using: 'docker'
   image: 'Dockerfile'

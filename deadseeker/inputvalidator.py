@@ -7,7 +7,8 @@ from deadseeker.common import (
     DEFAULT_RETRY_MAX_TIME,
     DEFAULT_WEB_AGENT,
     DEFAULT_MAX_DEPTH,
-    DEFAULT_CONNECT_LIMIT_PER_HOST
+    DEFAULT_CONNECT_LIMIT_PER_HOST,
+    DEFAULT_TIMEOUT
 )
 
 
@@ -37,6 +38,9 @@ class InputValidator:
     def get_connect_limit_per_host(self) -> int:
         return self._numeric(
             'INPUT_CONNECT_LIMIT_PER_HOST', DEFAULT_CONNECT_LIMIT_PER_HOST)
+
+    def get_timeout(self) -> int:
+        return self._numeric('INPUT_TIMEOUT', DEFAULT_TIMEOUT)
 
     def get_verbosity(self) -> Union[bool, int]:
         verboseStr = self.inputs.get('INPUT_VERBOSE')

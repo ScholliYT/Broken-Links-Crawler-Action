@@ -35,6 +35,7 @@ def run_action() -> None:
 
     config = SeekerConfig()
     config.connect_limit_per_host = inputvalidator.get_connect_limit_per_host()
+    config.timeout = inputvalidator.get_timeout()
     config.max_tries = inputvalidator.get_retry_maxtries()
     config.max_time = inputvalidator.get_retry_maxtime()
     config.alwaysgetonsite = inputvalidator.get_alwaysgetonsite()

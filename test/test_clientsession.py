@@ -22,6 +22,7 @@ class TestDefaultClientSessionFactory(AsyncTestCase):
         self.config.max_tries = 3
         self.config.max_time = 45
         self.config.connect_limit_per_host = 0
+        self.config.timeout = 60
         self.retryclient_mock = patch('deadseeker.clientsession.RetryClient')
         self.retryclient = self.retryclient_mock.start()
         self.exponentialretry_mock = patch(
