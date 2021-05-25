@@ -6,7 +6,7 @@ name: Lint and Test Project
 on: [push, pull_request]
 
 jobs:
-  build:
+  lint-and-test:
 
     runs-on: ubuntu-latest
 

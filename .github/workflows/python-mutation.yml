@@ -6,7 +6,7 @@ name: Mutation Test Project
 on: [pull_request]
 
 jobs:
-  build:
+  mutation-test:
 
     runs-on: ubuntu-latest
 
