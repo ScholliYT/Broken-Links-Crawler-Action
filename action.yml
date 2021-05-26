@@ -59,6 +59,10 @@ inputs:
     description: 'Number of seconds to wait for a request to complete'
     required: false
     default: '60'
+  search_attrs:
+    description: 'Names of element attributes to extract links from'
+    required: false
+    default: 'href,src'
 runs:
   using: 'docker'
   image: 'Dockerfile'

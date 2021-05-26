@@ -22,6 +22,7 @@ TEST_EXCLUDE_CONTAINED = ['excludecontained']
 TEST_ALWAYS_GET_ONSITE = True
 TEST_CONNECT_LIMIT_PER_HOST = 3
 TEST_TIMEOUT = 60
+TEST_SEARCH_ATTRS = set(['href', 'src', 'data-src'])
 
 
 class TestAction(unittest.TestCase):
@@ -31,6 +32,7 @@ class TestAction(unittest.TestCase):
         self.inputvalidator_class = self.inputvalidator_patch.start()
         self.inputvalidator: InputValidator = \
             self.inputvalidator_class.return_value
+        self.inputvalidator.get_search_attrs.return_value = TEST_SEARCH_ATTRS
         self.inputvalidator.get_urls.return_value = TEST_URLS
         self.inputvalidator.get_maxdepth.return_value = TEST_MAX_DEPTH
         self.inputvalidator.get_retry_maxtime.return_value = TEST_MAX_TIME
@@ -128,6 +130,7 @@ class TestAction(unittest.TestCase):
         run_action()
         self.deadseeker.assert_called_once()
         config: SeekerConfig = self.deadseeker.call_args.args[0]
+        self.assertEqual(config.search_attrs, TEST_SEARCH_ATTRS)
         self.assertEqual(config.max_tries, TEST_MAX_TRIES)
         self.assertEqual(config.max_time, TEST_MAX_TIME)
         self.assertEqual(config.max_depth, TEST_MAX_DEPTH)

@@ -237,7 +237,9 @@ class TestDeadSeeker(unittest.TestCase):
         linkparser = Mock(spec=LinkParser)
         linkparser.parse.side_effect = parse_mock
 
-        def get_link_parser_mock(linkacceptor: LinkAcceptor):
+        def get_link_parser_mock(
+                config: SeekerConfig, linkacceptor: LinkAcceptor):
+            self.assertIs(config, self.config)
             self.assertIs(linkacceptor, self.linkacceptor)
             return linkparser
         self.testobj.linkparserfactory.get_link_parser.side_effect = \

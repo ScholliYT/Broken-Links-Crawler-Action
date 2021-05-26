@@ -71,6 +71,10 @@ Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)
 
 **Optional** By default, the crawler will open a maximum of 10 connections per host.  This can be useful for when crawling a site that has rate limits. Setting this value to zero will cause an unlimited number of connections per host, but this could inadvertently cause timeout errors if the target server gets overwhelmed with connections. (default 10).
 
+### `search_attrs`
+
+**Optional** The names of html element attributes to extract links from.  This can be useful in you are crawling a site that uses a library like [lazyload](https://github.com/tuupola/lazyload) to lazy-load images -- you would want to make your search_attrs 'href,src,data-src'.  (default 'href,src')
+
 ## Example usage
 ```yml
 uses: ScholliYT/Broken-Links-Crawler-Action@v3

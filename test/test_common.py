@@ -31,6 +31,12 @@ class TestSeekerConfig(unittest.TestCase):
         self.assertEqual(
             self.testobj.max_depth, -1)
 
+    def test_default_search_attrs(self):
+        self.assertEqual(
+            self.testobj.search_attrs,
+            set(['href', 'src'])
+        )
+
     def test_default_connect_limit_per_host(self):
         self.assertEqual(
             self.testobj.connect_limit_per_host, 10)

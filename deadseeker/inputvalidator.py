@@ -1,10 +1,11 @@
 import validators  # type: ignore
-from typing import List, Dict, Union, Optional
+from typing import List, Dict, Union, Optional, Set
 import re
 import logging
 from deadseeker.common import (
     DEFAULT_RETRY_MAX_TRIES,
     DEFAULT_RETRY_MAX_TIME,
+    DEFAULT_SEARCH_ATTRS,
     DEFAULT_WEB_AGENT,
     DEFAULT_MAX_DEPTH,
     DEFAULT_CONNECT_LIMIT_PER_HOST,
@@ -25,6 +26,12 @@ class InputValidator:
                 "'INPUT_WEBSITE_URL' environment variable" +\
                 f" expected to contain valid url: {url}"
         return website_urls
+
+    def get_search_attrs(self) -> Set[str]:
+        search_attrs = self._splitAndTrim('INPUT_SEARCH_ATTRS')
+        if search_attrs:
+            return set(search_attrs)
+        return DEFAULT_SEARCH_ATTRS
 
     def get_retry_maxtries(self) -> int:
         return self._numeric('INPUT_MAX_RETRIES', DEFAULT_RETRY_MAX_TRIES)

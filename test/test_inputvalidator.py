@@ -1,6 +1,7 @@
 from deadseeker.common import (
     DEFAULT_RETRY_MAX_TRIES,
     DEFAULT_RETRY_MAX_TIME,
+    DEFAULT_SEARCH_ATTRS,
     DEFAULT_WEB_AGENT,
     DEFAULT_MAX_DEPTH,
     DEFAULT_CONNECT_LIMIT_PER_HOST,
@@ -60,6 +61,16 @@ class TestInputValidator(unittest.TestCase):
         self.assertEqual(2, len(urls))
         self.assertTrue('https://www.google.com' in urls)
         self.assertTrue('https://www.apple.com' in urls)
+
+    def test_search_attrs_default(self):
+        search_attrs = self.testObj.get_search_attrs()
+        self.assertEqual(DEFAULT_SEARCH_ATTRS, search_attrs)
+
+    def test_search_attrs_with_values(self):
+        self.env['INPUT_SEARCH_ATTRS'] = \
+            'href,src,data-src'
+        search_attrs = self.testObj.get_search_attrs()
+        self.assertEqual(set(['href', 'src', 'data-src']), search_attrs)
 
     def test_verboseFalseByDefault(self):
         self.assertFalse(

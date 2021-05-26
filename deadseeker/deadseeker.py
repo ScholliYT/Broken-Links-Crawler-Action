@@ -53,7 +53,8 @@ class DeadSeeker:
             visited.add(url)
             targets.appendleft(UrlTarget(url, url, self.config.max_depth))
         linkacceptor = self.linkacceptorfactory.get_link_acceptor(self.config)
-        linkparser = self.linkparserfactory.get_link_parser(linkacceptor)
+        linkparser = \
+            self.linkparserfactory.get_link_parser(self.config, linkacceptor)
         responsefetcher = self.responsefetcherfactory.get_response_fetcher(
                                 self.config)
         async with self.clientsessionfactory.get_client_session(

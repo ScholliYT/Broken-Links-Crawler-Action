@@ -34,6 +34,7 @@ def run_action() -> None:
         logging.basicConfig(level=verbosity)
 
     config = SeekerConfig()
+    config.search_attrs = inputvalidator.get_search_attrs()
     config.connect_limit_per_host = inputvalidator.get_connect_limit_per_host()
     config.timeout = inputvalidator.get_timeout()
     config.max_tries = inputvalidator.get_retry_maxtries()

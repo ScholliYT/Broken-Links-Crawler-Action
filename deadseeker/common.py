@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Set
 
 DEFAULT_WEB_AGENT: str = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' +\
     ' AppleWebKit/537.36 (KHTML, like Gecko)' +\
@@ -9,6 +9,7 @@ DEFAULT_EXCLUDE_PREFIX: List[str] = ['mailto:', 'tel:']
 DEFAULT_MAX_DEPTH: int = -1
 DEFAULT_CONNECT_LIMIT_PER_HOST: int = 10
 DEFAULT_TIMEOUT: int = 60
+DEFAULT_SEARCH_ATTRS: Set[str] = set(['href', 'src'])
 
 
 class SeekerConfig:
@@ -22,6 +23,7 @@ class SeekerConfig:
         self.excludesuffix: List[str] = []
         self.includecontained: List[str] = []
         self.excludecontained: List[str] = []
+        self.search_attrs: Set[str] = DEFAULT_SEARCH_ATTRS
         self.agent: str = DEFAULT_WEB_AGENT
         self.alwaysgetonsite: bool = False
         self.connect_limit_per_host: int = \
