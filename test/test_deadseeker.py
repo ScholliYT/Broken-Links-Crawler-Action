@@ -323,6 +323,7 @@ class TestDeadSeeker(unittest.TestCase):
         self.assertEqual(failures, [])
         self.assertEqual(4000.0, results.elapsed)
 
+    # Test for ScholliYT/Broken-Links-Crawler-Action#5
     def test_site3_is_fully_crawled(self):
         results = self.testobj.seek(TEST3_URL_HOME)
         successes = get_urls(results.successes)
