@@ -226,7 +226,8 @@ class TestDeadSeeker(unittest.TestCase):
             self.linkacceptor
         self.testobj.linkparserfactory = Mock(spec=LinkParserFactory)
 
-        def parse_mock(html: str):
+        def parse_mock(resp: UrlFetchResponse):
+            html = resp.html
             links = TEST_PARSE_RESULTS_BY_HTML.get(html)
             self.assertIsNotNone(
                 html,

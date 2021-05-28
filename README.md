@@ -75,6 +75,10 @@ Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)
 
 **Optional** The names of html element attributes to extract links from.  This can be useful in you are crawling a site that uses a library like [lazyload](https://github.com/tuupola/lazyload) to lazy-load images -- you would want to make your search_attrs 'href,src,data-src'.  (default 'href,src')
 
+### `resolve_before_filtering`
+
+**Optional** By default, the crawler will apply the includes/excludes filtering criteria to the links as they appear in the html source.  For example, if a link has a relative url in the html source, then the includes/excludes will be applied to the link in its relative form.  By setting this value to true, the crawler will fully resolve the link to its absolute representation before applying the includes/excludes filtering criteria.  If you wanted to only crawl links that are prefixed with your site ('http://mysite.com/') then you would set `resolve_before_filtering` to `'true'` and set `include_url_prefix` to `'http://mysite.com/'`.  (default false)
+
 ## Example usage
 ```yml
 uses: ScholliYT/Broken-Links-Crawler-Action@v3

@@ -1,8 +1,9 @@
 from .linkacceptor import LinkAcceptor
 from html.parser import HTMLParser
-from typing import List, Tuple, Optional, Set
+from urllib.parse import urljoin
+from typing import List, Tuple, Optional
 import logging
-from .common import SeekerConfig
+from .common import SeekerConfig, UrlFetchResponse
 from abc import abstractmethod, ABC
 
 logger = logging.getLogger(__name__)
@@ -10,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class LinkParser(ABC):
     @abstractmethod  # pragma: no mutate
-    def parse(self, html: str) -> List[str]:
+    def parse(self, resp: UrlFetchResponse) -> List[str]:
         pass
 
 
@@ -31,9 +32,9 @@ class DefaultLinkParser(LinkParser):
         self.config = config
         self.linkacceptor = linkacceptor
 
-    def parse(self, html: str) -> List[str]:
-        parser = LinkHtmlParser(self.config.search_attrs, self.linkacceptor)
-        parser.feed(html)
+    def parse(self, resp: UrlFetchResponse) -> List[str]:
+        parser = LinkHtmlParser(resp, self.config, self.linkacceptor)
+        parser.parse()
         return parser.links
 
 
@@ -48,9 +49,11 @@ class DefaultLinkParserFactory(LinkParserFactory):
 class LinkHtmlParser(HTMLParser):
     def __init__(
             self,
-            search_attrs: Set[str],
+            resp: UrlFetchResponse,
+            config: SeekerConfig,
             linkacceptor: LinkAcceptor):
-        self.search_attrs = search_attrs
+        self.resp = resp
+        self.config = config
         self.linkacceptor = linkacceptor
         self.links: List[str] = list()
         super().__init__()
@@ -64,11 +67,17 @@ class LinkHtmlParser(HTMLParser):
         '''Override parent method and check tag for our attributes'''
         for attr in attrs:
             # ('href', 'http://google.com')
-            if attr[0] in self.search_attrs:
+            if attr[0] in self.config.search_attrs:
                 url = attr[1]
                 if url:
+                    if self.config.resolvebeforefilter:
+                        url = urljoin(self.resp.urltarget.url, url)
                     if self.linkacceptor.accepts(url):
                         logger.debug(f'Accepting url: {url}')
                         self.links.append(url)
                     else:
                         logger.debug(f'Skipping url: {url}')
+
+    def parse(self) -> None:
+        if self.resp.html:
+            super().feed(self.resp.html)

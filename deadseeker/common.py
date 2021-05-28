@@ -26,6 +26,7 @@ class SeekerConfig:
         self.search_attrs: Set[str] = DEFAULT_SEARCH_ATTRS
         self.agent: str = DEFAULT_WEB_AGENT
         self.alwaysgetonsite: bool = False
+        self.resolvebeforefilter: bool = False
         self.connect_limit_per_host: int = \
             DEFAULT_CONNECT_LIMIT_PER_HOST
         self.timeout: int = DEFAULT_TIMEOUT

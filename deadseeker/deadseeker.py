@@ -87,15 +87,14 @@ class DeadSeeker:
             resp: UrlFetchResponse) -> None:
         depth = resp.urltarget.depth
         if resp.html and depth != 0:
-            home = resp.urltarget.home
-            links = linkparser.parse(resp.html)
+            links = linkparser.parse(resp)
             base = resp.urltarget.url
             for newurl in links:
                 newurl = urljoin(base, newurl)
                 if newurl not in visited:
                     visited.add(newurl)
                     targets.appendleft(
-                        UrlTarget(home, newurl, depth - 1))
+                        UrlTarget(resp.urltarget.home, newurl, depth - 1))
 
     def seek(
             self,

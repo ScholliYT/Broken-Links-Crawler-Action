@@ -65,6 +65,10 @@ class InputValidator:
     def get_alwaysgetonsite(self) -> bool:
         return self._get_boolean(self.inputs.get('INPUT_ALWAYS_GET_ONSITE'))
 
+    def get_resolvebeforefilter(self) -> bool:
+        return self._get_boolean(
+            self.inputs.get('INPUT_RESOLVE_BEFORE_FILTERING'))
+
     def _get_boolean(self, valueStr: Optional[str]) -> bool:
         truepattern = '^t|true|y|yes|on$'
         return bool(

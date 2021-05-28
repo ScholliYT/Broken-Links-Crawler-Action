@@ -11,7 +11,7 @@ from deadseeker.inputvalidator import InputValidator
 import unittest
 from logging import DEBUG, INFO, WARN, ERROR, CRITICAL
 import logging
-from typing import Dict
+from typing import Dict, Callable
 
 INCLUDE_EXCLUDE_METHODS_BY_VARNAME: Dict[str, str] = {
     'INPUT_INCLUDE_URL_PREFIX': 'get_includeprefix',
@@ -100,24 +100,46 @@ class TestInputValidator(unittest.TestCase):
                 f' verbose false: {verboseStr}')
 
     def test_alwaysgetonsite_true(self):
+        self._test_get_boolean_true(
+            'INPUT_ALWAYS_GET_ONSITE',
+            lambda: self.testObj.get_alwaysgetonsite())
+
+    def test_alwaysgetonsite_false(self):
+        self._test_get_boolean_false(
+            'INPUT_ALWAYS_GET_ONSITE',
+            lambda: self.testObj.get_alwaysgetonsite())
+
+    def test_resolvebeforefilter_true(self):
+        self._test_get_boolean_true(
+            'INPUT_RESOLVE_BEFORE_FILTERING',
+            lambda: self.testObj.get_resolvebeforefilter())
+
+    def test_resolvebeforefilter_false(self):
+        self._test_get_boolean_false(
+            'INPUT_RESOLVE_BEFORE_FILTERING',
+            lambda: self.testObj.get_resolvebeforefilter())
+
+    def _test_get_boolean_true(
+            self, envname: str, callable: Callable[[], bool]):
         for valueStr in [
                 'true', 't', 'True', 'T', 'TRUE',
                 'yes', 'y', 'Yes', 'Y', 'YES',
                 'on', 'On', 'ON']:
-            self.env['INPUT_ALWAYS_GET_ONSITE'] = valueStr
+            self.env[envname] = valueStr
             self.assertTrue(
-                self.testObj.get_alwaysgetonsite(),
+                callable(),
                 'Expected value to evaluate to' +
                 f' verbose true: {valueStr}')
 
-    def test_alwaysgetonsite_false(self):
+    def _test_get_boolean_false(
+            self, envname: str, callable: Callable[[], bool]):
         for valueStr in [
                 '', 'false', 'f', 'False', 'F', 'FALSE',
                 'no', 'n', 'No', 'N', 'NO',
                 'off', 'Off', 'OFF']:
-            self.env['INPUT_ALWAYS_GET_ONSITE'] = valueStr
+            self.env[envname] = valueStr
             self.assertFalse(
-                self.testObj.get_alwaysgetonsite(),
+                callable(),
                 'Expected value to evaluate to' +
                 f' verbose false: {valueStr}')
 

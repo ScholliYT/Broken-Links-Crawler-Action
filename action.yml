@@ -63,6 +63,10 @@ inputs:
     description: 'Names of element attributes to extract links from'
     required: false
     default: 'href,src'
+  resolve_before_filtering:
+    description: 'Enables absolute link resolution before applying filtering patterns'
+    required: false
+    default: 'false'
 runs:
   using: 'docker'
   image: 'Dockerfile'

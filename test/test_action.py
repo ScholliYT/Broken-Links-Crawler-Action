@@ -20,6 +20,7 @@ TEST_EXCLUDE_SUFFIX = ['excludesuffix']
 TEST_INCLUDE_CONTAINED = ['includecontained']
 TEST_EXCLUDE_CONTAINED = ['excludecontained']
 TEST_ALWAYS_GET_ONSITE = True
+TEST_RESOLVE_BEFORE_FILTERING = True
 TEST_CONNECT_LIMIT_PER_HOST = 3
 TEST_TIMEOUT = 60
 TEST_SEARCH_ATTRS = set(['href', 'src', 'data-src'])
@@ -54,6 +55,8 @@ class TestAction(unittest.TestCase):
             TEST_EXCLUDE_CONTAINED
         self.inputvalidator.get_alwaysgetonsite.return_value = \
             TEST_ALWAYS_GET_ONSITE
+        self.inputvalidator.get_resolvebeforefilter.return_value = \
+            TEST_RESOLVE_BEFORE_FILTERING
         self.deadseeker_patch = patch('deadseeker.action.DeadSeeker')
         self.deadseeker = self.deadseeker_patch.start()
         self.seek = self.deadseeker.return_value.seek
@@ -142,6 +145,8 @@ class TestAction(unittest.TestCase):
         self.assertEqual(config.includecontained, TEST_INCLUDE_CONTAINED)
         self.assertEqual(config.excludecontained, TEST_EXCLUDE_CONTAINED)
         self.assertEqual(config.alwaysgetonsite, TEST_ALWAYS_GET_ONSITE)
+        self.assertEqual(
+            config.resolvebeforefilter, TEST_RESOLVE_BEFORE_FILTERING)
         self.assertEqual(
             config.connect_limit_per_host,
             TEST_CONNECT_LIMIT_PER_HOST)

@@ -37,6 +37,9 @@ class TestSeekerConfig(unittest.TestCase):
             set(['href', 'src'])
         )
 
+    def test_default_resolvebeforefilter(self):
+        self.assertFalse(self.testobj.resolvebeforefilter)
+
     def test_default_connect_limit_per_host(self):
         self.assertEqual(
             self.testobj.connect_limit_per_host, 10)
