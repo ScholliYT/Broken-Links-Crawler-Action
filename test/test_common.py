@@ -38,7 +38,7 @@ class TestSeekerConfig(unittest.TestCase):
         )
 
     def test_default_resolvebeforefilter(self):
-        self.assertFalse(self.testobj.resolvebeforefilter)
+        self.assertEqual(self.testobj.resolvebeforefilter, False)
 
     def test_default_connect_limit_per_host(self):
         self.assertEqual(
