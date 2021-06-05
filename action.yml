@@ -54,7 +54,19 @@ inputs:
   connect_limit_per_host:
     description: 'Limit number of tcp connections per host'
     required: false
-    default: ''
+    default: '10'
+  timeout:
+    description: 'Number of seconds to wait for a request to complete'
+    required: false
+    default: '60'
+  search_attrs:
+    description: 'Names of element attributes to extract links from'
+    required: false
+    default: 'href,src'
+  resolve_before_filtering:
+    description: 'Enables absolute link resolution before applying filtering patterns'
+    required: false
+    default: 'false'
 runs:
   using: 'docker'
   image: 'Dockerfile'

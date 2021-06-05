@@ -21,6 +21,10 @@ class MockServerRequestHandler(SimpleHTTPRequestHandler):
         return DIRECTORY + path
 
     def do_HEAD(self):
+        if self.path.endswith('.ico'):
+            self.send_response(HTTPStatus.METHOD_NOT_ALLOWED)
+            self.end_headers()
+            return
         if not self.check_error():
             super().do_HEAD()
 
@@ -112,6 +116,7 @@ class TestIntegration(unittest.TestCase):
 
             expected_info_prefixes = [
                 f'200 - {self.url} - ',
+                f'200 - {self.url}/favicon.ico - ',
                 f'200 - {self.url}/page1.html - ',
                 f'200 - {self.url}/subpages/subpage1.html - ',
                 f'200 - {self.url}/page2.html - ',

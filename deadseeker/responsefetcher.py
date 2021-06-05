@@ -1,5 +1,5 @@
 from .common import UrlFetchResponse, UrlTarget, SeekerConfig
-from aiohttp import ClientSession
+from aiohttp import ClientSession, ClientResponse
 from abc import abstractmethod, ABC
 from .timer import Timer
 import aiohttp
@@ -43,7 +43,7 @@ class AbstractResponseFetcher(ResponseFetcher, ABC):
         except aiohttp.ClientResponseError as e:
             resp.status = e.status
             resp.error = e
-        except aiohttp.ClientError as e:
+        except Exception as e:
             resp.error = e
         resp.elapsed = timer.stop()*1000
         return resp
@@ -57,6 +57,28 @@ class AbstractResponseFetcher(ResponseFetcher, ABC):
             timer: Timer) -> None:
         pass
 
+    async def _do_get(
+            self,
+            session: ClientSession,
+            resp: UrlFetchResponse,
+            urltarget: UrlTarget,
+            timer: Timer) -> None:
+        url = urltarget.url
+        async with session.get(url) as response:
+            timer.stop()
+            resp.status = response.status
+            if has_html(response) and is_onsite(urltarget):
+                resp.html = await response.text()
+
+
+def has_html(response: ClientResponse) -> bool:
+    return ('Content-Type' in response.headers and
+            'html' in response.headers['Content-Type'])
+
+
+def is_onsite(urltarget: UrlTarget) -> bool:
+    return urltarget.home in urltarget.url
+
 
 # Optimized approach: Use HEAD request first, then only
 # use a GET request if the url is onsite and has html body
@@ -68,16 +90,18 @@ class HeadThenGetIfHtmlResponseFetcher(AbstractResponseFetcher):
             resp: UrlFetchResponse,
             urltarget: UrlTarget,
             timer: Timer) -> None:
-        url = urltarget.url
-        async with session.head(url) as headresponse:
-            timer.stop()
-            resp.status = headresponse.status
-            has_html = ('Content-Type' in headresponse.headers and
-                        'html' in headresponse.headers['Content-Type'])
-            onsite = urltarget.home in url
-            if(has_html and onsite):
-                async with session.get(url) as getresponse:
-                    resp.html = await getresponse.text()
+        try:
+            async with session.head(urltarget.url) as response:
+                timer.stop()
+                resp.status = response.status
+                if is_onsite(urltarget):
+                    await self._do_get(session, resp, urltarget, timer)
+        except aiohttp.ClientResponseError as e:
+            # Fixes ScholliYT/Broken-Links-Crawler-Action#8
+            if e.status == 405:
+                await self._do_get(session, resp, urltarget, timer)
+            else:
+                raise e
 
 
 # Always uses GET requests for onsite urls, but will continue
@@ -90,16 +114,8 @@ class AlwaysGetIfOnSiteResponseFetcher(HeadThenGetIfHtmlResponseFetcher):
             resp: UrlFetchResponse,
             urltarget: UrlTarget,
             timer: Timer) -> None:
-        url = urltarget.url
-        onsite = urltarget.home in url
-        if(onsite):
-            async with session.get(url) as getresponse:
-                resp.status = getresponse.status
-                has_html = ('Content-Type' in getresponse.headers and
-                            'html' in getresponse.headers['Content-Type'])
-                if(has_html):
-                    resp.html = await getresponse.text()
-                timer.stop()
+        if(is_onsite(urltarget)):
+            await self._do_get(session, resp, urltarget, timer)
         else:
             await super()._inner_fetch(
                 session,

@@ -4,6 +4,7 @@ from unittest.mock import Mock, patch
 from deadseeker.clientsession import DefaultClientSessionFactory
 from deadseeker.common import SeekerConfig
 import aiohttp
+import asyncio
 from types import SimpleNamespace
 from aiohttp import ClientSession, TraceRequestStartParams
 import logging
@@ -21,6 +22,7 @@ class TestDefaultClientSessionFactory(AsyncTestCase):
         self.config.max_tries = 3
         self.config.max_time = 45
         self.config.connect_limit_per_host = 0
+        self.config.timeout = 60
         self.retryclient_mock = patch('deadseeker.clientsession.RetryClient')
         self.retryclient = self.retryclient_mock.start()
         self.exponentialretry_mock = patch(
@@ -33,20 +35,26 @@ class TestDefaultClientSessionFactory(AsyncTestCase):
             'deadseeker.clientsession.TCPConnector')
         self.tcpconnector = \
             self.tcpconnector_patch.start()
+        self.clienttimeout_patch = patch(
+            'deadseeker.clientsession.ClientTimeout')
+        self.clienttimeout = self.clienttimeout_patch.start()
 
     def tearDown(self):
         self.retryclient_mock.stop()
         self.exponentialretry_mock.stop()
         self.traceconfig_mock.stop()
         self.tcpconnector_patch.stop()
+        self.clienttimeout_patch.stop()
 
     def test_retryclient_returned(self):
         actualresult = self.testObj.get_client_session(
                 self.config)
         self.assertIs(actualresult, self.retryclient.return_value)
+        self.clienttimeout.assert_called_with(total=60)
         self.retryclient.assert_called_with(
                 raise_for_status=True,
                 connector=self.tcpconnector.return_value,
+                timeout=self.clienttimeout.return_value,
                 headers={'User-Agent': TEST_AGENT},
                 retry_options=self.exponentialretry.return_value,
                 trace_configs=[self.traceconfig.return_value])
@@ -57,7 +65,10 @@ class TestDefaultClientSessionFactory(AsyncTestCase):
         self.exponentialretry.assert_called_with(
                             attempts=self.config.max_tries,
                             max_timeout=self.config.max_time,
-                            exceptions=[aiohttp.ClientError])
+                            exceptions=[
+                                aiohttp.ClientError,
+                                asyncio.TimeoutError
+                            ])
 
     async def test_traceconfig_configuration(self):
         self.testObj.get_client_session(

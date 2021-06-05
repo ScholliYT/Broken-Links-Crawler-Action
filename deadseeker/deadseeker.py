@@ -1,5 +1,5 @@
 import asyncio
-from urllib.parse import urlparse, urljoin
+from urllib.parse import urljoin
 from typing import List, Set, Deque, Optional, Union
 from .timer import Timer
 import logging
@@ -53,7 +53,8 @@ class DeadSeeker:
             visited.add(url)
             targets.appendleft(UrlTarget(url, url, self.config.max_depth))
         linkacceptor = self.linkacceptorfactory.get_link_acceptor(self.config)
-        linkparser = self.linkparserfactory.get_link_parser(linkacceptor)
+        linkparser = \
+            self.linkparserfactory.get_link_parser(self.config, linkacceptor)
         responsefetcher = self.responsefetcherfactory.get_response_fetcher(
                                 self.config)
         async with self.clientsessionfactory.get_client_session(
@@ -86,16 +87,14 @@ class DeadSeeker:
             resp: UrlFetchResponse) -> None:
         depth = resp.urltarget.depth
         if resp.html and depth != 0:
-            home = resp.urltarget.home
-            links = linkparser.parse(resp.html)
+            links = linkparser.parse(resp)
+            base = resp.urltarget.url
             for newurl in links:
-                if not bool(
-                        urlparse(newurl).netloc):  # relative link?
-                    newurl = urljoin(resp.urltarget.url, newurl)
+                newurl = urljoin(base, newurl)
                 if newurl not in visited:
                     visited.add(newurl)
                     targets.appendleft(
-                        UrlTarget(home, newurl, depth - 1))
+                        UrlTarget(resp.urltarget.home, newurl, depth - 1))
 
     def seek(
             self,

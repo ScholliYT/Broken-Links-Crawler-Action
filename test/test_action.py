@@ -20,7 +20,10 @@ TEST_EXCLUDE_SUFFIX = ['excludesuffix']
 TEST_INCLUDE_CONTAINED = ['includecontained']
 TEST_EXCLUDE_CONTAINED = ['excludecontained']
 TEST_ALWAYS_GET_ONSITE = True
+TEST_RESOLVE_BEFORE_FILTERING = True
 TEST_CONNECT_LIMIT_PER_HOST = 3
+TEST_TIMEOUT = 60
+TEST_SEARCH_ATTRS = set(['href', 'src', 'data-src'])
 
 
 class TestAction(unittest.TestCase):
@@ -30,12 +33,14 @@ class TestAction(unittest.TestCase):
         self.inputvalidator_class = self.inputvalidator_patch.start()
         self.inputvalidator: InputValidator = \
             self.inputvalidator_class.return_value
+        self.inputvalidator.get_search_attrs.return_value = TEST_SEARCH_ATTRS
         self.inputvalidator.get_urls.return_value = TEST_URLS
         self.inputvalidator.get_maxdepth.return_value = TEST_MAX_DEPTH
         self.inputvalidator.get_retry_maxtime.return_value = TEST_MAX_TIME
         self.inputvalidator.get_retry_maxtries.return_value = TEST_MAX_TRIES
         self.inputvalidator.get_connect_limit_per_host.return_value = \
             TEST_CONNECT_LIMIT_PER_HOST
+        self.inputvalidator.get_timeout.return_value = TEST_TIMEOUT
         self.inputvalidator.get_includeprefix.return_value = \
             TEST_INCLUDE_PREFIX
         self.inputvalidator.get_excludeprefix.return_value = \
@@ -50,6 +55,8 @@ class TestAction(unittest.TestCase):
             TEST_EXCLUDE_CONTAINED
         self.inputvalidator.get_alwaysgetonsite.return_value = \
             TEST_ALWAYS_GET_ONSITE
+        self.inputvalidator.get_resolvebeforefilter.return_value = \
+            TEST_RESOLVE_BEFORE_FILTERING
         self.deadseeker_patch = patch('deadseeker.action.DeadSeeker')
         self.deadseeker = self.deadseeker_patch.start()
         self.seek = self.deadseeker.return_value.seek
@@ -126,6 +133,7 @@ class TestAction(unittest.TestCase):
         run_action()
         self.deadseeker.assert_called_once()
         config: SeekerConfig = self.deadseeker.call_args.args[0]
+        self.assertEqual(config.search_attrs, TEST_SEARCH_ATTRS)
         self.assertEqual(config.max_tries, TEST_MAX_TRIES)
         self.assertEqual(config.max_time, TEST_MAX_TIME)
         self.assertEqual(config.max_depth, TEST_MAX_DEPTH)
@@ -138,5 +146,8 @@ class TestAction(unittest.TestCase):
         self.assertEqual(config.excludecontained, TEST_EXCLUDE_CONTAINED)
         self.assertEqual(config.alwaysgetonsite, TEST_ALWAYS_GET_ONSITE)
         self.assertEqual(
+            config.resolvebeforefilter, TEST_RESOLVE_BEFORE_FILTERING)
+        self.assertEqual(
             config.connect_limit_per_host,
             TEST_CONNECT_LIMIT_PER_HOST)
+        self.assertEqual(config.timeout, TEST_TIMEOUT)

@@ -1,6 +1,11 @@
 import unittest
 from aiounittest import AsyncTestCase
-from aiohttp import ClientSession, ClientResponseError, ClientError
+from asyncio import TimeoutError
+from aiohttp import (
+    ClientSession,
+    ClientResponseError,
+    ClientError
+)
 from unittest.mock import Mock, patch
 from aioresponses import aioresponses
 from deadseeker.common import SeekerConfig
@@ -61,6 +66,60 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
             self.assertIsNone(response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
 
+    # Test for ScholliYT/Broken-Links-Crawler-Action#8
+    @aioresponses()
+    async def test_if_same_site_and_html_head_not_supported(self,  m):
+        exception = ClientResponseError(None, None, status=405)
+        self._prep_request(
+            m,
+            TEST_HOME_URL,
+            headexception=exception,
+            content_type=TYPE_HTML)
+        async with ClientSession() as session:
+            response = await self.testobj.fetch_response(
+                    session, self.urltarget)
+            self.assertIs(self.urltarget, response.urltarget)
+            self.assertEqual(200, response.status)
+            self.assertEqual(TEST_BODY, response.html)
+            self.assertIsNone(response.error)
+            self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
+
+    # Test for ScholliYT/Broken-Links-Crawler-Action#8
+    @aioresponses()
+    async def test_if_same_site_and_not_html_head_not_supported(self,  m):
+        exception = ClientResponseError(None, None, status=405)
+        self._prep_request(
+            m,
+            TEST_HOME_URL,
+            headexception=exception,
+            content_type=TYPE_JSON)
+        async with ClientSession() as session:
+            response = await self.testobj.fetch_response(
+                    session, self.urltarget)
+            self.assertIs(self.urltarget, response.urltarget)
+            self.assertEqual(200, response.status)
+            self.assertIsNone(response.html)
+            self.assertIsNone(response.error)
+            self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
+
+    # Test for ScholliYT/Broken-Links-Crawler-Action#8
+    @aioresponses()
+    async def test_if_other_site_and_html_head_not_supported(self,  m):
+        exception = ClientResponseError(None, None, status=405)
+        self._prep_request(
+            m,
+            TEST_OTHER_URL,
+            headexception=exception,
+            content_type=TYPE_HTML)
+        async with ClientSession() as session:
+            response = await self.testobj.fetch_response(
+                    session, self.urltarget)
+            self.assertIs(self.urltarget, response.urltarget)
+            self.assertEqual(200, response.status)
+            self.assertIsNone(response.html)
+            self.assertIsNone(response.error)
+            self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
+
     @aioresponses()
     async def test_if_other_site_and_html(
             self, m):
@@ -70,7 +129,7 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
             self.assertEqual(200, response.status)
-            self.assertNotEqual(TEST_BODY, response.html)
+            self.assertIsNone(response.html)
             self.assertIsNone(response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
 
@@ -83,7 +142,7 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
             self.assertEqual(200, response.status)
-            self.assertNotEqual(TEST_BODY, response.html)
+            self.assertIsNone(response.html)
             self.assertIsNone(response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
 
@@ -96,7 +155,7 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
             self.assertEqual(200, response.status)
-            self.assertNotEqual(TEST_BODY, response.html)
+            self.assertIsNone(response.html)
             self.assertIsNone(response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
 
@@ -104,13 +163,13 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
     async def test_if_response_error(
             self, m):
         exception = ClientResponseError(None, None, status=404)
-        self._prep_request(m, TEST_HOME_URL, exception=exception)
+        self._prep_request(m, TEST_HOME_URL, headexception=exception)
         async with ClientSession() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
             self.assertEqual(404, response.status)
-            self.assertNotEqual(TEST_BODY, response.html)
+            self.assertIsNone(response.html)
             self.assertIs(exception, response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
 
@@ -118,13 +177,27 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
     async def test_if_connection_error(
             self, m):
         exception = ClientError()
-        self._prep_request(m, TEST_HOME_URL, exception=exception)
+        self._prep_request(m, TEST_HOME_URL, headexception=exception)
         async with ClientSession() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
             self.assertEqual(0, response.status)
-            self.assertNotEqual(TEST_BODY, response.html)
+            self.assertIsNone(response.html)
+            self.assertIs(exception, response.error)
+            self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
+
+    @aioresponses()
+    async def test_if_timeout_error(
+            self, m):
+        exception = TimeoutError()
+        self._prep_request(m, TEST_HOME_URL, headexception=exception)
+        async with ClientSession() as session:
+            response = await self.testobj.fetch_response(
+                    session, self.urltarget)
+            self.assertIs(self.urltarget, response.urltarget)
+            self.assertEqual(0, response.status)
+            self.assertIsNone(response.html)
             self.assertIs(exception, response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
 
@@ -132,14 +205,17 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
             self,
             mockresponses,
             url: str,
-            **kwargs):
+            content_type: str = None,
+            headexception: Exception = None):
         self.urltarget.url = url
         mockresponses.head(
             url,
-            **kwargs
+            content_type=content_type,
+            exception=headexception
         )
         mockresponses.get(
             url,
+            content_type=content_type,
             body=TEST_BODY
         )
 
@@ -179,7 +255,7 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
             self.assertEqual(200, response.status)
-            self.assertNotEqual(TEST_BODY, response.html)
+            self.assertIsNone(response.html)
             self.assertIsNone(response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
 
@@ -192,7 +268,7 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
             self.assertEqual(200, response.status)
-            self.assertNotEqual(TEST_BODY, response.html)
+            self.assertIsNone(response.html)
             self.assertIsNone(response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
 
@@ -206,7 +282,7 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
             self.assertEqual(200, response.status)
-            self.assertNotEqual(TEST_BODY, response.html)
+            self.assertIsNone(response.html)
             self.assertIsNone(response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
 
@@ -220,7 +296,7 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
             self.assertEqual(404, response.status)
-            self.assertNotEqual(TEST_BODY, response.html)
+            self.assertIsNone(response.html)
             self.assertIs(exception, response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
 
@@ -234,7 +310,21 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
             self.assertEqual(0, response.status)
-            self.assertNotEqual(TEST_BODY, response.html)
+            self.assertIsNone(response.html)
+            self.assertIs(exception, response.error)
+            self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
+
+    @aioresponses()
+    async def test_if_timeout_error(
+            self, m):
+        exception = TimeoutError()
+        self._prep_request(m, TEST_HOME_URL, exception=exception)
+        async with ClientSession() as session:
+            response = await self.testobj.fetch_response(
+                    session, self.urltarget)
+            self.assertIs(self.urltarget, response.urltarget)
+            self.assertEqual(0, response.status)
+            self.assertIsNone(response.html)
             self.assertIs(exception, response.error)
             self.assertEqual(TEST_EXPECTED_ELAPSED, response.elapsed)
 

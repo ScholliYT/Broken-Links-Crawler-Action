@@ -1,13 +1,15 @@
 import validators  # type: ignore
-from typing import List, Dict, Union, Optional
+from typing import List, Dict, Union, Optional, Set
 import re
 import logging
 from deadseeker.common import (
     DEFAULT_RETRY_MAX_TRIES,
     DEFAULT_RETRY_MAX_TIME,
+    DEFAULT_SEARCH_ATTRS,
     DEFAULT_WEB_AGENT,
     DEFAULT_MAX_DEPTH,
-    DEFAULT_CONNECT_LIMIT_PER_HOST
+    DEFAULT_CONNECT_LIMIT_PER_HOST,
+    DEFAULT_TIMEOUT
 )
 
 
@@ -25,6 +27,12 @@ class InputValidator:
                 f" expected to contain valid url: {url}"
         return website_urls
 
+    def get_search_attrs(self) -> Set[str]:
+        search_attrs = self._splitAndTrim('INPUT_SEARCH_ATTRS')
+        if search_attrs:
+            return set(search_attrs)
+        return DEFAULT_SEARCH_ATTRS
+
     def get_retry_maxtries(self) -> int:
         return self._numeric('INPUT_MAX_RETRIES', DEFAULT_RETRY_MAX_TRIES)
 
@@ -37,6 +45,9 @@ class InputValidator:
     def get_connect_limit_per_host(self) -> int:
         return self._numeric(
             'INPUT_CONNECT_LIMIT_PER_HOST', DEFAULT_CONNECT_LIMIT_PER_HOST)
+
+    def get_timeout(self) -> int:
+        return self._numeric('INPUT_TIMEOUT', DEFAULT_TIMEOUT)
 
     def get_verbosity(self) -> Union[bool, int]:
         verboseStr = self.inputs.get('INPUT_VERBOSE')
@@ -53,6 +64,10 @@ class InputValidator:
 
     def get_alwaysgetonsite(self) -> bool:
         return self._get_boolean(self.inputs.get('INPUT_ALWAYS_GET_ONSITE'))
+
+    def get_resolvebeforefilter(self) -> bool:
+        return self._get_boolean(
+            self.inputs.get('INPUT_RESOLVE_BEFORE_FILTERING'))
 
     def _get_boolean(self, valueStr: Optional[str]) -> bool:
         truepattern = '^t|true|y|yes|on$'

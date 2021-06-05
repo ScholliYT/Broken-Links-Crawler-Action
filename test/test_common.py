@@ -31,9 +31,22 @@ class TestSeekerConfig(unittest.TestCase):
         self.assertEqual(
             self.testobj.max_depth, -1)
 
+    def test_default_search_attrs(self):
+        self.assertEqual(
+            self.testobj.search_attrs,
+            set(['href', 'src'])
+        )
+
+    def test_default_resolvebeforefilter(self):
+        self.assertEqual(self.testobj.resolvebeforefilter, False)
+
     def test_default_connect_limit_per_host(self):
         self.assertEqual(
-            self.testobj.connect_limit_per_host, 0)
+            self.testobj.connect_limit_per_host, 10)
+
+    def test_default_timeout(self):
+        self.assertEqual(
+            self.testobj.timeout, 60)
 
     def test_default_include_prefix(self):
         self.assertEqual(

@@ -69,9 +69,19 @@ Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)
 
 ### `connect_limit_per_host`
 
-**Optional** By default, the crawler will open as many connections at it needs to make the requests.  By setting this value to a number greater than zero (0), the crawler will not exceed that number of connections for each host. This can be useful for when crawling a site that has rate limits. (default unlimited).
+**Optional** By default, the crawler will open a maximum of 10 connections per host.  This can be useful for when crawling a site that has rate limits. Setting this value to zero will cause an unlimited number of connections per host, but this could inadvertently cause timeout errors if the target server gets overwhelmed with connections. (default 10).
+
+### `search_attrs`
+
+**Optional** The names of html element attributes to extract links from.  This can be useful in you are crawling a site that uses a library like [lazyload](https://github.com/tuupola/lazyload) to lazy-load images -- you would want to make your search_attrs 'href,src,data-src'.  (default 'href,src')
+
+### `resolve_before_filtering`
+
+**Optional** By default, the crawler will apply the includes/excludes filtering criteria to the links as they appear in the html source.  For example, if a link has a relative url in the html source, then the includes/excludes will be applied to the link in its relative form.  By setting this value to true, the crawler will fully resolve the link to its absolute representation before applying the includes/excludes filtering criteria.  If you wanted to only crawl links that are prefixed with your site ('http://mysite.com/') then you would set `resolve_before_filtering` to `'true'` and set `include_url_prefix` to `'http://mysite.com/'`.  (default false)
 
 ## Example usage
+
+### Basic scan with retry
 ```yml
 uses: ScholliYT/Broken-Links-Crawler-Action@v3
 with:
@@ -80,9 +90,23 @@ with:
   verbose: 'true'
   max_retry_time: 30
   max_retries: 5
+  max_depth: 1
 ```
 
-## Dev
+### Basic scan with retry, only fetches URLs on same site
+```yml
+uses: ScholliYT/Broken-Links-Crawler-Action@v3
+with:
+  website_url: 'https://github.com/ScholliYT/Broken-Links-Crawler-Action'
+  include_url_prefix: 'https://github.com/ScholliYT/Broken-Links-Crawler-Action'
+  resolve_before_filtering: 'true'
+  verbose: 'true'
+  max_retry_time: 30
+  max_retries: 5
+  max_depth: 1
+```
+
+## Development
 
 The easiest way to run this action locally is to use Docker. Just build a new image and pass the correct env. variables to it. 
 ```
