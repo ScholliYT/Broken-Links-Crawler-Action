@@ -10,7 +10,7 @@ Based on this work: https://github.com/healeycodes/Broken-Link-Crawler
 
 ### `website_url`
 
-**Required** The url of the website to check.  You can provide a comma separated list of urls if you would like to 
+**Required** The url of the website to check. You can provide a comma separated list of urls if you would like to 
 crawl multiple websites.
 
 ### `include_url_prefix`
@@ -65,19 +65,19 @@ Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)
 
 ### `always_get_onsite`
 
-**Optional** By default, the crawler will use a HEAD request first, then will follow-up with a GET request if the response is html and the url represents a page on the same site as the root url.  By setting this value to 'true', the crawler will always us a GET request for any onsite url. (default false).
+**Optional** By default, the crawler will use a HEAD request first, then will follow-up with a GET request if the response is html and the url represents a page on the same site as the root url. By setting this value to 'true', the crawler will always us a GET request for any onsite url. (default false).
 
 ### `connect_limit_per_host`
 
-**Optional** By default, the crawler will open a maximum of 10 connections per host.  This can be useful for when crawling a site that has rate limits. Setting this value to zero will cause an unlimited number of connections per host, but this could inadvertently cause timeout errors if the target server gets overwhelmed with connections. (default 10).
+**Optional** By default, the crawler will open a maximum of 10 connections per host. This can be useful for when crawling a site that has rate limits. Setting this value to zero will cause an unlimited number of connections per host, but this could inadvertently cause timeout errors if the target server gets overwhelmed with connections. (default 10).
 
 ### `search_attrs`
 
-**Optional** The names of html element attributes to extract links from.  This can be useful in you are crawling a site that uses a library like [lazyload](https://github.com/tuupola/lazyload) to lazy-load images -- you would want to make your search_attrs 'href,src,data-src'.  (default 'href,src')
+**Optional** The names of html element attributes to extract links from. This can be useful in you are crawling a site that uses a library like [lazyload](https://github.com/tuupola/lazyload) to lazy-load images -- you would want to make your search_attrs 'href,src,data-src'. (default 'href,src')
 
 ### `resolve_before_filtering`
 
-**Optional** By default, the crawler will apply the includes/excludes filtering criteria to the links as they appear in the html source.  For example, if a link has a relative url in the html source, then the includes/excludes will be applied to the link in its relative form.  By setting this value to true, the crawler will fully resolve the link to its absolute representation before applying the includes/excludes filtering criteria.  If you wanted to only crawl links that are prefixed with your site ('http://mysite.com/') then you would set `resolve_before_filtering` to `'true'` and set `include_url_prefix` to `'http://mysite.com/'`.  (default false)
+**Optional** By default, the crawler will apply the includes/excludes filtering criteria to the links as they appear in the html source. For example, if a link has a relative url in the html source, then the includes/excludes will be applied to the link in its relative form. By setting this value to true, the crawler will fully resolve the link to its absolute representation before applying the includes/excludes filtering criteria. If you wanted to only crawl links that are prefixed with your site ('http://mysite.com/') then you would set `resolve_before_filtering` to `'true'` and set `include_url_prefix` to `'http://mysite.com/'`. (default false)
 
 ## Example usage
 
@@ -111,16 +111,16 @@ with:
 The easiest way to run this action locally is to use Docker. Just build a new image and pass the correct env. variables to it. 
 ```
 docker build --tag broken-links-crawler-action:latest .
-docker run -e INPUT_WEBSITE_URL="https://github.com/ScholliYT/Broken-Links-Crawler-Action" -e INPUT_VERBOSE="true" -e INPUT_MAX_RETRY_TIME=30 -e INPUT_MAX_RETRIES=5 -e INPUT_EXCLUDE_URL_PREFIX="mailto:,https://www.linkedin.com,https://linkedin.com" broken-links-crawler-action:latest
+docker run -e INPUT_WEBSITE_URL="https://github.com/ScholliYT/Broken-Links-Crawler-Action" -e INPUT_VERBOSE="true" -e INPUT_MAX_RETRY_TIME=30 -e INPUT_MAX_RETRIES=5 -e INPUT_MAX_DEPTH=1 -e INPUT_INCLUDE_URL_CONTAINED='ScholliYT/Broken-Links-Crawler-Action' -e INPUT_EXCLUDE_URL_CONTAINED='/tree,/code_menu_contents,/hovercards/citation' -e INPUT_EXCLUDE_URL_PREFIX="mailto:,https://www.linkedin.com,https://linkedin.com" broken-links-crawler-action:latest
 ```
 
 ### Installing test dependencies
 
-Several utilities are used for testing the code out.  To install all of the required dependencies, please 
+Several utilities are used for testing the code out. To install all of the required dependencies, please 
 use the following command:
 
 ```
-pip install -r test-dependences.txt
+pip install -r test-requirements.txt
 ```
 
 ### Pre-commit hook
@@ -172,4 +172,4 @@ pytest -m "integrationtest"
 
 #### Mutation Testing
 
-Mutation testing changes the real code (creating a 'mutant') and runs all of the tests to make sure that at least one test fails.   This ensures that your tests are actually effective at testing the code, or it can also reveal unnecessary implementation code that should be refactored.   To run mutation testing, use the `mutmut run` command.  For details on missed mutants, run the `mutmut html` command to generate an html report of the missed mutants.
+Mutation testing changes the real code (creating a 'mutant') and runs all of the tests to make sure that at least one test fails. This ensures that your tests are actually effective at testing the code, or it can also reveal unnecessary implementation code that should be refactored. To run mutation testing, use the `mutmut run` command. For details on missed mutants, run the `mutmut html` command to generate an html report of the missed mutants.
