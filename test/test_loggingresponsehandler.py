@@ -30,21 +30,29 @@ class TestLoggingResponseHandler(unittest.TestCase):
         self.resp.status = 400
         self.resp.error = ClientError()
         with patch.object(self.logger, 'error') as error_mock,\
-                patch.object(self.logger, 'info') as info_mock:
+                patch.object(self.logger, 'info') as info_mock,\
+                patch.object(self.logger, 'debug') as debug_mock:
             self.testobj.handle_response(self.resp)
-            expected = '::error ::ClientError: 400' +\
+            expected_error = '::error ::ClientError: 400' +\
                 ' - http://testing.test.com/'
-            error_mock.assert_called_with(expected)
+            expected_debug = 'The following exception occured'
+            error_mock.assert_called_with(expected_error)
+            debug_mock.assert_called_with(expected_debug,
+                                          exc_info=self.resp.error)
             info_mock.assert_not_called()
 
     def test_error_logs_when_no_status_error(self):
         self.resp.error = ClientError('test error')
         with patch.object(self.logger, 'error') as error_mock,\
-                patch.object(self.logger, 'info') as info_mock:
+                patch.object(self.logger, 'info') as info_mock,\
+                patch.object(self.logger, 'debug') as debug_mock:
             self.testobj.handle_response(self.resp)
             expected = '::error ::ClientError: test error' +\
                 ' - http://testing.test.com/'
+            expected_debug = 'The following exception occured'
             error_mock.assert_called_with(expected)
+            debug_mock.assert_called_with(expected_debug,
+                                          exc_info=self.resp.error)
             info_mock.assert_not_called()
 
 
