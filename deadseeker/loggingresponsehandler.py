@@ -18,5 +18,6 @@ class LoggingUrlFetchResponseHandler(UrlFetchResponseHandler):
             else:
                 logger.error(
                     f'::error ::{errortype}: {str(error)} - {url}')
+            logger.debug("The following exception occured", exc_info=error)
         else:
             logger.info(f'{status} - {url} - {elapsedstr}')
