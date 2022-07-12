@@ -1,4 +1,4 @@
 validators==0.18.2
-aiohttp==3.7.4.post0
-aiodns==2.0.0
-aiohttp-retry==2.3.5
+aiohttp==3.8.1
+aiodns==3.0.0
+aiohttp-retry==2.5.1

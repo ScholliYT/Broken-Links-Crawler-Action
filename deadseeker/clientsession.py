@@ -46,10 +46,10 @@ class DefaultClientSessionFactory(ClientSessionFactory):
         retry_options = ExponentialRetry(
                             attempts=config.max_tries,
                             max_timeout=config.max_time,
-                            exceptions=[
+                            exceptions={
                                 aiohttp.ClientError,
                                 asyncio.TimeoutError
-                            ])
+                            })
         return RetryClient(
                 raise_for_status=True,
                 connector=connector,
