@@ -68,7 +68,7 @@ class AbstractResponseFetcher(ResponseFetcher, ABC):
             timer.stop()
             resp.status = response.status
             if has_html(response) and is_onsite(urltarget):
-                resp.html = await response.text(encoding="utf-8")
+                resp.html = await response.text()
 
 
 def has_html(response: ClientResponse) -> bool:
