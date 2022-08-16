@@ -13,11 +13,17 @@ class LoggingUrlFetchResponseHandler(UrlFetchResponseHandler):
         error = resp.error
         if error:
             errortype = type(error).__name__
+
+            navigation_path = " -> ".join(resp.urltarget.parent_urls())
+            navigation_path_msg = ""
+            if navigation_path:
+                navigation_path_msg = ". Found by navigating through: " + navigation_path + "."
+
             if status:
-                logger.error(f'::error ::{errortype}: {status} - {url}')
+                logger.error(f'::error ::{errortype}: {status} - {url}{navigation_path_msg}')
             else:
                 logger.error(
-                    f'::error ::{errortype}: {str(error)} - {url}')
+                    f'::error ::{errortype}: {str(error)} - {url}{navigation_path_msg}')
             logger.debug("The following exception occured", exc_info=error)
         else:
             logger.info(f'{status} - {url} - {elapsedstr}')

@@ -37,6 +37,20 @@ class UrlTarget():
         self.home = home
         self.url = url
         self.depth = depth
+        # We don't know the parent element (yet)
+        self.parent: Optional[UrlTarget] = None
+
+    def child(self, url: str) -> 'UrlTarget':
+        child = UrlTarget(self.home, url, self.depth - 1)
+        # We store the parent Url from where we found this one in the parent
+        child.parent = self
+        return child
+
+    def parent_urls(self) -> List[str]:
+        if self.parent:
+            return self.parent.parent_urls() + [self.parent.url]
+        else:
+            return []
 
 
 class UrlFetchResponse():

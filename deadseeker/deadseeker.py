@@ -95,8 +95,7 @@ class DeadSeeker:
                 newurl = urljoin(base, newurl)
                 if newurl not in visited:
                     visited.add(newurl)
-                    targets.appendleft(
-                        UrlTarget(resp.urltarget.home, newurl, depth - 1))
+                    targets.appendleft(resp.urltarget.child(newurl))
 
     def seek(
             self,
