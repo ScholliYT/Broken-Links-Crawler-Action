@@ -47,8 +47,8 @@ class DeadSeeker:
             ) -> SeekResults:
         timer = Timer()
         results = SeekResults()
-        visited: Set[str] = set()
-        targets: Deque[UrlTarget] = Deque[UrlTarget]()
+        visited: Set[str] = set()  # to keep track of visited and queued URLs
+        targets: Deque[UrlTarget] = Deque[UrlTarget]()  # queued URLs only
         for url in urls:
             visited.add(url)
             targets.appendleft(UrlTarget(url, url, self.config.max_depth))
@@ -61,7 +61,7 @@ class DeadSeeker:
                 self.config) as session:
             while targets:
                 tasks = []
-                while targets:
+                while targets:  # iterate all targets of one depth
                     urltarget = targets.pop()  # pragma: no mutate
                     tasks.append(
                         asyncio.create_task(
@@ -69,6 +69,8 @@ class DeadSeeker:
                                 session, urltarget)))
                 for task in asyncio.as_completed(tasks):  # completed first
                     resp = await task
+                    assert isinstance(resp, UrlFetchResponse), \
+                        "Expected to get an UrlFetchResponse from the festh_response task"  # pragma: no mutate
                     if responsehandler:
                         responsehandler.handle_response(resp)
                     if resp.error:

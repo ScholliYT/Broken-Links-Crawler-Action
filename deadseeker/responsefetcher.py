@@ -74,7 +74,7 @@ class AbstractResponseFetcher(ResponseFetcher, ABC):
 
 def has_html(response: ClientResponse) -> bool:
     return ('Content-Type' in response.headers and
-            'html' in response.headers['Content-Type'])
+            'html' in response.content_type)
 
 
 def is_onsite(urltarget: UrlTarget) -> bool:
@@ -91,18 +91,22 @@ class HeadThenGetIfHtmlResponseFetcher(AbstractResponseFetcher):
             resp: UrlFetchResponse,
             urltarget: UrlTarget,
             timer: Timer) -> None:
+        head_not_allowed = False  # pragma: no mutate
+        is_html_content = False  # pragma: no mutate
         try:
             async with session.head(urltarget.url) as response:
                 timer.stop()
                 resp.status = response.status
-                if is_onsite(urltarget):
-                    await self._do_get(session, resp, urltarget, timer)
+                is_html_content = has_html(response)
         except aiohttp.ClientResponseError as e:
             # Fixes ScholliYT/Broken-Links-Crawler-Action#8
             if e.status == 405:
-                await self._do_get(session, resp, urltarget, timer)
+                head_not_allowed = True
             else:
                 raise e
+
+        if head_not_allowed or (is_onsite(urltarget) and is_html_content):
+            await self._do_get(session, resp, urltarget, timer)
 
 
 # Always uses GET requests for onsite urls, but will continue
