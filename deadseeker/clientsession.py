@@ -4,13 +4,13 @@ import asyncio
 import logging
 from types import SimpleNamespace
 from aiohttp import (
-    ClientSession,
     TraceConfig,
     TraceRequestStartParams,
     TCPConnector,
     ClientTimeout
 )
-from aiohttp_retry import RetryClient, ExponentialRetry  # type: ignore
+from aiohttp_retry import RetryClient, ExponentialRetry
+from aiohttp_retry.types import ClientType
 from abc import abstractmethod, ABC
 
 logger = logging.getLogger(__name__)
@@ -18,15 +18,15 @@ logger = logging.getLogger(__name__)
 
 class ClientSessionFactory(ABC):
     @abstractmethod  # pragma: no mutate
-    def get_client_session(self, config: SeekerConfig) -> ClientSession:
+    def get_client_session(self, config: SeekerConfig) -> ClientType:
         pass
 
 
 class DefaultClientSessionFactory(ClientSessionFactory):
 
-    def get_client_session(self, config: SeekerConfig) -> ClientSession:
+    def get_client_session(self, config: SeekerConfig) -> ClientType:
         async def _on_request_start(
-            session: ClientSession,
+            session: ClientType,
             trace_config_ctx: SimpleNamespace,
             params: TraceRequestStartParams
         ) -> None:

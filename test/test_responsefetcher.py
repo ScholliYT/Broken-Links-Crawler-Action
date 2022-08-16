@@ -2,10 +2,10 @@ import unittest
 from aiounittest import AsyncTestCase
 from asyncio import TimeoutError
 from aiohttp import (
-    ClientSession,
     ClientResponseError,
     ClientError
 )
+from aiohttp_retry import RetryClient
 from unittest.mock import Mock, patch
 from aioresponses import aioresponses
 from deadseeker.common import SeekerConfig
@@ -57,7 +57,7 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
     @aioresponses()
     async def test_if_same_site_and_html(self,  m):
         self._prep_request(m, TEST_HOME_URL, content_type=TYPE_HTML)
-        async with ClientSession() as session:
+        async with RetryClient() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
@@ -75,7 +75,7 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
             TEST_HOME_URL,
             headexception=exception,
             content_type=TYPE_HTML)
-        async with ClientSession() as session:
+        async with RetryClient() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
@@ -93,7 +93,7 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
             TEST_HOME_URL,
             headexception=exception,
             content_type=TYPE_JSON)
-        async with ClientSession() as session:
+        async with RetryClient() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
@@ -111,7 +111,7 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
             TEST_OTHER_URL,
             headexception=exception,
             content_type=TYPE_HTML)
-        async with ClientSession() as session:
+        async with RetryClient() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
@@ -124,7 +124,7 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
     async def test_if_other_site_and_html(
             self, m):
         self._prep_request(m, TEST_OTHER_URL, content_type=TYPE_HTML)
-        async with ClientSession() as session:
+        async with RetryClient() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
@@ -137,7 +137,7 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
     async def test_if_same_site_and_not_html(
             self,  m):
         self._prep_request(m, TEST_HOME_URL, content_type=TYPE_JSON)
-        async with ClientSession() as session:
+        async with RetryClient() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
@@ -150,7 +150,7 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
     async def test_if_other_site_and_not_html(
             self, m):
         self._prep_request(m, TEST_OTHER_URL, content_type=TYPE_JSON)
-        async with ClientSession() as session:
+        async with RetryClient() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
@@ -164,7 +164,7 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
             self, m):
         exception = ClientResponseError(None, None, status=404)
         self._prep_request(m, TEST_HOME_URL, headexception=exception)
-        async with ClientSession() as session:
+        async with RetryClient() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
@@ -178,7 +178,7 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
             self, m):
         exception = ClientError()
         self._prep_request(m, TEST_HOME_URL, headexception=exception)
-        async with ClientSession() as session:
+        async with RetryClient() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
@@ -192,7 +192,7 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
             self, m):
         exception = TimeoutError()
         self._prep_request(m, TEST_HOME_URL, headexception=exception)
-        async with ClientSession() as session:
+        async with RetryClient() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
@@ -236,7 +236,7 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
     @aioresponses()
     async def test_if_same_site_and_html(self,  m):
         self._prep_request(m, TEST_HOME_URL, content_type=TYPE_HTML)
-        async with ClientSession() as session:
+        async with RetryClient() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
@@ -250,7 +250,7 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
             self, m):
         self._prep_request(
             m, TEST_OTHER_URL, method='HEAD', content_type=TYPE_HTML)
-        async with ClientSession() as session:
+        async with RetryClient() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
@@ -263,7 +263,7 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
     async def test_if_same_site_and_not_html(
             self,  m):
         self._prep_request(m, TEST_HOME_URL, content_type=TYPE_JSON)
-        async with ClientSession() as session:
+        async with RetryClient() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
@@ -277,7 +277,7 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
             self, m):
         self._prep_request(
             m, TEST_OTHER_URL, method='HEAD', content_type=TYPE_JSON)
-        async with ClientSession() as session:
+        async with RetryClient() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
@@ -291,7 +291,7 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
             self, m):
         exception = ClientResponseError(None, None, status=404)
         self._prep_request(m, TEST_HOME_URL, exception=exception)
-        async with ClientSession() as session:
+        async with RetryClient() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
@@ -305,7 +305,7 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
             self, m):
         exception = ClientError()
         self._prep_request(m, TEST_HOME_URL, exception=exception)
-        async with ClientSession() as session:
+        async with RetryClient() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)
@@ -319,7 +319,7 @@ class TestAlwaysGetIfOnSiteResponseFetcher(AsyncTestCase):
             self, m):
         exception = TimeoutError()
         self._prep_request(m, TEST_HOME_URL, exception=exception)
-        async with ClientSession() as session:
+        async with RetryClient() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
             self.assertIs(self.urltarget, response.urltarget)

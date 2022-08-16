@@ -29,7 +29,8 @@ from deadseeker.linkparser import (
     LinkParser
 )
 from deadseeker.timer import Timer
-from aiohttp import ClientSession, ClientResponseError, ClientError
+from aiohttp import ClientResponseError, ClientError
+from aiohttp_retry.types import ClientType
 
 
 # Preparing test data to represent two web sites, test1.com and test2.com
@@ -212,7 +213,7 @@ class TestDeadSeeker(unittest.TestCase):
         self.testobj.responsefetcherfactory\
             .get_response_fetcher.return_value = self.responsefetcher
 
-        def fetch_response_mock(session: ClientSession, urltarget: UrlTarget):
+        def fetch_response_mock(session: ClientType, urltarget: UrlTarget):
             response_creator = TEST_RESPONSES_BY_URL.get(urltarget.url)
             self.assertIsNotNone(
                 response_creator,

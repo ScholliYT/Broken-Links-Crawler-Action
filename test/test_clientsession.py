@@ -6,7 +6,8 @@ from deadseeker.common import SeekerConfig
 import aiohttp
 import asyncio
 from types import SimpleNamespace
-from aiohttp import ClientSession, TraceRequestStartParams
+from aiohttp import TraceRequestStartParams
+from aiohttp_retry.types import ClientType
 import logging
 
 
@@ -65,10 +66,10 @@ class TestDefaultClientSessionFactory(AsyncTestCase):
         self.exponentialretry.assert_called_with(
                             attempts=self.config.max_tries,
                             max_timeout=self.config.max_time,
-                            exceptions=[
+                            exceptions={
                                 aiohttp.ClientError,
                                 asyncio.TimeoutError
-                            ])
+                            })
 
     async def test_traceconfig_configuration(self):
         self.testObj.get_client_session(
@@ -79,7 +80,7 @@ class TestDefaultClientSessionFactory(AsyncTestCase):
         append.assert_called_once()
         thecall = append.call_args_list[0]
         func = thecall.args[0]
-        session = Mock(spec=ClientSession)
+        session = Mock(spec=ClientType)
         trace_config_ctx = Mock(spec=SimpleNamespace)
         ctx = dict()
         trace_config_ctx.trace_request_ctx = ctx
