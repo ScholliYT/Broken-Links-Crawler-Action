@@ -9,4 +9,4 @@ repos:
     -   id: mypy
         files: ^deadseeker/  
         args: [--disallow-untyped-defs]
-        additional_dependencies: [aiohttp-retry==2.8.3]
+        additional_dependencies: [aiohttp-retry==2.8.3] # we need to install this dependency for mypy's venv to find the types

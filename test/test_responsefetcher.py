@@ -57,6 +57,8 @@ class TestHeadThenGetIfHtmlResponseFetcher(AsyncTestCase):
     @aioresponses()
     async def test_if_same_site_and_html(self,  m):
         self._prep_request(m, TEST_HOME_URL, content_type=TYPE_HTML)
+        # We use the RetryClient() as a session instance here
+        # One could also use a aiohttp ClientSession instance
         async with RetryClient() as session:
             response = await self.testobj.fetch_response(
                     session, self.urltarget)
