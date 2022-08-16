@@ -1,5 +1,6 @@
 from .common import UrlFetchResponse, UrlTarget, SeekerConfig
-from aiohttp import ClientSession, ClientResponse
+from aiohttp import ClientResponse
+from aiohttp_retry.types import ClientType
 from abc import abstractmethod, ABC
 from .timer import Timer
 import aiohttp
@@ -8,7 +9,7 @@ import aiohttp
 class ResponseFetcher:
     async def fetch_response(
             self,
-            session: ClientSession,
+            session: ClientType,
             urltarget: UrlTarget) -> UrlFetchResponse:
         pass
 
@@ -34,7 +35,7 @@ class AbstractResponseFetcher(ResponseFetcher, ABC):
 
     async def fetch_response(
             self,
-            session: ClientSession,
+            session: ClientType,
             urltarget: UrlTarget) -> UrlFetchResponse:
         resp = UrlFetchResponse(urltarget)
         timer = Timer()
@@ -51,7 +52,7 @@ class AbstractResponseFetcher(ResponseFetcher, ABC):
     @abstractmethod  # pragma: no mutate
     async def _inner_fetch(
             self,
-            session: ClientSession,
+            session: ClientType,
             resp: UrlFetchResponse,
             urltarget: UrlTarget,
             timer: Timer) -> None:
@@ -59,7 +60,7 @@ class AbstractResponseFetcher(ResponseFetcher, ABC):
 
     async def _do_get(
             self,
-            session: ClientSession,
+            session: ClientType,
             resp: UrlFetchResponse,
             urltarget: UrlTarget,
             timer: Timer) -> None:
@@ -86,7 +87,7 @@ class HeadThenGetIfHtmlResponseFetcher(AbstractResponseFetcher):
 
     async def _inner_fetch(
             self,
-            session: ClientSession,
+            session: ClientType,
             resp: UrlFetchResponse,
             urltarget: UrlTarget,
             timer: Timer) -> None:
@@ -110,7 +111,7 @@ class AlwaysGetIfOnSiteResponseFetcher(HeadThenGetIfHtmlResponseFetcher):
 
     async def _inner_fetch(
             self,
-            session: ClientSession,
+            session: ClientType,
             resp: UrlFetchResponse,
             urltarget: UrlTarget,
             timer: Timer) -> None:
