@@ -21,8 +21,8 @@ def run_action() -> None:
     inputvalidator = InputValidator(dict(os.environ))
 
     verbosity: Union[bool, int] = inputvalidator.get_verbosity()
-    if(isinstance(verbosity, bool)):
-        if(verbosity):
+    if (isinstance(verbosity, bool)):
+        if (verbosity):
             logging.basicConfig(
                 level=logging.INFO,
                 format='%(message)s')
@@ -52,7 +52,7 @@ def run_action() -> None:
     urls = inputvalidator.get_urls()
     seeker = DeadSeeker(config)
     responsehandler = LoggingUrlFetchResponseHandler()
-    if(len(seeker.seek(urls, responsehandler).failures, ) > 0):
+    if (len(seeker.seek(urls, responsehandler).failures, ) > 0):
         logger.critical("::error ::Found some broken links!")
         sys.exit(1)
 

@@ -51,13 +51,13 @@ class InputValidator:
 
     def get_verbosity(self) -> Union[bool, int]:
         verboseStr = self.inputs.get('INPUT_VERBOSE')
-        if(verboseStr):
-            if(self._get_boolean(verboseStr)):
+        if (verboseStr):
+            if (self._get_boolean(verboseStr)):
                 return True
             levelpattern = '^debug|info|warn(?:ing)?|error|critical$'
             levelmatch = re.search(
                 levelpattern, verboseStr, flags=re.IGNORECASE)
-            if(levelmatch):
+            if (levelmatch):
                 levelname = levelmatch.group(0).upper()
                 return logging.getLevelName(levelname)
         return False

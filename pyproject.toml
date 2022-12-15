@@ -1,0 +1,54 @@
+[tool.poetry]
+name = "broken-links-crawler-action"
+version = "3.1.1"
+description = "GitHub Action to check a website for broken links"
+authors = ["Tom Stein <dev@tomstein.me>"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "deadseeker" }]
+
+[tool.poetry.dependencies]
+python = ">=3.8.1,<3.9"
+validators = "0.18.2"
+aiohttp = "3.8.1"
+aiodns = "3.0.0"
+aiohttp-retry = "2.8.3"
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^6.0.0"
+flake8-pyproject = "^1.2.2"
+pytest = "6.2.2"
+pytest-cov = "2.11.1"
+pre-commit = "2.11.1"
+pytest-aiohttp = "1.0.4"
+mypy = "0.971"
+aiounittest = "1.4.2"
+aioresponses = "0.7.3"
+mutmut = "^2.4.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mutmut]
+paths_to_mutate = "deadseeker/"
+runner = "python -m pytest -x --assert=plain -m \"not integrationtest\" --cov"
+use_coverage = true
+
+[tool.mypy]
+files = "deadseeker"
+disallow_untyped_defs = true
+
+[tool.flake8]
+count = true
+show_source = true
+max_complexity = 10
+statistics = true
+max-line-length = 120
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+markers = """
+    integrationtest: mark test as an integration test
+    asyncio: asynchronous tests
+"""

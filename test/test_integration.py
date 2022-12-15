@@ -132,7 +132,7 @@ class TestIntegration(unittest.TestCase):
             for expected_prefix in expected_info_prefixes:
                 found = False
                 for actual in actual_infos:
-                    if(actual.startswith(expected_prefix)):
+                    if (actual.startswith(expected_prefix)):
                         actual_infos.remove(actual)
                         found = True
                         break
