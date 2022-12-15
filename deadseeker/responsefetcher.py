@@ -7,7 +7,7 @@ import aiohttp
 
 
 class ResponseFetcher:
-    async def fetch_response(
+    async def fetch_response(  # type: ignore [empty-body]
             self,
             session: ClientType,
             urltarget: UrlTarget) -> UrlFetchResponse:

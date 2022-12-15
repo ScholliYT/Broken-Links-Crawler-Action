@@ -100,7 +100,7 @@ class DeadSeeker:
     def seek(
             self,
             urls: Union[str, List[str]],
-            responsehandler: UrlFetchResponseHandler = None) -> SeekResults:
+            responsehandler: Optional[UrlFetchResponseHandler] = None) -> SeekResults:
         url_list = [urls] if isinstance(urls, str) else urls
         results = asyncio.run(self._main(url_list, responsehandler))
         logger.debug(f'Process took {results.elapsed:.2f}')
