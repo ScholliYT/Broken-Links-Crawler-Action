@@ -105,8 +105,9 @@ class TestIntegration(unittest.TestCase):
                 patch.object(self.logger, 'info') as info_mock:
             run_action()
             expected_errors = [
-                f'::error ::ClientResponseError: 500 - {self.url}/page4.html',
-                f'::error ::ClientResponseError: 404 - {self.url}/page3.html'
+                f'::error ::ClientResponseError: 500 - {self.url}/page4.html. Found by navigating through: {self.url}.',
+                f'::error ::ClientResponseError: 404 - {self.url}/page3.html.' +
+                f' Found by navigating through: {self.url} -> {self.url}/page1.html -> {self.url}/page2.html.'
             ]
             actual_errors: List[str] = []
             for call in error_mock.call_args_list:

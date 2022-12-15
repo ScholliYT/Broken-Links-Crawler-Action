@@ -90,5 +90,30 @@ class TestUrlFetchResponse(unittest.TestCase):
         self.assertIsNone(self.testobj.html)
 
 
+class TestUrlTarget(unittest.TestCase):
+
+    def setUp(self):
+        self.testobj = UrlTarget("https://example.com", "https://example.com", 5)
+
+    def test_child_has_parent(self):
+        child = self.testobj.child("https://test.com")
+        self.assertEqual(self.testobj.home, child.home)
+        self.assertEqual(self.testobj.depth - 1, child.depth)
+        self.assertIsNone(self.testobj.parent)
+        self.assertEqual(self.testobj, child.parent)
+        self.assertEqual("https://test.com", child.url)
+
+    def test_parent_urls_generates_only_urls_for_parents(self):
+        child1 = self.testobj.child("https://example.com/1")
+        child2 = child1.child("https://example.com/2")
+
+        output = child2.parent_urls()
+        expected_urls = [
+            "https://example.com",
+            "https://example.com/1"
+        ]
+        self.assertEqual(expected_urls, output)
+
+
 if __name__ == '__main__':
     unittest.main()
