@@ -3,7 +3,7 @@
 
 name: Lint and Test Project
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   lint-and-test:
