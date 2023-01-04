@@ -1,5 +1,5 @@
 # Container image that runs your code
-FROM python:3.8-slim-buster
+FROM python:3.11-slim-buster
 
 RUN python3.8 -m pip install pipx
 RUN pipx install "poetry==1.2.2"
