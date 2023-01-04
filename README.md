@@ -124,7 +124,7 @@ To install all the required dependencies, please
 use the following command:
 
 ```sh
-poetry env use python3.8 # in case your system python differs
+poetry env use python3.11 # in case your system python differs from 3.8, 3.9, 3.10 or 3.11
 poetry install # use '--without dev' to install only required dependencies
 ```
 
