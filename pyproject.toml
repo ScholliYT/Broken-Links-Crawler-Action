@@ -8,7 +8,7 @@ readme = "README.md"
 packages = [{ include = "deadseeker" }]
 
 [tool.poetry.dependencies]
-python = ">=3.8.1,<3.9"
+python = ">=3.8.1,<3.12"
 validators = ">=0.18.2"
 aiohttp = "^3.8.1"
 aiodns = "^3.0.0"

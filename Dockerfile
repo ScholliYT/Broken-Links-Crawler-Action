@@ -1,7 +1,7 @@
 # Container image that runs your code
-FROM python:3.8-slim-buster
+FROM python:3.11-slim-buster
 
-RUN python3.8 -m pip install pipx
+RUN python3.11 -m pip install pipx
 RUN pipx install "poetry==1.2.2"
 # We need to ensure taht poetry is available (alternative: RUN pipx ensurepath)
 ENV PATH="{PATH}:/root/.local/bin" 
