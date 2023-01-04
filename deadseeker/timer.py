@@ -8,6 +8,6 @@ class Timer:
         self.end: Optional[float] = None
 
     def stop(self) -> float:
-        if(self.end is None):
+        if (self.end is None):
             self.end = time.time()
         return self.end - self.start

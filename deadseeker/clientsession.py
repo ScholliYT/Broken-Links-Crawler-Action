@@ -32,7 +32,7 @@ class DefaultClientSessionFactory(ClientSessionFactory):
         ) -> None:
             current_attempt = \
                 trace_config_ctx.trace_request_ctx['current_attempt']
-            if(current_attempt > 1):
+            if (current_attempt > 1):
                 logger.warning(
                     f'::warn ::Retry Attempt #{current_attempt} ' +
                     f'of {config.max_tries}: {params.url}')

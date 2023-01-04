@@ -7,7 +7,7 @@ import aiohttp
 
 
 class ResponseFetcher:
-    async def fetch_response(
+    async def fetch_response(  # type: ignore [empty-body]
             self,
             session: ClientType,
             urltarget: UrlTarget) -> UrlFetchResponse:
@@ -26,7 +26,7 @@ class DefaultResponseFetcherFactory(ResponseFetcherFactory):
     def get_response_fetcher(
             self,
             config: SeekerConfig) -> ResponseFetcher:
-        if(config.alwaysgetonsite):
+        if (config.alwaysgetonsite):
             return AlwaysGetIfOnSiteResponseFetcher()
         return HeadThenGetIfHtmlResponseFetcher()
 
@@ -119,7 +119,7 @@ class AlwaysGetIfOnSiteResponseFetcher(HeadThenGetIfHtmlResponseFetcher):
             resp: UrlFetchResponse,
             urltarget: UrlTarget,
             timer: Timer) -> None:
-        if(is_onsite(urltarget)):
+        if (is_onsite(urltarget)):
             await self._do_get(session, resp, urltarget, timer)
         else:
             await super()._inner_fetch(
