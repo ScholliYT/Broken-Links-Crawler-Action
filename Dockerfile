@@ -1,11 +1,25 @@
 # Container image that runs your code
 FROM python:3.11-slim-buster
 
-RUN python3.11 -m pip install pipx
-RUN pipx install "poetry==1.2.2"
-# We need to ensure taht poetry is available (alternative: RUN pipx ensurepath)
-ENV PATH="{PATH}:/root/.local/bin" 
+# pip
+ENV PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_DEFAULT_TIMEOUT=100
 
+# poetry
+ENV POETRY_VERSION=1.2.2 \
+    POETRY_NO_INTERACTION=1 \
+    POETRY_CACHE_DIR='/var/cache/pypoetry' \
+    PYSETUP_PATH="/opt/pysetup" \
+    VENV_PATH="/opt/pysetup/.venv" \
+    PATH="$VENV_PATH/bin:$PATH:/root/.local/bin"
+
+
+RUN python3.11 -m pip install pipx
+RUN pipx install "poetry==$POETRY_VERSION"
+# We need to ensure taht poetry is available (alternative: RUN pipx ensurepath)
+# ENV PATH="{PATH}:/root/.local/bin" 
+RUN pipx ensurepath
 
 # We copy just the pyproject.toml and pyproject.lock first to leverage Docker cache
 COPY pyproject.toml poetry.lock ./
