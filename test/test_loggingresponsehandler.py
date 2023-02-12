@@ -57,8 +57,8 @@ class TestLoggingResponseHandler(unittest.TestCase):
             self.testobj.handle_response(self.subpage_response)
             expected_error = '::error ::ClientError: 400' +\
                 ' - http://subpage.testing.test.com/page1' +\
-                '. Found by navigating through: http://testing.test.com/ ' +\
-                '-> http://subpage.testing.test.com/.'
+                ' found by navigating through: http://testing.test.com/ ' +\
+                '-> http://subpage.testing.test.com/'
             expected_debug = 'The following exception occured'
             error_mock.assert_called_with(expected_error)
             debug_mock.assert_called_with(expected_debug,

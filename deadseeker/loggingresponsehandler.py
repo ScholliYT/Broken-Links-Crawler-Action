@@ -17,7 +17,7 @@ class LoggingUrlFetchResponseHandler(UrlFetchResponseHandler):
             navigation_path = " -> ".join(resp.urltarget.parent_urls())
             navigation_path_msg = ""
             if navigation_path:
-                navigation_path_msg = ". Found by navigating through: " + navigation_path + "."
+                navigation_path_msg = " found by navigating through: " + navigation_path
 
             if status:
                 logger.error(f'::error ::{errortype}: {status} - {url}{navigation_path_msg}')
