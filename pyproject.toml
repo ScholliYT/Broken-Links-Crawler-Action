@@ -16,7 +16,7 @@ aiohttp-retry = "^2.8.3"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^6.0.0"
-flake8-pyproject = "^1.2.2"
+flake8-pyproject = "^1.2.3"
 pytest = "^7.3.1"
 pytest-cov = "^4.0.0"
 pre-commit = "^2.11.1"
