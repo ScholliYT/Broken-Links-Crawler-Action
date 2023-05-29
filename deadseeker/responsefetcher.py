@@ -68,6 +68,10 @@ class AbstractResponseFetcher(ResponseFetcher, ABC):
         async with session.get(url) as response:
             timer.stop()
             resp.status = response.status
+            # Because of redirects the url might have changed. Update it here.
+            # This fixes https://github.com/ScholliYT/Broken-Links-Crawler-Action/issues/39
+            urltarget.url = str(response.real_url)
+
             if has_html(response) and is_onsite(urltarget):
                 resp.html = await response.text()
 

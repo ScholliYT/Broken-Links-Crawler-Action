@@ -25,16 +25,25 @@ class MockServerRequestHandler(SimpleHTTPRequestHandler):
             self.send_response(HTTPStatus.METHOD_NOT_ALLOWED)
             self.end_headers()
             return
-        if not self.check_error():
+        if not self.check_error() and not self.check_redirect():
             super().do_HEAD()
 
     def do_GET(self):
-        if not self.check_error():
+        if not self.check_error() and not self.check_redirect():
             super().do_GET()
 
     def check_error(self):
         if self.path.endswith('/page4.html'):
             self.send_response(HTTPStatus.INTERNAL_SERVER_ERROR)
+            self.end_headers()
+            return True
+        return False
+
+    def check_redirect(self):
+        if self.path.endswith('/subpages'):
+            self.send_response(HTTPStatus.MOVED_PERMANENTLY)
+            new_url = self.path.replace('/subpages', '/subpages/')
+            self.send_header('Location', new_url)
             self.end_headers()
             return True
         return False
@@ -121,7 +130,11 @@ class TestIntegration(unittest.TestCase):
                 f'200 - {self.url}/subpages/subpage1.html - ',
                 f'200 - {self.url}/page2.html - ',
                 f'200 - {self.url}/subpages/subpage2.html - ',
-                f'200 - {self.url}/index.html - '
+                f'200 - {self.url}/index.html - ',
+                f'200 - {self.url}/subpages/redirect/redirect.html - ',
+                # duplicate because of fix for https://github.com/ScholliYT/Broken-Links-Crawler-Action/issues/39
+                f'200 - {self.url}/subpages/subsubpages/ - ',
+                f'200 - {self.url}/subpages/subsubpages/ - ',
             ]
             actual_infos: List[str] = []
             for call in info_mock.call_args_list:
