@@ -179,6 +179,14 @@ poetry run pytest -m "integrationtest"
 
 Mutation testing changes the real code (creating a 'mutant') and runs all the tests to make sure that at least one test fails. This ensures that your tests are actually effective at testing the code, or it can also reveal unnecessary implementation code that should be refactored. To run mutation testing, use the `poetry run mutmut run` command. For details on missed mutants, run the `poetry run mutmut html` command to generate an HTML report of the missed mutants.
 
+### Releasing a new version
+
+- Publish a new release with an incremented version number on GitHub
+- Update all tags to the new release (latest, v3 ...)
+  - git tag -d v3
+  - git tag v3
+  - git push -f origin v3
+
 # Simliar Projects
 
 - https://github.com/JustinBeckwith/linkinator
