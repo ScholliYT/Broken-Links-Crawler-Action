@@ -85,18 +85,35 @@ Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)
 
 ### Basic scan with retry
 ```yml
-uses: ScholliYT/Broken-Links-Crawler-Action@v3
-with:
-  website_url: 'https://github.com/ScholliYT/Broken-Links-Crawler-Action'
-  exclude_url_prefix: 'mailto:,https://www.linkedin.com,https://linkedin.com'
-  verbose: 'true'
-  max_retry_time: 30
-  max_retries: 5
-  max_depth: 1
+name: Check for broken links
+on: 
+  workflow_dispatch: # allow manual trigger
+  push:
+    branches: 
+      - main
+  schedule:
+    # run daily at 4 am
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '0 4 * * *'
+jobs:
+  crawl_for_broken_links:
+    runs-on: ubuntu-latest
+    name: Broken-Links-Crawler
+    steps:
+    - name: Checking links
+      uses: ScholliYT/Broken-Links-Crawler-Action@v3
+      with:
+        website_url: 'https://github.com/ScholliYT/Broken-Links-Crawler-Action'
+        exclude_url_prefix: 'mailto:,https://www.linkedin.com,https://linkedin.com'
+        verbose: 'true'
+        max_retry_time: 30
+        max_retries: 5
+        max_depth: 1
 ```
 
 ### Basic scan with retry, only fetches URLs on same site
 ```yml
+# jobs, steps... omitted in this example
 uses: ScholliYT/Broken-Links-Crawler-Action@v3
 with:
   website_url: 'https://github.com/ScholliYT/Broken-Links-Crawler-Action'
