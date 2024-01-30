@@ -68,13 +68,13 @@ class TestIntegration(unittest.TestCase):
         # Configure mock server.
         port = get_free_port()
         cls.mock_server = HTTPServer(
-            ('localhost', port), MockServerRequestHandler)
+            ('127.0.0.1', port), MockServerRequestHandler)
 
         # Start running mock server in a separate thread.
         # Daemon threads automatically shut down when the main process exits.
         cls.mock_server_thread = Thread(target=cls.mock_server.serve_forever, daemon=True)
         cls.mock_server_thread.start()
-        cls.url = f'http://localhost:{port}'
+        cls.url = f'http://127.0.0.1:{port}'
 
     def setUp(self):
         self.logger = logging.getLogger('deadseeker.loggingresponsehandler')
@@ -108,8 +108,8 @@ class TestIntegration(unittest.TestCase):
         self.env['INPUT_EXCLUDE_URL_PREFIX'] = \
             'https://www.google.com'
         with \
-                patch.dict(os.environ, self.env),\
-                patch.object(self.logger, 'error') as error_mock,\
+                patch.dict(os.environ, self.env), \
+                patch.object(self.logger, 'error') as error_mock, \
                 patch.object(self.logger, 'info') as info_mock:
             run_action()
             expected_errors = [

@@ -26,7 +26,7 @@ class TestLoggingResponseHandler(unittest.TestCase):
 
     def test_info_logs_when_success(self):
         self.resp.status = 200
-        with patch.object(self.logger, 'error') as error_mock,\
+        with patch.object(self.logger, 'error') as error_mock, \
                 patch.object(self.logger, 'info') as info_mock:
             self.testobj.handle_response(self.resp)
             expected = '200 - http://testing.test.com/ - 1234.12 ms'
@@ -36,8 +36,8 @@ class TestLoggingResponseHandler(unittest.TestCase):
     def test_error_logs_when_responseerror(self):
         self.resp.status = 400
         self.resp.error = ClientError()
-        with patch.object(self.logger, 'error') as error_mock,\
-                patch.object(self.logger, 'info') as info_mock,\
+        with patch.object(self.logger, 'error') as error_mock, \
+                patch.object(self.logger, 'info') as info_mock, \
                 patch.object(self.logger, 'debug') as debug_mock:
             self.testobj.handle_response(self.resp)
             expected_error = '::error ::ClientError: 400' +\
@@ -51,8 +51,8 @@ class TestLoggingResponseHandler(unittest.TestCase):
     def test_error_logs_when_responseerror_including_navigationpath(self):
         self.subpage_response.status = 400
         self.subpage_response.error = ClientError()
-        with patch.object(self.logger, 'error') as error_mock,\
-                patch.object(self.logger, 'info') as info_mock,\
+        with patch.object(self.logger, 'error') as error_mock, \
+                patch.object(self.logger, 'info') as info_mock, \
                 patch.object(self.logger, 'debug') as debug_mock:
             self.testobj.handle_response(self.subpage_response)
             expected_error = '::error ::ClientError: 400' +\
@@ -67,8 +67,8 @@ class TestLoggingResponseHandler(unittest.TestCase):
 
     def test_error_logs_when_no_status_error(self):
         self.resp.error = ClientError('test error')
-        with patch.object(self.logger, 'error') as error_mock,\
-                patch.object(self.logger, 'info') as info_mock,\
+        with patch.object(self.logger, 'error') as error_mock, \
+                patch.object(self.logger, 'info') as info_mock, \
                 patch.object(self.logger, 'debug') as debug_mock:
             self.testobj.handle_response(self.resp)
             expected = '::error ::ClientError: test error' +\
