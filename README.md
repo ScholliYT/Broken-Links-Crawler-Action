@@ -198,6 +198,7 @@ Mutation testing changes the real code (creating a 'mutant') and runs all the te
 
 ### Releasing a new version
 
+- Update version number in pyproject.toml
 - Publish a new release with an incremented version number on GitHub
 - Update all tags to the new release (latest, v3 ...)
   - git tag -d v3

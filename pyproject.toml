@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "broken-links-crawler-action"
-version = "3.1.1"
+version = "3.3.1"
 description = "GitHub Action to check a website for broken links"
 authors = ["Tom Stein <dev@tomstein.me>"]
 license = "MIT"
