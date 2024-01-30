@@ -136,7 +136,7 @@ docker run -e INPUT_WEBSITE_URL="https://github.com/ScholliYT/Broken-Links-Crawl
 ### Installing test dependencies
 
 Several utilities are used for testing the code out. 
-We use [Poetry](https://python-poetry.org/) (version 1.2.2) to manage dependencies.
+We use [Poetry](https://python-poetry.org/) (version 1.7.1) to manage dependencies.
 To install all the required dependencies, please 
 use the following command:
 

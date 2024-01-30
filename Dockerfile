@@ -7,7 +7,7 @@ ENV PIP_NO_CACHE_DIR=off \
     PIP_DEFAULT_TIMEOUT=100
 
 # poetry
-ENV POETRY_VERSION=1.2.2 \
+ENV POETRY_VERSION=1.7.1 \
     POETRY_NO_INTERACTION=1 \
     POETRY_CACHE_DIR='/var/cache/pypoetry' \
     PYSETUP_PATH="/opt/pysetup" \
