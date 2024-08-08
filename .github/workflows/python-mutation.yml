@@ -22,7 +22,7 @@ jobs:
     - name: Install Python Poetry
       uses: abatilo/actions-poetry@v2
       with:
-        poetry-version: 1.7.1
+        poetry-version: 1.8.3
     - name: Install dependencies
       run: |
         # installing dependencies used by the project
