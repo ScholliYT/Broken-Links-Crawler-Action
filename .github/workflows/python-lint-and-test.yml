@@ -48,7 +48,7 @@ jobs:
     - name: Set ci docker label
       run: echo "CI_DOCKER_LABEL=broken-links-crawler-action:ci-$(date +%s)" >> $GITHUB_ENV
     - name: Build the Docker image
-      uses: nick-invision/retry@v2
+      uses: nick-invision/retry@v3
       with:
         timeout_seconds: 120
         max_attempts: 3
