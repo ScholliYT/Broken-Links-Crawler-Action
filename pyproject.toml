@@ -15,7 +15,7 @@ aiodns = "^3.0.0"
 aiohttp-retry = "^2.8.3"
 
 [tool.poetry.group.dev.dependencies]
-flake8 = "^6.0.0"
+flake8 = "^7.1.2"
 flake8-pyproject = "^1.2.2"
 pytest = "^7.4.0"
 pytest-cov = "^4.1.0"
