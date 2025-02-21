@@ -34,7 +34,7 @@ inputs:
   web_agent_string:
     description: 'The string to use for the web agent when crawling pages.'
     required: false
-    default: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36'
+    default: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36'
   verbose:
     description: 'Set logging verbosity level: true/false/yes/no/on/off/debug/info/warning/error/critical'
     required: false
