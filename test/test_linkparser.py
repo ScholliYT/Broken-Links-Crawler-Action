@@ -1,8 +1,9 @@
+import logging
 from deadseeker.linkparser import DefaultLinkParser, DefaultLinkParserFactory
 from deadseeker.linkacceptor import LinkAcceptor
 from deadseeker.common import SeekerConfig, UrlFetchResponse, UrlTarget
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 import os
 
 TESTFILE_LOC = os.path.join(os.path.dirname(__file__), "test_linkparser.html")
@@ -38,6 +39,51 @@ class TestDefaultLinkParser(unittest.TestCase):
         self.linkacceptor.accepts.return_value = True
         self.testobj: DefaultLinkParser = \
             DefaultLinkParser(self.config, self.linkacceptor)
+
+        self.logger = logging.getLogger('deadseeker.linkparser')
+
+    def test_debug_logs_when_accepting(self):
+        expectedlinks = [
+            '/link-manifest-href.webmanifest',
+            '/link-apple-touch-icon-href.png',
+            '/link-stylesheet-href.css',
+            '/script-src.js',
+            'script-src-relative.js',
+            '/a-href.html',
+            '/img-src.jpeg',
+            '/img-data-src.png',
+            '//www.google-analytics.com/analytics.js'
+        ]
+        with patch.object(self.logger, 'error') as error_mock, \
+                patch.object(self.logger, 'info') as info_mock, \
+                patch.object(self.logger, 'debug') as debug_mock:
+            self.testobj.parse(self.resp)
+            info_mock.assert_not_called()
+            error_mock.assert_not_called()
+            for link in expectedlinks:
+                debug_mock.assert_any_call(f'Accepting url: {link}')
+
+    def test_debug_logs_when_skipping(self):
+        expectedlinks = [
+            '/link-manifest-href.webmanifest',
+            '/link-apple-touch-icon-href.png',
+            '/link-stylesheet-href.css',
+            '/script-src.js',
+            'script-src-relative.js',
+            '/a-href.html',
+            '/img-src.jpeg',
+            '/img-data-src.png',
+            '//www.google-analytics.com/analytics.js'
+        ]
+        self.linkacceptor.accepts.return_value = False
+        with patch.object(self.logger, 'error') as error_mock, \
+                patch.object(self.logger, 'info') as info_mock, \
+                patch.object(self.logger, 'debug') as debug_mock:
+            self.testobj.parse(self.resp)
+            info_mock.assert_not_called()
+            error_mock.assert_not_called()
+            for link in expectedlinks:
+                debug_mock.assert_any_call(f'Skipping url: {link}')
 
     def test_find_links_all_true(self):
         actuallinks = self.testobj.parse(self.resp)

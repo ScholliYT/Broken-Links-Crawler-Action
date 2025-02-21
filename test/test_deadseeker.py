@@ -1,3 +1,4 @@
+import logging
 import unittest
 from unittest.mock import Mock, patch
 from typing import List
@@ -251,8 +252,22 @@ class TestDeadSeeker(unittest.TestCase):
         self.timer_stop = self.timer_stop_patch.start()
         self.timer_stop.return_value = 4.0
 
+        self.logger = logging.getLogger('deadseeker.deadseeker')
+
     def tearDown(self):
         self.timer_stop_patch.stop()
+
+    def test_elapsed_time_is_debug_logged(self):
+        with patch.object(self.logger, 'error') as error_mock, \
+                patch.object(self.logger, 'info') as info_mock, \
+                patch.object(self.logger, 'debug') as debug_mock:
+            results = self.testobj.seek(TEST1_URL_HOME)
+            error_mock.assert_not_called()
+            info_mock.assert_not_called()
+            debug_mock.assert_called_with('Process took 4000.00 ms')
+
+        results = self.testobj.seek(TEST1_URL_HOME)
+        self.assertEqual(4000.0, results.elapsed, 'Elapsed time is not 4.0')
 
     def test_site1_is_fully_crawled(self):
         results = self.testobj.seek(TEST1_URL_HOME)
