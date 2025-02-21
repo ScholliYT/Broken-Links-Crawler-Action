@@ -64,7 +64,7 @@ jobs:
           -e INPUT_MAX_DEPTH=1 \
           -e INPUT_CONNECT_LIMIT_PER_HOST=1 \
           -e INPUT_INCLUDE_URL_CONTAINED='ScholliYT/Broken-Links-Crawler-Action' \
-          -e INPUT_EXCLUDE_URL_CONTAINED='/tree,/code_menu_contents,/hovercards/citation' \
+          -e INPUT_EXCLUDE_URL_CONTAINED='/tree,/code_menu_contents,/hovercards/citation,/search' \
           -e INPUT_EXCLUDE_URL_PREFIX="mailto:,https://www.linkedin.com,https://linkedin.com" \
           -e INPUT_EXCLUDE_URL_SUFFIX=".zip" \
           --workdir="/opt/" \
