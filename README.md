@@ -46,7 +46,7 @@ you do not want to fetch from, such as "knownadprovider.com".
 **Optional** The string to use for the web agent when crawling pages.  
 The default is:  
 ```
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36
 ```
 
 ### `verbose`
