@@ -1,5 +1,5 @@
-# Container image that runs your code
-FROM python:3.11-slim-buster
+# Container image that runs your code. Use a current Debian to get fresh CA bundle.
+FROM python:3.11-slim
 
 # pip
 ENV PIP_NO_CACHE_DIR=off \
@@ -11,8 +11,9 @@ ENV POETRY_VERSION=1.7.1 \
     POETRY_NO_INTERACTION=1 \
     POETRY_CACHE_DIR='/var/cache/pypoetry' \
     PYSETUP_PATH="/opt/pysetup" \
-    VENV_PATH="/opt/pysetup/.venv" \
-    PATH="$VENV_PATH/bin:$PATH:/root/.local/bin"
+    VENV_PATH="/opt/pysetup/.venv"
+
+ENV PATH="$VENV_PATH/bin:$PATH:/root/.local/bin"
 
 
 RUN python3.11 -m pip install pipx
@@ -28,8 +29,8 @@ RUN poetry install --only main --no-root --no-interaction --no-ansi -v
 # Copies your code file from your action repository to the filesystem path `/` of the container
 COPY deadseeker /modules/deadseeker/
 
-# Adds our module to sys.path so python can find it
-ENV PYTHONPATH "${PYTHONPATH}:/modules/"
+# Set PYTHONPATH to only our modules directory
+ENV PYTHONPATH="/modules"
 
 # Code file to execute when the docker container starts up (`deadseeker.py`)
 ENTRYPOINT [ "poetry", "run", "python", "-m", "deadseeker.action" ]
