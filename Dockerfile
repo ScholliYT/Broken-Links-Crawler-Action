@@ -1,5 +1,5 @@
 # Container image that runs your code. Use a current Debian to get fresh CA bundle.
-FROM python:3.11-slim
+FROM python:3.14-slim
 
 # pip
 ENV PIP_NO_CACHE_DIR=off \
